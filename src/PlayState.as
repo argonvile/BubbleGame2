@@ -9,10 +9,12 @@ package
 		private var heldBubbles:FlxGroup = new FlxGroup();
 		private var popperEmitter:FlxEmitter = new FlxEmitter();
 		private var bubbleRate:Number = 120; // bubbles per minute
+		private var bubbleLifespan:Number = 0; // if bubbles are popping
 		
 		private var elapsed:Number = 0;
 		private var newBubbleTimer:Number = 0;
 		private var gameState:int = 100;
+		private var thrownBubbles:Array = new Array();
 		
 		override public function create():void
 		{
@@ -50,10 +52,31 @@ package
 		override public function update():void
 		{
 			super.update();
+			if(bubbleLifespan > 0) {
+				bubbleLifespan -= FlxG.elapsed;
+				if(bubbleLifespan <= 0) {
+					dropDetachedBubbles();
+				}
+			}
 			if (gameState == 100) {
 				elapsed += FlxG.elapsed;
-				bubbleRate+=FlxG.elapsed * 3;
-				newBubbleTimer += FlxG.elapsed * (bubbleRate / 60);
+				bubbleRate += FlxG.elapsed * 3;
+				if (bubbleLifespan <= 0) {
+					newBubbleTimer += FlxG.elapsed * (bubbleRate / 60);
+					if (thrownBubbles.length > 0) {
+						// handle thrown bubbles
+						for each (var thrownBubble:Bubble in thrownBubbles) {
+							var lowestBubble:Bubble = lowestBubble(thrownBubble.x);
+							if (lowestBubble == null) {
+								lowestBubble = new Bubble(thrownBubble.x, thrownBubble.x%32 == 0 ? -16 : -8, 0xffff0000);
+							}
+							thrownBubble.y = lowestBubble.y + 16;
+							bubbles.add(thrownBubble);
+							popMatches(thrownBubble);
+						}
+						thrownBubbles.length = 0;
+					}
+				}
 				if (FlxG.keys.justPressed("LEFT")) {
 					playerSprite.x = Math.max(playerSprite.x-16, 0);
 				} else if (FlxG.keys.justPressed("RIGHT")) {
@@ -66,11 +89,12 @@ package
 				}
 				if (FlxG.keys.justPressed("X")) {
 					// find the next block above the player, and spit out our blocks below it
-					var heldBubble:Bubble = heldBubbles.getFirstAlive() as Bubble;
-					if (heldBubble != null) {
-						var thrownBubble:Bubble = throwBubbles();
-						popMatches(thrownBubble);
-						dropDetachedBubbles();
+					for each (var heldBubble:Bubble in heldBubbles.members) {
+						if (heldBubble != null && heldBubble.alive) {
+							heldBubble.x = playerSprite.x;
+							heldBubbles.remove(heldBubble);
+							thrownBubbles.push(heldBubble);
+						}
 					}
 				}
 				if (FlxG.keys.justPressed("C") || newBubbleTimer > 6) {
@@ -198,41 +222,31 @@ package
 			} while (++iBubblesToCheck < bubblesToCheck.length);
 			
 			if (iBubblesToCheck >= 4) {
+				bubbleLifespan = 1.2;
 				for each(var bubble:Bubble in bubblesToCheck) {
-					bubble.kill();
+					bubble.lifespan = bubbleLifespan;
+					bubble.makeGraphic(bubble.width, bubble.height, 0xffffffff);
 				}
 			}
 		}
 		
 		private function grabBubbles():void {
 			var maxBubble:Bubble = lowestBubble();
-			if (maxBubble == null) {
-				return;
-			}
 			var heldBubble:Bubble = heldBubbles.getFirstAlive() as Bubble;
-			if (heldBubble != null) {
-				if (heldBubble.bubbleColor == maxBubble.bubbleColor) {
-					heldBubbles.add(maxBubble);
-					bubbles.remove(maxBubble);
-				} else {
-					return;
-				}
-			} else {
-				heldBubble = maxBubble;
-				heldBubbles.add(maxBubble);
-				bubbles.remove(maxBubble);
-			}
 			var positionMap:Object = newPositionMap();
 			var y:Number = maxBubble.y;
-			do {
-				maxBubble = positionMap[hashPosition(maxBubble.x, maxBubble.y - 16)];
-				if (maxBubble != null && maxBubble.bubbleColor == heldBubble.bubbleColor) {
+			while(maxBubble != null) {
+				if (heldBubble != null && maxBubble.bubbleColor != heldBubble.bubbleColor) {
+					break;
+				} else if (maxBubble.lifespan > 0) {
+					break;
+				} else {
+					heldBubble = maxBubble;
 					heldBubbles.add(maxBubble);
 					bubbles.remove(maxBubble);
-				} else {
-					maxBubble = null;
 				}
-			} while (maxBubble != null);
+				maxBubble = positionMap[hashPosition(maxBubble.x, maxBubble.y - 16)];
+			}
 		}
 		
 		private function newPositionMap():Object {
@@ -249,10 +263,13 @@ package
 			return Math.round(x) + "," + Math.round(y);
 		}
 		
-		private function lowestBubble():Bubble {
+		private function lowestBubble(x:Number = -9999):Bubble {
+			if (x == -9999) {
+				x = playerSprite.x;
+			}
 			var maxBubble:Bubble;
 			for each (var bubble:Bubble in bubbles.members) {
-				if (bubble != null && bubble.alive && bubble.x == playerSprite.x) {
+				if (bubble != null && bubble.alive && bubble.x == x) {
 					if (maxBubble == null || bubble.y > maxBubble.y) {
 						maxBubble = bubble;
 					}
