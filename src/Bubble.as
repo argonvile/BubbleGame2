@@ -16,6 +16,11 @@ package
 		
 		override public function update():void {
 			super.update();
+			if (isAnchor()) {
+				alpha = 0.6;
+			} else {
+				alpha = 1.0;
+			}
 			if(lifespan <= 0) {
 				return;
 			}
@@ -23,6 +28,10 @@ package
 			if(lifespan <= 0) {
 				kill();
 			}
+		}
+		
+		public function isAnchor():Boolean {
+			return y < 0;
 		}
 	}
 }
