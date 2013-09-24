@@ -1,1 +1,1 @@
-bubbles are 17x17, columns are 15 px wide
+Fix board prepopulation bug

@@ -22,16 +22,38 @@ package
 			var targetHsv:Object = FlxColor.RGBtoHSV(bubbleColor);
 			for (var pixelX:int = 0; pixelX < _pixels.width; pixelX++) {
 				for (var pixelY:int = 0; pixelY < _pixels.height; pixelY++) {
-					var pixelRgb:int = _pixels.getPixel32(pixelX, pixelY);
-					var pixelHsv:Object = FlxColor.RGBtoHSV(pixelRgb);
+					var pixelRgb:uint = _pixels.getPixel32(pixelX, pixelY);
+					var pixelHsv:Object = RGBtoHSV(pixelRgb);
 					pixelHsv.hue = (targetHsv.hue + pixelHsv.hue) % 360;
-					pixelHsv.saturation *= targetHsv.saturation;
 					pixelRgb = FlxColor.HSVtoRGB(pixelHsv.hue, pixelHsv.saturation, pixelHsv.value, FlxColor.getAlpha(pixelRgb));
 					_pixels.setPixel32(pixelX, pixelY, pixelRgb);
 				}
 			}
 		}
-		
+
+		private static function RGBtoHSV(color:uint):Object {
+			var rgb:Object = FlxColor.getRGB(color);
+			
+			var cmax:Number = Math.max(rgb.red, rgb.green, rgb.blue);
+			var cDiff:Number = cmax - Math.min(rgb.red, rgb.green, rgb.blue);
+			var value:Number = cmax / 255;
+			var saturation:Number = cmax == 0 ? 0 : cDiff / cmax;
+			var hue:Number;
+			if (rgb.red == cmax) {
+				hue = (rgb.green - rgb.blue) / cDiff;
+			} else if (rgb.green == cmax) {
+				hue = 2 + (rgb.blue - rgb.red) / cDiff;
+			} else {
+				hue = 4 + (rgb.red - rgb.green) / cDiff;
+			}
+			hue /= 6;
+			if (hue < 0) {
+				hue++;
+			}
+			hue *= 360;
+			return { hue:hue, saturation:saturation, value:value };
+		}
+
 		override public function update():void {
 			super.update();
 			if (isAnchor()) {
