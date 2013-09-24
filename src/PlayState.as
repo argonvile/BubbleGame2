@@ -4,6 +4,10 @@ package
  
 	public class PlayState extends FlxState
 	{
+		private var bubbleHeight:int = 17;
+		private var bubbleWidth:int = 17;
+		private var columnWidth:int = 15;
+		
 		private var playerSprite:FlxSprite;
 		private var bubbles:FlxGroup;
 		private var heldBubbles:FlxGroup = new FlxGroup();
@@ -23,20 +27,25 @@ package
 		override public function create():void
 		{
 			bubbles = new FlxGroup();
-			for (var y:int = -16; y < 160; y += 16) {
+			/*for (var y:int = -bubbleHeight; y < 160; y += bubbleHeight) {
 				var x:int;
-				for (x = 0; x < 96; x += 32) {
+				for (x = 0; x < columnWidth*6; x += columnWidth*2) {
 					var mySprite:FlxSprite = new Bubble(x, y, randomColor());
 					bubbles.add(mySprite);
 				}
-				for (x = 16; x < 96; x+=32) {
-					var mySprite:FlxSprite = new Bubble(x, y - 8, randomColor());
+				for (x = columnWidth; x < columnWidth*6; x+=columnWidth*2) {
+					var mySprite:FlxSprite = new Bubble(x, y - bubbleHeight / 2, randomColor());
 					bubbles.add(mySprite);
 				}
 			}
+			*/
+			for each (var position:Array in [[0, -bubbleHeight], [columnWidth, -bubbleHeight*1.5], [columnWidth*2, -bubbleHeight], [columnWidth*3, -bubbleHeight*1.5], [columnWidth*4, -bubbleHeight], [columnWidth*5, -bubbleHeight*1.5]]) {
+				var mySprite:FlxSprite = new Bubble(position[0], position[1], randomColor());
+				bubbles.add(mySprite);
+			}
 			add(bubbles);
 			playerSprite = new FlxSprite(0, 224);
-			playerSprite.makeGraphic(16, 16, 0xffffffff);
+			playerSprite.makeGraphic(columnWidth, bubbleHeight, 0xffffffff);
 			add(playerSprite);
 		}
 		
@@ -54,12 +63,12 @@ package
 				bubbleRate += FlxG.elapsed * 3;
 				if (bubbleLifespan <= 0) {
 					newRowTimer += FlxG.elapsed * (bubbleRate / 60);
-					rowScrollTimer += FlxG.elapsed * ((bubbleRate * 16 / 6) / 60);
+					rowScrollTimer += FlxG.elapsed * ((bubbleRate * bubbleHeight / 6) / 60);
 					if (thrownBubbles.length > 0) {
 						// handle thrown bubbles
 						for each (var thrownBubble:Bubble in thrownBubbles) {
 							var lowestBubble:Bubble = lowestBubble(thrownBubble.x);
-							thrownBubble.y = lowestBubble.y + 16;
+							thrownBubble.y = lowestBubble.y + bubbleHeight;
 							bubbles.add(thrownBubble);
 							popMatches(thrownBubble);
 						}
@@ -67,20 +76,20 @@ package
 					}
 				}
 				if (FlxG.keys.justPressed("LEFT")) {
-					playerSprite.x = Math.max(playerSprite.x-16, 0);
+					playerSprite.x = Math.max(playerSprite.x-columnWidth, 0);
 				}
 				if (FlxG.keys.justPressed("RIGHT")) {
-					playerSprite.x = Math.min(playerSprite.x+16, 80);
+					playerSprite.x = Math.min(playerSprite.x+columnWidth, columnWidth * 5);
 				}
 				if (FlxG.keys.justPressed("DOWN")) {
-					playerSprite.x = 16;
+					playerSprite.x = columnWidth;
 				}
 				if (FlxG.keys.justPressed("UP")) {
-					playerSprite.x = 16*4;
+					playerSprite.x = columnWidth*4;
 				}
 				if (FlxG.keys.pressed("LEFT")) {
 					leftTimer += FlxG.elapsed;
-					if (leftTimer > 0.2) {
+					if (leftTimer > 0.175) {
 						playerSprite.x = 0;
 					}
 				} else {
@@ -88,8 +97,8 @@ package
 				}
 				if (FlxG.keys.pressed("RIGHT")) {
 					rightTimer += FlxG.elapsed;
-					if (rightTimer > 0.2) {
-						playerSprite.x = 16 * 5;
+					if (rightTimer > 0.175) {
+						playerSprite.x = columnWidth * 5;
 					}
 				} else {
 					rightTimer = 0;
@@ -119,7 +128,7 @@ package
 					rowScrollTimer -= Math.floor(rowScrollTimer);
 					if (newRowTimer > 6) {
 						newRowTimer -= 6;
-						for each (var position:Array in [[0, -16], [16, -24], [32, -16], [48, -24], [64, -16], [80, -24]]) {
+						for each (var position:Array in [[0, -bubbleHeight], [columnWidth, -bubbleHeight*1.5], [columnWidth*2, -bubbleHeight], [columnWidth*3, -bubbleHeight*1.5], [columnWidth*4, -bubbleHeight], [columnWidth*5, -bubbleHeight*1.5]]) {
 							var mySprite:FlxSprite = new Bubble(position[0], position[1], randomColor());
 							bubbles.add(mySprite);
 						}
@@ -163,12 +172,12 @@ package
 				positionMap[hashPosition(bubbleToCheck.x, bubbleToCheck.y)] = null;
 				var neighbors:Array = new Array();
 				for each (var position:String in [
-					hashPosition(bubbleToCheck.x, bubbleToCheck.y - 16),
-					hashPosition(bubbleToCheck.x + 16, bubbleToCheck.y - 8),
-					hashPosition(bubbleToCheck.x + 16, bubbleToCheck.y + 8),
-					hashPosition(bubbleToCheck.x, bubbleToCheck.y + 16),
-					hashPosition(bubbleToCheck.x - 16, bubbleToCheck.y + 8),
-					hashPosition(bubbleToCheck.x - 16, bubbleToCheck.y - 8)
+					hashPosition(bubbleToCheck.x, bubbleToCheck.y - bubbleHeight),
+					hashPosition(bubbleToCheck.x + columnWidth, bubbleToCheck.y - bubbleHeight/2),
+					hashPosition(bubbleToCheck.x + columnWidth, bubbleToCheck.y + bubbleHeight/2),
+					hashPosition(bubbleToCheck.x, bubbleToCheck.y + bubbleHeight),
+					hashPosition(bubbleToCheck.x - columnWidth, bubbleToCheck.y + bubbleHeight/2),
+					hashPosition(bubbleToCheck.x - columnWidth, bubbleToCheck.y - bubbleHeight/2)
 				]) {
 					var neighbor:Bubble = positionMap[position];
 					if (neighbor != null) {
@@ -197,12 +206,12 @@ package
 				var bubbleToCheck:Bubble = bubblesToCheck[iBubblesToCheck];
 				positionMap[hashPosition(bubbleToCheck.x, bubbleToCheck.y)] = null;
 				for each (var position:String in [
-					hashPosition(bubbleToCheck.x, bubbleToCheck.y - 16),
-					hashPosition(bubbleToCheck.x + 16, bubbleToCheck.y - 8),
-					hashPosition(bubbleToCheck.x + 16, bubbleToCheck.y + 8),
-					hashPosition(bubbleToCheck.x, bubbleToCheck.y + 16),
-					hashPosition(bubbleToCheck.x - 16, bubbleToCheck.y + 8),
-					hashPosition(bubbleToCheck.x - 16, bubbleToCheck.y - 8)
+					hashPosition(bubbleToCheck.x, bubbleToCheck.y - bubbleHeight),
+					hashPosition(bubbleToCheck.x + columnWidth, bubbleToCheck.y - bubbleHeight/2),
+					hashPosition(bubbleToCheck.x + columnWidth, bubbleToCheck.y + bubbleHeight/2),
+					hashPosition(bubbleToCheck.x, bubbleToCheck.y + bubbleHeight),
+					hashPosition(bubbleToCheck.x - columnWidth, bubbleToCheck.y + bubbleHeight/2),
+					hashPosition(bubbleToCheck.x - columnWidth, bubbleToCheck.y - bubbleHeight/2)
 				]) {
 					var neighbor:Bubble = positionMap[position];
 					if (neighbor != null && neighbor.bubbleColor == bubbleToCheck.bubbleColor) {
@@ -239,7 +248,7 @@ package
 					heldBubbles.add(maxBubble);
 					bubbles.remove(maxBubble);
 				}
-				maxBubble = positionMap[hashPosition(maxBubble.x, maxBubble.y - 16)];
+				maxBubble = positionMap[hashPosition(maxBubble.x, maxBubble.y - bubbleHeight)];
 			}
 		}
 		
@@ -254,7 +263,7 @@ package
 		}
 		
 		private function hashPosition(x:Number, y:Number):Object {
-			return Math.round(x) + "," + Math.round(y);
+			return Math.round(x*2) + "," + Math.round(y*2);
 		}
 		
 		private function lowestBubble(x:Number = -9999):Bubble {
@@ -275,11 +284,11 @@ package
 		private function randomColor():int {
 			var randomInt:int = Math.random() * 5;
 			switch(randomInt) {
-				case 0: return 0xffcc3333;
-				case 1: return 0xffcccc33;
-				case 2: return 0xff33cc33;
-				case 3: return 0xff3380cc;
-				default: return 0xff8033cc;
+				case 0: return 0xffff0000;
+				case 1: return 0xffffff00;
+				case 2: return 0xff00ff00;
+				case 3: return 0xff0080ff;
+				default: return 0xff8000ff;
 			}
 		}
 	}
