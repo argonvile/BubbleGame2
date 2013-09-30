@@ -1,1 +1,18 @@
-Fix board prepopulation bug
+*Fix board prepopulation bug
+Add connected bubble graphic
+Add bubble eyes
+Add popping animation
+Add pulling animation
+Add tossing animation
+Add dropping animation
+---Give prototype to Nogard!
+Add background
+Bubbles should "wiggle"
+Bubble eyes should look around
+Bubble eyes should look surprised
+Add "danger" graphics -- column changes color? Flashes?
+Add "hurry up" button
+Add background graphic
+Add player graphic
+
+

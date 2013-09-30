@@ -1,6 +1,7 @@
 package
 {
 	import org.flixel.*;
+	import org.flixel.plugin.photonstorm.FlxColor;
  
 	public class PlayState extends FlxState
 	{
@@ -10,6 +11,7 @@ package
 		
 		private var playerSprite:FlxSprite;
 		private var bubbles:FlxGroup;
+		private var connectors:FlxGroup;
 		private var heldBubbles:FlxGroup = new FlxGroup();
 		private var popperEmitter:FlxEmitter = new FlxEmitter();
 		private var bubbleRate:Number = 120; // bubbles per minute
@@ -27,23 +29,15 @@ package
 		override public function create():void
 		{
 			bubbles = new FlxGroup();
-			/*for (var y:int = -bubbleHeight; y < 160; y += bubbleHeight) {
-				var x:int;
-				for (x = 0; x < columnWidth*6; x += columnWidth*2) {
-					var mySprite:FlxSprite = new Bubble(x, y, randomColor());
-					bubbles.add(mySprite);
-				}
-				for (x = columnWidth; x < columnWidth*6; x+=columnWidth*2) {
-					var mySprite:FlxSprite = new Bubble(x, y - bubbleHeight / 2, randomColor());
-					bubbles.add(mySprite);
-				}
-			}
-			*/
 			for each (var position:Array in [[0, -bubbleHeight], [columnWidth, -bubbleHeight*1.5], [columnWidth*2, -bubbleHeight], [columnWidth*3, -bubbleHeight*1.5], [columnWidth*4, -bubbleHeight], [columnWidth*5, -bubbleHeight*1.5]]) {
 				var mySprite:FlxSprite = new Bubble(position[0], position[1], randomColor());
 				bubbles.add(mySprite);
 			}
 			add(bubbles);
+			connectors = new FlxGroup();
+			add(connectors);
+			
+			
 			playerSprite = new FlxSprite(0, 224);
 			playerSprite.makeGraphic(columnWidth, bubbleHeight, 0xffffffff);
 			add(playerSprite);
@@ -118,15 +112,34 @@ package
 						}
 					}
 				}
-				if (FlxG.keys.justPressed("C") || rowScrollTimer > 1) {
-					// add another row of bubbles
+				if (rowScrollTimer > 1) {
+					// scroll all the bubbles down a little
+					var newPoppableBubbles:Array = new Array();
 					for each (var bubble:Bubble in bubbles.members) {
 						if (bubble != null && bubble.alive) {
+							var wasAnchor:Boolean = bubble.isAnchor();
 							bubble.y += Math.floor(rowScrollTimer);
+							if (!bubble.isAnchor() && wasAnchor) {
+								newPoppableBubbles.push(bubble);
+							}
+						}
+					}
+					for each (var connector:Connector in connectors.members) {
+						if (connector != null && connector.alive) {
+							connector.y += Math.floor(rowScrollTimer);
+						}
+					}
+					if (newPoppableBubbles.length > 0) {
+						var positionMap:Object = newPositionMap();
+						for each (var bubble:Bubble in newPoppableBubbles) {
+							maybeAddConnector(bubble, positionMap[hashPosition(bubble.x, bubble.y + bubbleHeight)], Embed.Microbe0S);
+							maybeAddConnector(bubble, positionMap[hashPosition(bubble.x - columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Sw);
+							maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Se);
 						}
 					}
 					rowScrollTimer -= Math.floor(rowScrollTimer);
 					if (newRowTimer > 6) {
+						// add a new row
 						newRowTimer -= 6;
 						for each (var position:Array in [[0, -bubbleHeight], [columnWidth, -bubbleHeight*1.5], [columnWidth*2, -bubbleHeight], [columnWidth*3, -bubbleHeight*1.5], [columnWidth*4, -bubbleHeight], [columnWidth*5, -bubbleHeight*1.5]]) {
 							var mySprite:FlxSprite = new Bubble(position[0], position[1], randomColor());
@@ -154,6 +167,26 @@ package
 					FlxG.switchState(new PlayState());
 					return;
 				}
+			}
+		}
+		
+		private function maybeAddConnector(bubble:Bubble, bubbleS:Bubble, graphic:Class):void {
+			if (bubbleS != null && bubbleS.bubbleColor == bubble.bubbleColor) {
+				var connector:Connector = connectors.recycle(Connector) as Connector;
+				connector.revive();
+				connector.init(bubble, bubbleS);
+				connector.x = (bubble.x + bubbleS.x) / 2;
+				connector.y = (bubble.y + bubbleS.y) / 2;
+				connector.loadGraphic(graphic, false, false, 50, 50, true);
+				
+				Bubble.shiftHue(connector, bubble.bubbleColor);
+				
+				connector.scale.x = 17 / 50;
+				connector.scale.y = 17 / 50;
+				connector.setOriginToCorner();
+				connectors.add(connector);
+				bubble.connectors.push(connector);
+				bubbleS.connectors.push(connector);
 			}
 		}
 		
@@ -202,6 +235,12 @@ package
 			var bubblesToCheck:Array = new Array(maxBubble);
 			var iBubblesToCheck:int = 0;
 			
+			maybeAddConnector(maxBubble, positionMap[hashPosition(maxBubble.x - columnWidth, maxBubble.y + bubbleHeight / 2)], Embed.Microbe0Sw); // SW
+			maybeAddConnector(maxBubble, positionMap[hashPosition(maxBubble.x - columnWidth, maxBubble.y - bubbleHeight / 2)], Embed.Microbe0Se); // NW
+			maybeAddConnector(maxBubble, positionMap[hashPosition(maxBubble.x, maxBubble.y - bubbleHeight)], Embed.Microbe0S); // N
+			maybeAddConnector(maxBubble, positionMap[hashPosition(maxBubble.x + columnWidth, maxBubble.y - bubbleHeight / 2)], Embed.Microbe0Sw); // NE
+			maybeAddConnector(maxBubble, positionMap[hashPosition(maxBubble.x + columnWidth, maxBubble.y + bubbleHeight / 2)], Embed.Microbe0Se); // SE
+			
 			do {
 				var bubbleToCheck:Bubble = bubblesToCheck[iBubblesToCheck];
 				positionMap[hashPosition(bubbleToCheck.x, bubbleToCheck.y)] = null;
@@ -247,6 +286,7 @@ package
 					heldBubble = maxBubble;
 					heldBubbles.add(maxBubble);
 					bubbles.remove(maxBubble);
+					maxBubble.killConnectors();
 				}
 				maxBubble = positionMap[hashPosition(maxBubble.x, maxBubble.y - bubbleHeight)];
 			}
