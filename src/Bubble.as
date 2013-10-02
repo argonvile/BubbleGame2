@@ -1,5 +1,6 @@
 package  
 {
+	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.FlxColor;
@@ -14,13 +15,11 @@ package
 		public function Bubble(x:Number,y:Number,bubbleColor:int) 
 		{
 			super(x, y);
-			loadGraphic(Embed.Microbe0, false, false, 50, 50, true);
+			
+			makeGraphic(17, 17, 0x00000000, true);
+			pixels.draw(FlxG.addBitmap(Embed.Microbe0), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
+			pixels.draw(FlxG.addBitmap(Embed.Eyes0));
 			shiftHue(this, bubbleColor);
-			width = 17;
-			height = 17;
-			scale.x = 17 / 50;
-			scale.y = 17 / 50;
-			setOriginToCorner();
 			this.bubbleColor = bubbleColor;
 		}
 		

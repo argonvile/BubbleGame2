@@ -1,5 +1,5 @@
 *Fix board prepopulation bug
-Add connected bubble graphic
+*Add connected bubble graphic
 Add bubble eyes
 Add popping animation
 Add pulling animation
@@ -14,5 +14,9 @@ Add "danger" graphics -- column changes color? Flashes?
 Add "hurry up" button
 Add background graphic
 Add player graphic
-
+Add four different stages??
+ -- regular 6-column
+ -- 8-column where bubbles favor the sides
+ -- everything's red, and lots of puyo-puyo-esque garbage
+ -- grabbing a bubble turns everything the same color
 
