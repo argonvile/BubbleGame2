@@ -17,7 +17,7 @@ package
 		 * 100 = grabbed
 		 * 200 = thrown
 		 */
-		private var state:int = 0;
+		public var state:int = 0;
 		private var playerSprite:FlxSprite;
 		private var stateTime:Number = 0;
 		private const GRAB_DURATION:Number = 0.15;
@@ -134,16 +134,18 @@ package
 			}
 		}
 		
-		public function wasThrown(playerSprite:FlxSprite):void {
-			state = 200;
-			stateTime = 0;
-			this.playerSprite = playerSprite;
-		}
-		
 		public function wasGrabbed(playerSprite:FlxSprite):void {
 			state = 100;
 			stateTime = 0;
 			this.playerSprite = playerSprite;
+		}
+		
+		public function wasThrown(playerSprite:FlxSprite):void {
+			state = 200;
+			stateTime = 0;
+			this.playerSprite = playerSprite;
+			offset.x = (x + width / 2) - (playerSprite.x + playerSprite.width / 2);
+			offset.y = (y + height / 2) - (playerSprite.y + playerSprite.height / 2);
 		}
 	}
 }

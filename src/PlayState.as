@@ -21,7 +21,8 @@ package
 		private var newRowTimer:Number = 0;
 		private var rowScrollTimer:Number = 0;
 		private var gameState:int = 100;
-		private var thrownBubbles:Array = new Array();
+		private var suspendedBubbles:Array = new Array();
+		private var thrownBubbles:FlxGroup = new FlxGroup();
 		
 		private var leftTimer:Number = 0;
 		private var rightTimer:Number = 0;
@@ -44,6 +45,7 @@ package
 			add(playerSprite);
 
 			add(heldBubbles);
+			add(thrownBubbles);
 		}
 		
 		override public function update():void
@@ -61,15 +63,27 @@ package
 				if (bubbleLifespan <= 0) {
 					newRowTimer += FlxG.elapsed * (bubbleRate / 60);
 					rowScrollTimer += FlxG.elapsed * ((bubbleRate * bubbleHeight / 6) / 60);
-					if (thrownBubbles.length > 0) {
-						// handle thrown bubbles
-						for each (var thrownBubble:Bubble in thrownBubbles) {
-							var lowestBubble:Bubble = lowestBubble(thrownBubble.x);
-							thrownBubble.y = lowestBubble.y + bubbleHeight;
-							bubbles.add(thrownBubble);
-							popMatches(thrownBubble);
+					
+					if (suspendedBubbles.length > 0) {
+						// handle suspended bubbles
+						for each (var suspendedBubble:Bubble in suspendedBubbles) {
+							var lowestBubble:Bubble = lowestBubble(suspendedBubble.x);
+							suspendedBubble.y = lowestBubble.y + bubbleHeight;
+							suspendedBubble.wasThrown(playerSprite);
+							thrownBubbles.add(suspendedBubble);
 						}
-						thrownBubbles.length = 0;
+						suspendedBubbles.length = 0;
+					}
+					
+					// handle thrown bubbles
+					for each (var thrownBubble:Bubble in thrownBubbles.members) {
+						if (thrownBubble != null && thrownBubble.alive) {
+							if (thrownBubble.state == 0) {
+								thrownBubbles.remove(thrownBubble);
+								bubbles.add(thrownBubble);
+								popMatches(thrownBubble);
+							}
+						}
 					}
 				}
 				if (FlxG.keys.justPressed("LEFT")) {
@@ -110,9 +124,8 @@ package
 					for each (var heldBubble:Bubble in heldBubbles.members) {
 						if (heldBubble != null && heldBubble.alive) {
 							heldBubble.x = playerSprite.x;
-							heldBubble.wasThrown(playerSprite);
 							heldBubbles.remove(heldBubble);
-							thrownBubbles.push(heldBubble);
+							suspendedBubbles.push(heldBubble);
 						}
 					}
 				}
@@ -126,6 +139,11 @@ package
 							if (!bubble.isAnchor() && wasAnchor) {
 								newPoppableBubbles.push(bubble);
 							}
+						}
+					}
+					for each (var bubble:Bubble in thrownBubbles.members) {
+						if (bubble != null && bubble.alive) {
+							bubble.y += Math.floor(rowScrollTimer);
 						}
 					}
 					for each (var connector:Connector in connectors.members) {
@@ -317,6 +335,13 @@ package
 			}
 			var maxBubble:Bubble;
 			for each (var bubble:Bubble in bubbles.members) {
+				if (bubble != null && bubble.alive && bubble.x == x) {
+					if (maxBubble == null || bubble.y > maxBubble.y) {
+						maxBubble = bubble;
+					}
+				}
+			}
+			for each (var bubble:Bubble in thrownBubbles.members) {
 				if (bubble != null && bubble.alive && bubble.x == x) {
 					if (maxBubble == null || bubble.y > maxBubble.y) {
 						maxBubble = bubble;
