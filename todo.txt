@@ -1,9 +1,6 @@
-*Fix board prepopulation bug
-*Add connected bubble graphic
-Add bubble eyes
+*Add pulling animation
+*Add tossing animation
 Add popping animation
-Add pulling animation
-Add tossing animation
 Add dropping animation
 ---Give prototype to Nogard!
 Add background

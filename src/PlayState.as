@@ -26,6 +26,8 @@ package
 		private var leftTimer:Number = 0;
 		private var rightTimer:Number = 0;
 		
+		private const POP_DURATION:Number = 0.8;
+		
 		override public function create():void
 		{
 			bubbles = new FlxGroup();
@@ -37,10 +39,11 @@ package
 			connectors = new FlxGroup();
 			add(connectors);
 			
-			
 			playerSprite = new FlxSprite(0, 224);
 			playerSprite.makeGraphic(columnWidth, bubbleHeight, 0xffffffff);
 			add(playerSprite);
+
+			add(heldBubbles);
 		}
 		
 		override public function update():void
@@ -107,6 +110,7 @@ package
 					for each (var heldBubble:Bubble in heldBubbles.members) {
 						if (heldBubble != null && heldBubble.alive) {
 							heldBubble.x = playerSprite.x;
+							heldBubble.wasThrown(playerSprite);
 							heldBubbles.remove(heldBubble);
 							thrownBubbles.push(heldBubble);
 						}
@@ -261,7 +265,7 @@ package
 			} while (++iBubblesToCheck < bubblesToCheck.length);
 			
 			if (iBubblesToCheck >= 4) {
-				bubbleLifespan = 1.2;
+				bubbleLifespan = POP_DURATION;
 				for each(var bubble:Bubble in bubblesToCheck) {
 					bubble.lifespan = bubbleLifespan;
 					bubble.makeGraphic(bubble.width, bubble.height, 0xffffffff);
@@ -287,6 +291,7 @@ package
 					heldBubbles.add(maxBubble);
 					bubbles.remove(maxBubble);
 					maxBubble.killConnectors();
+					maxBubble.wasGrabbed(playerSprite);
 				}
 				maxBubble = positionMap[hashPosition(maxBubble.x, maxBubble.y - bubbleHeight)];
 			}

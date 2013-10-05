@@ -11,6 +11,17 @@ package
 		public var bubbleColor:int;
 		public var lifespan:Number;
 		public var connectors:Array = new Array();
+		/**
+		 * state
+		 * 0 = normal
+		 * 100 = grabbed
+		 * 200 = thrown
+		 */
+		private var state:int = 0;
+		private var playerSprite:FlxSprite;
+		private var stateTime:Number = 0;
+		private const GRAB_DURATION:Number = 0.15;
+		private const THROW_DURATION:Number = 0.075;
 		
 		public function Bubble(x:Number,y:Number,bubbleColor:int) 
 		{
@@ -63,6 +74,20 @@ package
 
 		override public function update():void {
 			super.update();
+			stateTime += FlxG.elapsed;
+			if (state == 100) {
+				var statePct:Number = Math.min(1, Math.pow(stateTime / GRAB_DURATION, 2.5));
+				offset.x = statePct * ((x + width / 2) - (playerSprite.x + playerSprite.width / 2));
+				offset.y = statePct * ((y + height / 2) - (playerSprite.y + playerSprite.height / 2));
+			}
+			if (state == 200) {
+				var statePct:Number = Math.min(1, Math.pow(stateTime / THROW_DURATION, 1.5));
+				offset.x = (1 - statePct) * ((x + width / 2) - (playerSprite.x + playerSprite.width / 2));
+				offset.y = (1 - statePct) * ((y + height / 2) - (playerSprite.y + playerSprite.height / 2));
+				if (statePct >= 1.0) {
+					state = 0;
+				}
+			}
 			if (isAnchor()) {
 				alpha = 0.6;
 			} else {
@@ -107,6 +132,18 @@ package
 					connectors[i] = null;
 				}
 			}
+		}
+		
+		public function wasThrown(playerSprite:FlxSprite):void {
+			state = 200;
+			stateTime = 0;
+			this.playerSprite = playerSprite;
+		}
+		
+		public function wasGrabbed(playerSprite:FlxSprite):void {
+			state = 100;
+			stateTime = 0;
+			this.playerSprite = playerSprite;
 		}
 	}
 }
