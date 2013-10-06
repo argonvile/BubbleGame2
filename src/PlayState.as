@@ -168,7 +168,6 @@ package
 							bubbles.add(mySprite);
 						}
 						// check if they lose
-						/*
 						for each (var bubble:Bubble in bubbles.members) {
 							if (bubble != null && bubble.alive && bubble.y > 232) {
 								gameState = 200;
@@ -182,7 +181,6 @@ package
 								add(text);
 							}
 						}
-						*/
 					}
 				}
 			} else if (gameState == 200) {
