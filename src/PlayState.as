@@ -196,16 +196,7 @@ package
 			if (bubbleS != null && bubbleS.bubbleColor == bubble.bubbleColor) {
 				var connector:Connector = connectors.recycle(Connector) as Connector;
 				connector.revive();
-				connector.init(bubble, bubbleS);
-				connector.x = (bubble.x + bubbleS.x) / 2;
-				connector.y = (bubble.y + bubbleS.y) / 2;
-				connector.loadGraphic(graphic, false, false, 50, 50, true);
-				
-				Bubble.shiftHue(connector, bubble.bubbleColor);
-				
-				connector.scale.x = 17 / 50;
-				connector.scale.y = 17 / 50;
-				connector.setOriginToCorner();
+				connector.init(bubble, bubbleS, graphic);
 				connectors.add(connector);
 				bubble.connectors.push(connector);
 				bubbleS.connectors.push(connector);
@@ -285,8 +276,7 @@ package
 			if (iBubblesToCheck >= 4) {
 				bubbleLifespan = POP_DURATION;
 				for each(var bubble:Bubble in bubblesToCheck) {
-					bubble.lifespan = bubbleLifespan;
-					bubble.makeGraphic(bubble.width, bubble.height, 0xffffffff);
+					bubble.wasPopped(bubbleLifespan);
 				}
 			}
 		}

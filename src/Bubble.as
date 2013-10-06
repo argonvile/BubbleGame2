@@ -9,34 +9,58 @@ package
 	public class Bubble extends FlxSprite
 	{
 		public var bubbleColor:int;
-		public var lifespan:Number;
+		public var lifespan:Number = -1;
 		public var connectors:Array = new Array();
 		/**
 		 * state
 		 * 0 = normal
-		 * 100 = grabbed
-		 * 200 = thrown
+		 * 100 = grabbing
+		 * 200 = throwing
+		 * 300 = popping
 		 */
 		public var state:int = 0;
 		private var playerSprite:FlxSprite;
 		private var stateTime:Number = 0;
 		private const GRAB_DURATION:Number = 0.15;
 		private const THROW_DURATION:Number = 0.075;
+		private var regularGraphic:BitmapData;
+		private var popGraphic:BitmapData;
 		
 		public function Bubble(x:Number,y:Number,bubbleColor:int) 
 		{
 			super(x, y);
 			
-			makeGraphic(17, 17, 0x00000000, true);
-			pixels.draw(FlxG.addBitmap(Embed.Microbe0), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
-			pixels.draw(FlxG.addBitmap(Embed.Eyes0));
-			shiftHue(this, bubbleColor);
 			this.bubbleColor = bubbleColor;
+			
+			regularGraphic = FlxG.createBitmap(17, 17, 0x00000000, true);
+			regularGraphic.draw(FlxG.addBitmap(Embed.Microbe0), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
+			regularGraphic.draw(FlxG.addBitmap(Embed.Eyes0));
+			shiftHueBitmapData(regularGraphic, bubbleColor);
+			
+			popGraphic = FlxG.createBitmap(17, 17, 0x00000000, true);
+			popGraphic.draw(regularGraphic);
+			whitenBitmapData(popGraphic);
+			
+			width = 17;
+			height = 17;
+			pixels = regularGraphic;
 		}
 		
-		public static function shiftHue(sprite:FlxSprite, color:uint):void {
+		public static function whitenBitmapData(spritePixels:BitmapData) {
+			for (var pixelX:int = 0; pixelX < spritePixels.width; pixelX++) {
+				for (var pixelY:int = 0; pixelY < spritePixels.height; pixelY++) {
+					var pixelRgb:uint = spritePixels.getPixel32(pixelX, pixelY);
+					var pixelHsv:Object = Bubble.RGBtoHSV(pixelRgb);
+					pixelHsv.saturation = 0;
+					pixelHsv.value = 1 - (1 - pixelHsv.value) / 2;
+					pixelRgb = FlxColor.HSVtoRGB(pixelHsv.hue, pixelHsv.saturation, pixelHsv.value, FlxColor.getAlpha(pixelRgb));
+					spritePixels.setPixel32(pixelX, pixelY, pixelRgb);
+				}
+			}
+		}
+		
+		public static function shiftHueBitmapData(spritePixels:BitmapData, color:uint):void {
 			var targetHsv:Object = FlxColor.RGBtoHSV(color);
-			var spritePixels:BitmapData = sprite.pixels;
 			for (var pixelX:int = 0; pixelX < spritePixels.width; pixelX++) {
 				for (var pixelY:int = 0; pixelY < spritePixels.height; pixelY++) {
 					var pixelRgb:uint = spritePixels.getPixel32(pixelX, pixelY);
@@ -46,9 +70,8 @@ package
 					spritePixels.setPixel32(pixelX, pixelY, pixelRgb);
 				}
 			}
-			sprite.pixels = spritePixels;
 		}
-
+		
 		public static function RGBtoHSV(color:uint):Object {
 			var rgb:Object = FlxColor.getRGB(color);
 			
@@ -96,9 +119,14 @@ package
 			if(lifespan <= 0) {
 				return;
 			}
-			lifespan -= FlxG.elapsed;
-			if(lifespan <= 0) {
+			if(stateTime >= lifespan) {
 				kill();
+			}
+			var popAnimState:int = (stateTime * 8) / lifespan;
+			if (popAnimState == 0 || popAnimState == 2) {
+				pixels = popGraphic;
+			} else {
+				pixels = regularGraphic;
 			}
 		}
 		
@@ -146,6 +174,17 @@ package
 			this.playerSprite = playerSprite;
 			offset.x = (x + width / 2) - (playerSprite.x + playerSprite.width / 2);
 			offset.y = (y + height / 2) - (playerSprite.y + playerSprite.height / 2);
+		}
+		
+		public function wasPopped(lifespan:Number):void {
+			this.lifespan = lifespan;
+			state = 300;
+			stateTime = 0;
+			for (var i:int = 0; i < connectors.length; i++) {
+				if (connectors[i] != null) {
+					connectors[i].wasPopped(lifespan);
+				}
+			}
 		}
 	}
 }

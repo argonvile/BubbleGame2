@@ -1,10 +1,11 @@
 *Add pulling animation
 *Add tossing animation
-Add popping animation
+*Add popping animation
 Add dropping animation
 ---Give prototype to Nogard!
 Add background
 Bubbles should "wiggle"
+Popping animation should pop one-at-a-time
 Bubble eyes should look around
 Bubble eyes should look surprised
 Add "danger" graphics -- column changes color? Flashes?
