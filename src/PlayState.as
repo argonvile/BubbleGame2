@@ -18,11 +18,11 @@ package
 		private var bubbleLifespan:Number = 0; // if bubbles are popping
 		
 		private var elapsed:Number = 0;
-		private var newRowTimer:Number = 0;
 		private var rowScrollTimer:Number = 0;
 		private var gameState:int = 100;
 		private var suspendedBubbles:Array = new Array();
-		private var thrownBubbles:FlxGroup = new FlxGroup();
+		private var thrownBubbles:Array = new Array();
+		private var newRowLocation:Number = -bubbleHeight;
 		
 		private var leftTimer:Number = 0;
 		private var rightTimer:Number = 0;
@@ -32,10 +32,6 @@ package
 		override public function create():void
 		{
 			bubbles = new FlxGroup();
-			for each (var position:Array in [[0, -bubbleHeight], [columnWidth, -bubbleHeight*1.5], [columnWidth*2, -bubbleHeight], [columnWidth*3, -bubbleHeight*1.5], [columnWidth*4, -bubbleHeight], [columnWidth*5, -bubbleHeight*1.5]]) {
-				var mySprite:FlxSprite = new Bubble(position[0], position[1], randomColor());
-				bubbles.add(mySprite);
-			}
 			add(bubbles);
 			connectors = new FlxGroup();
 			add(connectors);
@@ -45,7 +41,6 @@ package
 			add(playerSprite);
 
 			add(heldBubbles);
-			add(thrownBubbles);
 		}
 		
 		override public function update():void
@@ -61,7 +56,6 @@ package
 				elapsed += FlxG.elapsed;
 				bubbleRate += FlxG.elapsed * 3;
 				if (bubbleLifespan <= 0) {
-					newRowTimer += FlxG.elapsed * (bubbleRate / 60);
 					rowScrollTimer += FlxG.elapsed * ((bubbleRate * bubbleHeight / 6) / 60);
 					
 					if (suspendedBubbles.length > 0) {
@@ -70,20 +64,27 @@ package
 							var lowestBubble:Bubble = lowestBubble(suspendedBubble.x);
 							suspendedBubble.y = lowestBubble.y + bubbleHeight;
 							suspendedBubble.wasThrown(playerSprite);
-							thrownBubbles.add(suspendedBubble);
+							bubbles.add(suspendedBubble);
+							thrownBubbles.push(suspendedBubble);
 						}
 						suspendedBubbles.length = 0;
 					}
 					
 					// handle thrown bubbles
-					for each (var thrownBubble:Bubble in thrownBubbles.members) {
+					var thrownBubbleCount:int = 0;
+					for (var i:int = 0; i < thrownBubbles.length; i++) {
+						var thrownBubble:Bubble = thrownBubbles[i];
 						if (thrownBubble != null && thrownBubble.alive) {
-							if (thrownBubble.state == 0) {
-								thrownBubbles.remove(thrownBubble);
-								bubbles.add(thrownBubble);
+							if (thrownBubble.state == 200) {
+								thrownBubbleCount++;
+							} else {
+								thrownBubbles[i] = null;
 								popMatches(thrownBubble);
 							}
 						}
+					}
+					if (thrownBubbleCount == 0 && thrownBubbles.length > 0) {
+						thrownBubbles.length = 0;
 					}
 				}
 				if (FlxG.keys.justPressed("LEFT")) {
@@ -131,6 +132,7 @@ package
 				if (rowScrollTimer > 1) {
 					// scroll all the bubbles down a little
 					var newPoppableBubbles:Array = new Array();
+					newRowLocation += Math.floor(rowScrollTimer);
 					for each (var bubble:Bubble in bubbles.members) {
 						if (bubble != null && bubble.alive) {
 							var wasAnchor:Boolean = bubble.isAnchor();
@@ -138,11 +140,6 @@ package
 							if (!bubble.isAnchor() && wasAnchor) {
 								newPoppableBubbles.push(bubble);
 							}
-						}
-					}
-					for each (var bubble:Bubble in thrownBubbles.members) {
-						if (bubble != null && bubble.alive) {
-							bubble.y += Math.floor(rowScrollTimer);
 						}
 					}
 					for each (var connector:Connector in connectors.members) {
@@ -159,16 +156,20 @@ package
 						}
 					}
 					rowScrollTimer -= Math.floor(rowScrollTimer);
-					if (newRowTimer > 6) {
+					if (newRowLocation > -bubbleHeight) {
 						// add a new row
-						newRowTimer -= 6;
-						for each (var position:Array in [[0, -bubbleHeight], [columnWidth, -bubbleHeight*1.5], [columnWidth*2, -bubbleHeight], [columnWidth*3, -bubbleHeight*1.5], [columnWidth*4, -bubbleHeight], [columnWidth*5, -bubbleHeight*1.5]]) {
-							var mySprite:FlxSprite = new Bubble(position[0], position[1], randomColor());
-							bubbles.add(mySprite);
-						}
+						do {
+							trace("Added row...");
+							for each (var position:Array in [[0, newRowLocation], [columnWidth, newRowLocation-bubbleHeight*.5], [columnWidth*2, newRowLocation], [columnWidth*3, newRowLocation-bubbleHeight*.5], [columnWidth*4, newRowLocation], [columnWidth*5, newRowLocation-bubbleHeight*.5]]) {
+								var mySprite:FlxSprite = new Bubble(position[0], position[1], randomColor());
+								bubbles.add(mySprite);
+								trace(mySprite.x + "," + mySprite.y);
+							}
+							newRowLocation -= bubbleHeight;
+						} while (newRowLocation > -bubbleHeight);
 						// check if they lose
 						for each (var bubble:Bubble in bubbles.members) {
-							if (bubble != null && bubble.alive && bubble.y > 232) {
+							if (bubble != null && bubble.alive && bubble.y > 232 && bubble.state == 0) {
 								gameState = 200;
 								var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
 								text.alignment = "center";
@@ -297,7 +298,6 @@ package
 					heldBubble = maxBubble;
 					heldBubbles.add(maxBubble);
 					bubbles.remove(maxBubble);
-					thrownBubbles.remove(maxBubble);
 					maxBubble.killConnectors();
 					maxBubble.wasGrabbed(playerSprite);
 				}
@@ -309,11 +309,6 @@ package
 			var positionMap:Object = new Object();
 			for each (var bubble:Bubble in bubbles.members) {
 				if (bubble != null && bubble.alive && !bubble.isAnchor()) {
-					positionMap[hashPosition(bubble.x, bubble.y)] = bubble;
-				}
-			}
-			for each (var bubble:Bubble in thrownBubbles.members) {
-				if (bubble != null && bubble.alive) {
 					positionMap[hashPosition(bubble.x, bubble.y)] = bubble;
 				}
 			}
@@ -330,13 +325,6 @@ package
 			}
 			var maxBubble:Bubble;
 			for each (var bubble:Bubble in bubbles.members) {
-				if (bubble != null && bubble.alive && bubble.x == x) {
-					if (maxBubble == null || bubble.y > maxBubble.y) {
-						maxBubble = bubble;
-					}
-				}
-			}
-			for each (var bubble:Bubble in thrownBubbles.members) {
 				if (bubble != null && bubble.alive && bubble.x == x) {
 					if (maxBubble == null || bubble.y > maxBubble.y) {
 						maxBubble = bubble;
