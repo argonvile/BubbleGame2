@@ -21,8 +21,8 @@ package
 		public var state:int = 0;
 		private var playerSprite:FlxSprite;
 		private var stateTime:Number = 0;
-		private const GRAB_DURATION:Number = 0.22;
-		private const THROW_DURATION:Number = 0.11;
+		public static const GRAB_DURATION:Number = 0.22;
+		public static const THROW_DURATION:Number = 0.11;
 		private var regularGraphic:BitmapData;
 		private var popGraphic:BitmapData;
 		
