@@ -118,8 +118,7 @@ package
 					// find the next block above the player, and remove it
 					grabBubbles();
 					dropDetachedBubbles();
-				}
-				if (FlxG.keys.justPressed("X")) {
+				} else if (FlxG.keys.justPressed("X")) {
 					// find the next block above the player, and spit out our blocks below it
 					for each (var heldBubble:Bubble in heldBubbles.members) {
 						if (heldBubble != null && heldBubble.alive) {
@@ -298,6 +297,7 @@ package
 					heldBubble = maxBubble;
 					heldBubbles.add(maxBubble);
 					bubbles.remove(maxBubble);
+					thrownBubbles.remove(maxBubble);
 					maxBubble.killConnectors();
 					maxBubble.wasGrabbed(playerSprite);
 				}
@@ -309,6 +309,11 @@ package
 			var positionMap:Object = new Object();
 			for each (var bubble:Bubble in bubbles.members) {
 				if (bubble != null && bubble.alive && !bubble.isAnchor()) {
+					positionMap[hashPosition(bubble.x, bubble.y)] = bubble;
+				}
+			}
+			for each (var bubble:Bubble in thrownBubbles.members) {
+				if (bubble != null && bubble.alive) {
 					positionMap[hashPosition(bubble.x, bubble.y)] = bubble;
 				}
 			}

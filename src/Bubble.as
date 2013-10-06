@@ -176,6 +176,8 @@ package
 			state = 100;
 			stateTime = 0;
 			this.playerSprite = playerSprite;
+			offset.x = 0;
+			offset.y = 0;
 		}
 		
 		public function wasThrown(playerSprite:FlxSprite):void {
