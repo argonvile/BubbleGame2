@@ -1,8 +1,11 @@
 *Add pulling animation
 *Add tossing animation
 *Add popping animation
+fix "catch and throw" bug
 Add dropping animation
 ---Give prototype to Nogard!
+Getting a combo should prevent the level from dropping
+Eyes shouldn't get covered by connectors
 Add background
 Bubbles should "wiggle"
 Popping animation should pop one-at-a-time

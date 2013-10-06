@@ -1,5 +1,6 @@
 package  
 {
+	import flash.utils.getQualifiedClassName;
 	import org.flixel.*;
 	import flash.geom.Matrix;
 	import flash.display.BitmapData;
@@ -30,13 +31,23 @@ package
 			this.bubble1 = bubble1;
 			x = (bubble0.x + bubble1.x) / 2;
 			y = (bubble0.y + bubble1.y) / 2;
-			regularGraphic = FlxG.createBitmap(17, 17, 0x00000000, true);
-			regularGraphic.draw(FlxG.addBitmap(graphic), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
-			Bubble.shiftHueBitmapData(regularGraphic, bubble0.bubbleColor);
+			var key:String = "connector " + getQualifiedClassName(graphic) + " " + bubble0.bubbleColor.toString(16);
+			if (BitmapDataCache.getBitmap(key) == null) {
+				var newData:BitmapData = FlxG.createBitmap(17, 17, 0x00000000, true);
+				newData.draw(FlxG.addBitmap(graphic), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
+				Bubble.shiftHueBitmapData(newData, bubble0.bubbleColor);
+				BitmapDataCache.setBitmap(key, newData);
+			}
+			regularGraphic = BitmapDataCache.getBitmap(key);
 			
-			popGraphic = FlxG.createBitmap(17, 17, 0x00000000, true);
-			popGraphic.draw(regularGraphic);
-			Bubble.whitenBitmapData(popGraphic);
+			var key:String = "popped connector " + getQualifiedClassName(graphic);
+			if (BitmapDataCache.getBitmap(key) == null) {
+				var newData:BitmapData = FlxG.createBitmap(17, 17, 0x00000000, true);
+				newData.draw(regularGraphic);
+				Bubble.whitenBitmapData(newData);
+				BitmapDataCache.setBitmap(key, newData);
+			}
+			popGraphic = BitmapDataCache.getBitmap(key);
 			
 			pixels = regularGraphic;
 		}

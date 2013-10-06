@@ -21,8 +21,8 @@ package
 		public var state:int = 0;
 		private var playerSprite:FlxSprite;
 		private var stateTime:Number = 0;
-		private const GRAB_DURATION:Number = 0.15;
-		private const THROW_DURATION:Number = 0.075;
+		private const GRAB_DURATION:Number = 0.22;
+		private const THROW_DURATION:Number = 0.11;
 		private var regularGraphic:BitmapData;
 		private var popGraphic:BitmapData;
 		
@@ -32,14 +32,24 @@ package
 			
 			this.bubbleColor = bubbleColor;
 			
-			regularGraphic = FlxG.createBitmap(17, 17, 0x00000000, true);
-			regularGraphic.draw(FlxG.addBitmap(Embed.Microbe0), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
-			regularGraphic.draw(FlxG.addBitmap(Embed.Eyes0));
-			shiftHueBitmapData(regularGraphic, bubbleColor);
+			var key:String = "Microbe0 " + bubbleColor.toString(16);
+			if (BitmapDataCache.getBitmap(key) == null) {
+				var newData:BitmapData = FlxG.createBitmap(17, 17, 0x00000000, true);
+				newData.draw(FlxG.addBitmap(Embed.Microbe0), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
+				newData.draw(FlxG.addBitmap(Embed.Eyes0));
+				shiftHueBitmapData(newData, bubbleColor);
+				BitmapDataCache.setBitmap(key, newData);
+			}
+			regularGraphic = BitmapDataCache.getBitmap(key);
 			
-			popGraphic = FlxG.createBitmap(17, 17, 0x00000000, true);
-			popGraphic.draw(regularGraphic);
-			whitenBitmapData(popGraphic);
+			var key:String = "popped Microbe0";
+			if (BitmapDataCache.getBitmap(key) == null) {
+				var newData:BitmapData = FlxG.createBitmap(17, 17, 0x00000000, true);
+				newData.draw(regularGraphic);
+				whitenBitmapData(newData);
+				BitmapDataCache.setBitmap(key, newData);
+			}
+			popGraphic = BitmapDataCache.getBitmap(key);
 			
 			width = 17;
 			height = 17;
