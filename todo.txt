@@ -1,13 +1,13 @@
 *Add pulling animation
 *Add tossing animation
 *Add popping animation
-fix "catch and throw" bug
- -- throw-catch causes bubbles to hover in mid air
- -- other weird behaviors
-fix weird "too fast" bug, where stuff was disappearing haphazardly?
-Add dropping animation
+*fix "catch and throw" bug
+* -- throw-catch causes bubbles to hover in mid air
+* -- other weird behaviors
+*fix weird "too fast" bug, where stuff was disappearing haphazardly?
+*Add dropping animation
 ---Give prototype to Nogard!
-Getting a combo should prevent the level from dropping
+*Getting a combo should prevent the level from dropping
 Eyes shouldn't get covered by connectors
 Add background
 Bubbles should "wiggle"
@@ -24,3 +24,6 @@ Add four different stages??
  -- everything's red, and lots of puyo-puyo-esque garbage
  -- grabbing a bubble turns everything the same color
 
+ -- eliminating 7 yellow bubbles at a time turns all yellow bubbles on the
+screen into another color (whichever color they're adjacent to)
+ -- 3-color super-fast level

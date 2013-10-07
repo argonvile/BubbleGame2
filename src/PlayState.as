@@ -12,6 +12,7 @@ package
 		private var playerSprite:FlxSprite;
 		private var bubbles:FlxGroup;
 		private var connectors:FlxGroup;
+		private var droppedBubbles:FlxGroup = new FlxGroup();
 		private var heldBubbles:FlxGroup = new FlxGroup();
 		private var popperEmitter:FlxEmitter = new FlxEmitter();
 		private var bubbleRate:Number = 120; // bubbles per minute
@@ -42,6 +43,7 @@ package
 			add(playerSprite);
 
 			add(heldBubbles);
+			add(droppedBubbles);
 		}
 		
 		override public function update():void
@@ -53,6 +55,14 @@ package
 					dropDetachedBubbles();
 					if (suspendedBubbles.length > 0) {
 						scrollPause = Bubble.THROW_DURATION;
+					}
+				}
+			}
+			// handle dropped bubbles
+			for each (var droppedBubble:Bubble in droppedBubbles.members) {
+				if (droppedBubble != null && droppedBubble.alive) {
+					if (droppedBubble.y > FlxG.height) {
+						droppedBubble.kill();
 					}
 				}
 			}
@@ -167,11 +177,9 @@ package
 							if (newRowLocation > -bubbleHeight) {
 								// add a new row
 								do {
-									trace("Added row...");
 									for each (var position:Array in [[0, newRowLocation], [columnWidth, newRowLocation-bubbleHeight*.5], [columnWidth*2, newRowLocation], [columnWidth*3, newRowLocation-bubbleHeight*.5], [columnWidth*4, newRowLocation], [columnWidth*5, newRowLocation-bubbleHeight*.5]]) {
 										var mySprite:FlxSprite = new Bubble(position[0], position[1], randomColor());
 										bubbles.add(mySprite);
-										trace(mySprite.x + "," + mySprite.y);
 									}
 									newRowLocation -= bubbleHeight;
 								} while (newRowLocation > -bubbleHeight);
@@ -246,7 +254,13 @@ package
 				if (positionMap[position] != null) {
 					var bubble:Bubble = positionMap[position];
 					if (bubble.alive) {
-						bubble.kill();
+						bubbles.remove(bubble);
+						bubble.killConnectors();
+						droppedBubbles.add(bubble);
+						bubble.flicker(1000);
+						bubble.velocity.y = (bubbleRate * bubbleHeight / 6) / 60;
+						bubble.velocity.x = bubble.velocity.y;
+						bubble.acceleration.y = 600;
 					}
 				}
 			}
