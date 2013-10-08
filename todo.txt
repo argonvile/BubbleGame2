@@ -8,14 +8,17 @@
 *Add dropping animation
 ---Give prototype to Nogard!
 *Getting a combo should prevent the level from dropping
+*Add "hurry up" button
+Popping animation should pop one-at-a-time
+Add stage select
+
+Improve hurry up animation
 Eyes shouldn't get covered by connectors
 Add background
 Bubbles should "wiggle"
-Popping animation should pop one-at-a-time
 Bubble eyes should look around
 Bubble eyes should look surprised
 Add "danger" graphics -- column changes color? Flashes?
-Add "hurry up" button
 Add background graphic
 Add player graphic
 Add four different stages??

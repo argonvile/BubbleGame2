@@ -54,6 +54,7 @@ package
 			width = 17;
 			height = 17;
 			pixels = regularGraphic;
+			updateAlpha();
 		}
 		
 		public static function whitenBitmapData(spritePixels:BitmapData) {
@@ -121,11 +122,7 @@ package
 					state = 0;
 				}
 			}
-			if (isAnchor()) {
-				alpha = 0.6;
-			} else {
-				alpha = 1.0;
-			}
+			updateAlpha();
 			if(lifespan <= 0) {
 				return;
 			}
@@ -138,6 +135,14 @@ package
 			} else {
 				pixels = regularGraphic;
 			}
+		}
+		
+		public function updateAlpha():void {
+			if (isAnchor()) {
+				alpha = 0.6;
+			} else {
+				alpha = 1.0;
+			}		
 		}
 		
 		public function isAnchor():Boolean {

@@ -142,6 +142,33 @@ package
 						}
 					}
 				}
+				if (FlxG.keys.justPressed("C")) {
+					var newPoppableBubbles:Array = new Array();
+					for each (var bubble:Bubble in bubbles.members) {
+						if (bubble != null && bubble.alive) {
+							var wasAnchor:Boolean = bubble.isAnchor();
+							bubble.y += bubbleHeight;
+							bubble.updateAlpha();
+							if (!bubble.isAnchor() && wasAnchor) {
+								newPoppableBubbles.push(bubble);
+							}							
+						}
+					}
+					for each (var connector:Connector in connectors.members) {
+						if (connector != null && connectors.alive) {
+							connector.y += bubbleHeight;
+						}
+					}
+					if (newPoppableBubbles.length > 0) {
+						var positionMap:Object = newPositionMap();
+						for each (var bubble:Bubble in newPoppableBubbles) {
+							maybeAddConnector(bubble, positionMap[hashPosition(bubble.x, bubble.y + bubbleHeight)], Embed.Microbe0S);
+							maybeAddConnector(bubble, positionMap[hashPosition(bubble.x - columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Sw);
+							maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Se);
+						}
+					}					
+					newRowLocation += bubbleHeight;
+				}
 				if (bubbleLifespan <= 0) {
 					if (scrollPause > 0) {
 						scrollPause -= FlxG.elapsed;
@@ -155,6 +182,7 @@ package
 								if (bubble != null && bubble.alive) {
 									var wasAnchor:Boolean = bubble.isAnchor();
 									bubble.y += Math.floor(rowScrollTimer);
+									bubble.updateAlpha();
 									if (!bubble.isAnchor() && wasAnchor) {
 										newPoppableBubbles.push(bubble);
 									}
@@ -174,30 +202,30 @@ package
 								}
 							}
 							rowScrollTimer -= Math.floor(rowScrollTimer);
-							if (newRowLocation > -bubbleHeight) {
-								// add a new row
-								do {
-									for each (var position:Array in [[0, newRowLocation], [columnWidth, newRowLocation-bubbleHeight*.5], [columnWidth*2, newRowLocation], [columnWidth*3, newRowLocation-bubbleHeight*.5], [columnWidth*4, newRowLocation], [columnWidth*5, newRowLocation-bubbleHeight*.5]]) {
-										var mySprite:FlxSprite = new Bubble(position[0], position[1], randomColor());
-										bubbles.add(mySprite);
-									}
-									newRowLocation -= bubbleHeight;
-								} while (newRowLocation > -bubbleHeight);
-								// check if they lose
-								for each (var bubble:Bubble in bubbles.members) {
-									if (bubble != null && bubble.alive && bubble.y > 232 && bubble.state == 0) {
-										gameState = 200;
-										var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
-										text.alignment = "center";
-										text.y = FlxG.height / 2 - text.height / 2;
-										add(text);
-										text = new FlxText(0, 0, FlxG.width, "Hit <Enter> to try again");
-										text.alignment = "center";
-										text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
-										add(text);
-									}
-								}
-							}
+						}
+					}
+				}
+				if (newRowLocation > -bubbleHeight) {
+					// add a new row
+					do {
+						for each (var position:Array in [[0, newRowLocation], [columnWidth, newRowLocation-bubbleHeight*.5], [columnWidth*2, newRowLocation], [columnWidth*3, newRowLocation-bubbleHeight*.5], [columnWidth*4, newRowLocation], [columnWidth*5, newRowLocation-bubbleHeight*.5]]) {
+							var mySprite:FlxSprite = new Bubble(position[0], position[1], randomColor());
+							bubbles.add(mySprite);
+						}
+						newRowLocation -= bubbleHeight;
+					} while (newRowLocation > -bubbleHeight);
+					// check if they lose
+					for each (var bubble:Bubble in bubbles.members) {
+						if (bubble != null && bubble.alive && bubble.y > 232 && bubble.state == 0) {
+							gameState = 200;
+							var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
+							text.alignment = "center";
+							text.y = FlxG.height / 2 - text.height / 2;
+							add(text);
+							text = new FlxText(0, 0, FlxG.width, "Hit <Enter> to try again");
+							text.alignment = "center";
+							text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
+							add(text);
 						}
 					}
 				}

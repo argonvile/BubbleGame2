@@ -8,7 +8,7 @@ package
 		public function Main()
 		{
 			super(320, 240, PlayState, 2, 60, 60);
-			//FlxG.debug = true;
+			FlxG.debug = true;
 		}
 	}
 }
