@@ -215,17 +215,19 @@ package
 						newRowLocation -= bubbleHeight;
 					} while (newRowLocation > -bubbleHeight);
 					// check if they lose
-					for each (var bubble:Bubble in bubbles.members) {
-						if (bubble != null && bubble.alive && bubble.y > 232 && bubble.state == 0) {
-							gameState = 200;
-							var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
-							text.alignment = "center";
-							text.y = FlxG.height / 2 - text.height / 2;
-							add(text);
-							text = new FlxText(0, 0, FlxG.width, "Hit <Enter> to try again");
-							text.alignment = "center";
-							text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
-							add(text);
+					if (bubbleLifespan <= 0 && scrollPause <= 0) {
+						for each (var bubble:Bubble in bubbles.members) {
+							if (bubble != null && bubble.alive && bubble.y > 232 && bubble.state == 0) {
+								gameState = 200;
+								var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
+								text.alignment = "center";
+								text.y = FlxG.height / 2 - text.height / 2;
+								add(text);
+								text = new FlxText(0, 0, FlxG.width, "Hit <Enter> to try again");
+								text.alignment = "center";
+								text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
+								add(text);
+							}
 						}
 					}
 				}
@@ -368,7 +370,7 @@ package
 		}
 		
 		private function hashPosition(x:Number, y:Number):Object {
-			return Math.round(x*2) + "," + Math.round(y*2);
+			return Math.round(x/columnWidth) + "," + Math.round(y/(bubbleHeight/2));
 		}
 		
 		private function lowestBubble(x:Number = -9999):Bubble {
