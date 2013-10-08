@@ -9,7 +9,6 @@ package
 	public class Bubble extends FlxSprite
 	{
 		public var bubbleColor:int;
-		public var lifespan:Number = -1;
 		public var connectors:Array = new Array();
 		/**
 		 * state
@@ -55,6 +54,24 @@ package
 			height = 17;
 			pixels = regularGraphic;
 			updateAlpha();
+		}
+		
+		public function loadPopGraphic():void {
+			pixels = popGraphic;
+			for each (var connector:Connector in connectors) {
+				if (connector != null && connector.alive) {
+					connector.loadPopGraphic();
+				}
+			}
+		}
+		
+		public function loadRegularGraphic():void {
+			pixels = regularGraphic;
+			for each (var connector:Connector in connectors) {
+				if (connector != null && connector.alive) {
+					connector.loadRegularGraphic();
+				}
+			}
 		}
 		
 		public static function whitenBitmapData(spritePixels:BitmapData) {
@@ -123,18 +140,6 @@ package
 				}
 			}
 			updateAlpha();
-			if(lifespan <= 0) {
-				return;
-			}
-			if(stateTime >= lifespan) {
-				kill();
-			}
-			var popAnimState:int = (stateTime * 8) / lifespan;
-			if (popAnimState == 0 || popAnimState == 2) {
-				pixels = popGraphic;
-			} else {
-				pixels = regularGraphic;
-			}
 		}
 		
 		public function updateAlpha():void {
@@ -191,17 +196,6 @@ package
 			this.playerSprite = playerSprite;
 			offset.x = (x + width / 2) - (playerSprite.x + playerSprite.width / 2);
 			offset.y = (y + height / 2) - (playerSprite.y + playerSprite.height / 2);
-		}
-		
-		public function wasPopped(lifespan:Number):void {
-			this.lifespan = lifespan;
-			state = 300;
-			stateTime = 0;
-			for (var i:int = 0; i < connectors.length; i++) {
-				if (connectors[i] != null) {
-					connectors[i].wasPopped(lifespan);
-				}
-			}
 		}
 	}
 }

@@ -7,16 +7,8 @@ package
 
 	public class Connector extends FlxSprite
 	{
-		public var lifespan:Number = -1;
 		public var bubble0:Bubble;
 		public var bubble1:Bubble;
-		/**
-		 * state
-		 * 0 = normal
-		 * 300 = popping
-		 */
-		public var state:int = 0;
-		private var stateTime:Number = 0;
 		private var regularGraphic:BitmapData;
 		private var popGraphic:BitmapData;
 		
@@ -27,9 +19,6 @@ package
 		}
 		
 		public function init(bubble0:Bubble, bubble1:Bubble, graphic:Class):void {
-			state = 0;
-			stateTime = 0;
-			lifespan = -1;
 			this.bubble0 = bubble0;
 			this.bubble1 = bubble1;
 			x = (bubble0.x + bubble1.x) / 2;
@@ -57,22 +46,14 @@ package
 
 		override public function update():void {
 			super.update();
-			stateTime += FlxG.elapsed;
-			if(lifespan <= 0) {
-				return;
-			}
-			var popAnimState:int = (stateTime * 8) / lifespan;
-			if (popAnimState == 0 || popAnimState == 2) {
-				pixels = popGraphic;
-			} else {
-				pixels = regularGraphic;
-			}
 		}
 		
-		public function wasPopped(lifespan:Number):void {
-			this.lifespan = lifespan;
-			state = 300;
-			stateTime = 0;
-		}		
+		public function loadPopGraphic():void {
+			pixels = popGraphic;
+		}
+		
+		public function loadRegularGraphic():void {
+			pixels = regularGraphic;
+		}
 	}
 }
