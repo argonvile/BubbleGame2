@@ -27,6 +27,9 @@ package
 		}
 		
 		public function init(bubble0:Bubble, bubble1:Bubble, graphic:Class):void {
+			state = 0;
+			stateTime = 0;
+			lifespan = -1;
 			this.bubble0 = bubble0;
 			this.bubble1 = bubble1;
 			x = (bubble0.x + bubble1.x) / 2;

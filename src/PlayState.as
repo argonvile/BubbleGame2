@@ -151,7 +151,7 @@ package
 							bubble.updateAlpha();
 							if (!bubble.isAnchor() && wasAnchor) {
 								newPoppableBubbles.push(bubble);
-							}							
+							}
 						}
 					}
 					for each (var connector:Connector in connectors.members) {
@@ -205,7 +205,7 @@ package
 						}
 					}
 				}
-				if (newRowLocation > -bubbleHeight) {
+				if (newRowLocation > -bubbleHeight*1.5) {
 					// add a new row
 					do {
 						for each (var position:Array in [[0, newRowLocation], [columnWidth, newRowLocation-bubbleHeight*.5], [columnWidth*2, newRowLocation], [columnWidth*3, newRowLocation-bubbleHeight*.5], [columnWidth*4, newRowLocation], [columnWidth*5, newRowLocation-bubbleHeight*.5]]) {
@@ -213,7 +213,7 @@ package
 							bubbles.add(mySprite);
 						}
 						newRowLocation -= bubbleHeight;
-					} while (newRowLocation > -bubbleHeight);
+					} while (newRowLocation > -bubbleHeight*1.5);
 					// check if they lose
 					if (bubbleLifespan <= 0 && scrollPause <= 0) {
 						for each (var bubble:Bubble in bubbles.members) {
@@ -354,6 +354,11 @@ package
 					bubbles.remove(maxBubble);
 					maxBubble.killConnectors();
 					maxBubble.wasGrabbed(playerSprite);
+					for (var i:int = 0; i < thrownBubbles.length; i++) {
+						if (thrownBubbles[i] == maxBubble) {
+							thrownBubbles[i] = null;
+						}
+					}
 				}
 				maxBubble = positionMap[hashPosition(maxBubble.x, maxBubble.y - bubbleHeight)];
 			}
@@ -370,7 +375,7 @@ package
 		}
 		
 		private function hashPosition(x:Number, y:Number):Object {
-			return Math.round(x/columnWidth) + "," + Math.round(y/(bubbleHeight/2));
+			return Math.round(x / columnWidth) + "," + Math.round((y - newRowLocation) * 2 / bubbleHeight);
 		}
 		
 		private function lowestBubble(x:Number = -9999):Bubble {

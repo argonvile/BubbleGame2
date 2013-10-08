@@ -9,13 +9,13 @@
 ---Give prototype to Nogard!
 *Getting a combo should prevent the level from dropping
 *Add "hurry up" button
+*Fix bug where sometimes new bubbles don't appear connected
+*Fix bug where connectors are disconnected if you throw-catch
+*Fix bug where throw-catching a ton of bubbles results in you only grabbing some?
 Add stage select
 Popping animation should pop one-at-a-time
 Dropping animation should drop one-at-a-time
-*Fix bug where sometimes new "C" bubbles don't appear connected
-Fix bug where connectors are disconnected if you throw-catch
-Fix bug where throw-catching a ton of bubbles results in you only grabbing
-some?
+add vertical "where am i and what am i holding" line
 
 
 Improve hurry up animation
