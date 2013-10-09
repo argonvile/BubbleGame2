@@ -69,6 +69,8 @@ package
 			stateTime += FlxG.elapsed;
 			timerText.text = String(Math.round(stateTime * 100) / 100);
 			if (gameState < 200) {
+				elapsed += FlxG.elapsed;
+				bubbleRate += FlxG.elapsed * 3;
 				// handle player input
 				if (FlxG.keys.justPressed("LEFT")) {
 					playerSprite.x = Math.max(playerSprite.x-columnWidth, 0);
