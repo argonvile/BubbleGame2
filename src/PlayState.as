@@ -5,9 +5,8 @@ package
  
 	public class PlayState extends FlxState
 	{
-		private var bubbleHeight:int = 17;
-		private var bubbleWidth:int = 17;
-		private var columnWidth:int = 15;
+		public var bubbleHeight:int = 17;
+		public var columnWidth:int = 15;
 		
 		private var playerSprite:FlxSprite;
 		private var bubbles:FlxGroup;
@@ -39,7 +38,10 @@ package
 		private var leftTimer:Number = 0;
 		private var rightTimer:Number = 0;
 		
-		private const POP_DURATION:Number = 0.8;
+		private const POP_DELAY:Number = 0.4;
+		private const POP_PER_BUBBLE_DELAY:Number = 0.1;
+		private const DROP_DELAY:Number = 0;
+		private const DROP_PER_BUBBLE_DELAY:Number = 0.03;
 		
 		private var timerText:FlxText;
 		
@@ -99,10 +101,6 @@ package
 				if (FlxG.keys.justPressed("Z")) {
 					// find the next block above the player, and remove it
 					grabBubbles();
-					if (gameState == 100) {
-						// if the player triggered a drop event, transition to state 120...
-						checkForDetachedBubbles();
-					}
 				}
 				if (FlxG.keys.justPressed("X")) {
 					// find the next block above the player, and spit out our blocks below it
@@ -156,9 +154,11 @@ package
 			if (gameState == 100 || gameState == 130) {
 				// did the player trigger a drop event?
 				// if so, transition to state 120...
-				checkForDetachedBubbles();
-				if (gameState == 120) {
-					return;
+				if (FlxG.keys.justPressed("Z")) {
+					checkForDetachedBubbles();
+					if (gameState == 120) {
+						return;
+					}
 				}
 
 				if (suspendedBubbles.length > 0) {
@@ -173,23 +173,35 @@ package
 					suspendedBubbles.length = 0;
 				}
 				// handle thrown bubbles
+				var popCounter:PopCounter = new PopCounter(this);
 				var thrownBubbleCount:int = 0;
+				var positionMap:Object = newPositionMap();
 				for (var i:int = 0; i < thrownBubbles.length; i++) {
 					var thrownBubble:Bubble = thrownBubbles[i];
+
 					if (thrownBubble != null && thrownBubble.alive) {
 						if (thrownBubble.state == 200) {
 							thrownBubbleCount++;
 						} else {
+							maybeAddConnector(thrownBubble, positionMap[hashPosition(thrownBubble.x - columnWidth, thrownBubble.y + bubbleHeight / 2)], Embed.Microbe0Sw); // SW
+							maybeAddConnector(thrownBubble, positionMap[hashPosition(thrownBubble.x - columnWidth, thrownBubble.y - bubbleHeight / 2)], Embed.Microbe0Se); // NW
+							maybeAddConnector(thrownBubble, positionMap[hashPosition(thrownBubble.x, thrownBubble.y - bubbleHeight)], Embed.Microbe0S); // N
+							maybeAddConnector(thrownBubble, positionMap[hashPosition(thrownBubble.x + columnWidth, thrownBubble.y - bubbleHeight / 2)], Embed.Microbe0Sw); // NE
+							maybeAddConnector(thrownBubble, positionMap[hashPosition(thrownBubble.x + columnWidth, thrownBubble.y + bubbleHeight / 2)], Embed.Microbe0Se); // SE
+					
 							thrownBubbles[i] = null;
-							popMatches(thrownBubble);
+							popCounter.popMatches(thrownBubble);
 						}
 					}
 				}
 				// did the player trigger a pop event?
 				// if so, transition to state 110...
-				if (gameState == 110) {
+				if (popCounter.shouldPop()) {
+					poppedBubbles = popCounter.getPoppedBubbles();
+					poppedBubbles.sort(orderByPosition);
+					changeState(110, POP_DELAY + POP_PER_BUBBLE_DELAY * poppedBubbles.length);
 					return;
-				}				
+				}
 				if (thrownBubbleCount == 0 && thrownBubbles.length > 0) {
 					thrownBubbles.length = 0;
 				}
@@ -255,7 +267,7 @@ package
 			}
 			if (gameState == 110) {
 				// change the bubble colors
-				var popAnimState:int = (stateTime * 8) / stateDuration;
+				var popAnimState:int = (stateTime * 3) / POP_DELAY;
 				if (popAnimState == 0 || popAnimState == 2) {
 					for each (var bubble:Bubble in poppedBubbles) {
 						bubble.loadPopGraphic();
@@ -263,6 +275,16 @@ package
 				} else {
 					for each (var bubble:Bubble in poppedBubbles) {
 						bubble.loadRegularGraphic();
+					}
+				}
+				for (var i:int = 0; i < poppedBubbles.length; i++) {
+					if ((i + 1) * POP_PER_BUBBLE_DELAY + POP_DELAY < stateTime) {
+						var poppedBubble:Bubble = poppedBubbles[i];
+						if (poppedBubble.visible) {
+							poppedBubble.visible = false;
+							poppedBubble.killConnectors();
+							Embed.play(Embed.SfxBlip0);
+						}
 					}
 				}
 				// is the pop event over?
@@ -280,20 +302,26 @@ package
 					}
 				}
 			} else if (gameState == 120) {
+				// drop some bubbles
+				for (var i:int = 0; i < poppedBubbles.length; i++) {
+					if ((i + 1) * DROP_PER_BUBBLE_DELAY + DROP_DELAY < stateTime) {
+						var bubble:Bubble = poppedBubbles[i];
+						if (bubble.acceleration.y == 0) {
+							Embed.play(Embed.SfxBlip0);
+							bubbles.remove(bubble);
+							bubble.killConnectors();
+							fallingBubbles.add(bubble);
+							bubble.flicker(1000);
+							bubble.velocity.y = (bubbleRate * bubbleHeight / 6) / 60;
+							bubble.velocity.x = bubble.velocity.y;
+							bubble.acceleration.y = 600;
+						}
+					}
+				}
 				// is the drop event over?
 				if (stateTime >= stateDuration) {
-					// if so, remove dropped bubbles
-					for each (var bubble:Bubble in poppedBubbles) {
-						bubbles.remove(bubble);
-						bubble.killConnectors();
-						fallingBubbles.add(bubble);
-						bubble.flicker(1000);
-						bubble.velocity.y = (bubbleRate * bubbleHeight / 6) / 60;
-						bubble.velocity.x = bubble.velocity.y;
-						bubble.acceleration.y = 600;
-					}
+					// if so, transition to state 100
 					poppedBubbles.length = 0;
-					// and transition to state 100
 					changeState(100);
 				}
 			} else if (gameState == 200) {
@@ -312,7 +340,7 @@ package
 			this.stateDuration = stateDuration;
 		}
 		
-		private function maybeAddConnector(bubble:Bubble, bubbleS:Bubble, graphic:Class):void {
+		public function maybeAddConnector(bubble:Bubble, bubbleS:Bubble, graphic:Class):void {
 			if (bubbleS != null && bubbleS.bubbleColor == bubble.bubbleColor) {
 				var connector:Connector = connectors.recycle(Connector) as Connector;
 				connector.revive();
@@ -354,50 +382,12 @@ package
 			}
 			for (var position:String in positionMap) {
 				if (positionMap[position] != null) {
-					if (gameState != 120) {
-						changeState(120);
-					}
 					poppedBubbles.push(positionMap[position]);
 				}
 			}
-		}
-		
-		private function popMatches(maxBubble:Bubble):void {
-			// create map
-			var positionMap:Object = newPositionMap();
-			var bubblesToCheck:Array = new Array(maxBubble);
-			var iBubblesToCheck:int = 0;
-			
-			maybeAddConnector(maxBubble, positionMap[hashPosition(maxBubble.x - columnWidth, maxBubble.y + bubbleHeight / 2)], Embed.Microbe0Sw); // SW
-			maybeAddConnector(maxBubble, positionMap[hashPosition(maxBubble.x - columnWidth, maxBubble.y - bubbleHeight / 2)], Embed.Microbe0Se); // NW
-			maybeAddConnector(maxBubble, positionMap[hashPosition(maxBubble.x, maxBubble.y - bubbleHeight)], Embed.Microbe0S); // N
-			maybeAddConnector(maxBubble, positionMap[hashPosition(maxBubble.x + columnWidth, maxBubble.y - bubbleHeight / 2)], Embed.Microbe0Sw); // NE
-			maybeAddConnector(maxBubble, positionMap[hashPosition(maxBubble.x + columnWidth, maxBubble.y + bubbleHeight / 2)], Embed.Microbe0Se); // SE
-			
-			do {
-				var bubbleToCheck:Bubble = bubblesToCheck[iBubblesToCheck];
-				positionMap[hashPosition(bubbleToCheck.x, bubbleToCheck.y)] = null;
-				for each (var position:String in [
-					hashPosition(bubbleToCheck.x, bubbleToCheck.y - bubbleHeight),
-					hashPosition(bubbleToCheck.x + columnWidth, bubbleToCheck.y - bubbleHeight/2),
-					hashPosition(bubbleToCheck.x + columnWidth, bubbleToCheck.y + bubbleHeight/2),
-					hashPosition(bubbleToCheck.x, bubbleToCheck.y + bubbleHeight),
-					hashPosition(bubbleToCheck.x - columnWidth, bubbleToCheck.y + bubbleHeight/2),
-					hashPosition(bubbleToCheck.x - columnWidth, bubbleToCheck.y - bubbleHeight/2)
-				]) {
-					var neighbor:Bubble = positionMap[position];
-					if (neighbor != null && neighbor.bubbleColor == bubbleToCheck.bubbleColor) {
-						positionMap[position] = null;
-						bubblesToCheck.push(neighbor);
-					}
-				}
-			} while (++iBubblesToCheck < bubblesToCheck.length);
-			
-			if (iBubblesToCheck >= 4) {
-				changeState(110, POP_DURATION);
-				for each(var bubble:Bubble in bubblesToCheck) {
-					poppedBubbles.push(bubble);
-				}
+			if (poppedBubbles.length > 0) {
+				poppedBubbles.sort(orderByPosition);
+				changeState(120, DROP_DELAY + poppedBubbles.length * DROP_PER_BUBBLE_DELAY);
 			}
 		}
 		
@@ -439,7 +429,7 @@ package
 			}
 		}
 		
-		private function newPositionMap():Object {
+		public function newPositionMap():Object {
 			var positionMap:Object = new Object();
 			for each (var bubble:Bubble in bubbles.members) {
 				if (bubble != null && bubble.alive && !bubble.isAnchor()) {
@@ -449,7 +439,7 @@ package
 			return positionMap;
 		}
 		
-		private function hashPosition(x:Number, y:Number):Object {
+		public function hashPosition(x:Number, y:Number):Object {
 			return Math.round(x / columnWidth) + "," + Math.round((y - newRowLocation) * 2 / bubbleHeight);
 		}
 		
@@ -477,6 +467,13 @@ package
 				case 3: return 0xff0080ff;
 				default: return 0xff8000ff;
 			}
+		}
+		
+		private function orderByPosition(a:Bubble, b:Bubble):Number {
+			if (a.y != b.y) {
+				return b.y - a.y;
+			}
+			return a.x - b.x;
 		}
 	}
 }

@@ -74,7 +74,7 @@ package
 			}
 		}
 		
-		public static function whitenBitmapData(spritePixels:BitmapData) {
+		public static function whitenBitmapData(spritePixels:BitmapData):void {
 			for (var pixelX:int = 0; pixelX < spritePixels.width; pixelX++) {
 				for (var pixelY:int = 0; pixelY < spritePixels.height; pixelY++) {
 					var pixelRgb:uint = spritePixels.getPixel32(pixelX, pixelY);
