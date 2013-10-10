@@ -17,7 +17,7 @@ package
 			var iBubblesToCheck:int = 0;
 			
 			do {
-				var bubbleToCheck:Bubble = bubblesToCheck[iBubblesToCheck];
+				var bubbleToCheck:DefaultBubble = bubblesToCheck[iBubblesToCheck];
 				positionMap[p.hashPosition(bubbleToCheck.x, bubbleToCheck.y)] = null;
 				for each (var position:String in [
 					p.hashPosition(bubbleToCheck.x, bubbleToCheck.y - PlayState.bubbleHeight),
@@ -27,7 +27,7 @@ package
 					p.hashPosition(bubbleToCheck.x - PlayState.columnWidth, bubbleToCheck.y + PlayState.bubbleHeight/2),
 					p.hashPosition(bubbleToCheck.x - PlayState.columnWidth, bubbleToCheck.y - PlayState.bubbleHeight/2)
 				]) {
-					var neighbor:Bubble = positionMap[position];
+					var neighbor:DefaultBubble = positionMap[position] as DefaultBubble;
 					if (neighbor != null && neighbor.bubbleColor == bubbleToCheck.bubbleColor) {
 						positionMap[position] = null;
 						bubblesToCheck.push(neighbor);

@@ -2,6 +2,7 @@ package
 {
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.FlxColor;
+	import levels.*;
  
 	public class PlayState extends FlxState
 	{
@@ -44,7 +45,7 @@ package
 		
 		override public function create():void
 		{
-			levelDetails = new ThreeColorBlitz();
+			levelDetails = new FilmReel(3);
 			
 			bubbles = new FlxGroup();
 			add(bubbles);
@@ -115,15 +116,24 @@ package
 				}
 				if (FlxG.keys.justPressed("C")) {
 					var newPoppableBubbles:Array = new Array();
+					var removedNullBubbles:Boolean = false;
 					for each (var bubble:Bubble in bubbles.members) {
 						if (bubble != null && bubble.alive) {
 							var wasAnchor:Boolean = bubble.isAnchor();
 							bubble.y += bubbleHeight;
 							bubble.updateAlpha();
 							if (!bubble.isAnchor() && wasAnchor) {
-								newPoppableBubbles.push(bubble);
-							}							
+								if (bubble is NullBubble) {
+									bubbles.remove(bubble);
+									removedNullBubbles = true;
+								} else {
+									newPoppableBubbles.push(bubble);
+								}
+							}
 						}
+					}
+					if (removedNullBubbles && (gameState == 100 || gameState == 130)) {
+						checkForDetachedBubbles();
 					}
 					for each (var connector:Connector in connectors.members) {
 						if (connector != null && connectors.alive) {
@@ -135,21 +145,35 @@ package
 				}
 			}
 			// do we need to add new rows?
-			if (gameState < 200 && newRowLocation > -bubbleHeight * 1.5) {
+			if (gameState < 200 && newRowLocation > -bubbleHeight * 2.5) {
 				// add new rows
+				var removedNullBubbles:Boolean = false;
 				var newPoppableBubbles:Array = new Array();
 				do {
 					for (var i:int = 0; i < levelDetails.columnCount; i++) {
 						var x:int = i * columnWidth;
-						var y = (i % 2 == 0)?newRowLocation:newRowLocation - bubbleHeight * .5;
-						var bubble:Bubble = new Bubble(levelDetails, x, y, levelDetails.nextBubbleColor());
-						bubbles.add(bubble);
-						if (!bubble.isAnchor()) {
-							newPoppableBubbles.push(bubble);
+						var y:int = (i % 2 == 0)?newRowLocation:newRowLocation - bubbleHeight * .5;
+						var bubbleColor:int = levelDetails.nextBubbleColor();
+						if (bubbleColor == 0) {
+							var nullBubble:NullBubble = new NullBubble(x, y);
+							if (nullBubble.isAnchor()) {
+								bubbles.add(nullBubble);
+							} else {
+								removedNullBubbles = true;
+							}
+						} else {
+							var defaultBubble:DefaultBubble = new DefaultBubble(levelDetails, x, y, bubbleColor);
+							if (!defaultBubble.isAnchor()) {
+								newPoppableBubbles.push(defaultBubble);
+							}
+							bubbles.add(defaultBubble);
 						}
 					}
 					newRowLocation -= bubbleHeight;
-				} while (newRowLocation > -bubbleHeight * 1.5);
+				} while (newRowLocation > -bubbleHeight * 2.5);
+				if (removedNullBubbles && (gameState == 100 || gameState == 130)) {
+					checkForDetachedBubbles();
+				}
 				maybeAddConnectors(newPoppableBubbles);
 			}
 			if (gameState == 100 || gameState == 130) {
@@ -178,7 +202,7 @@ package
 				var thrownBubbleCount:int = 0;
 				var positionMap:Object = newPositionMap();
 				for (var i:int = 0; i < thrownBubbles.length; i++) {
-					var thrownBubble:Bubble = thrownBubbles[i];
+					var thrownBubble:DefaultBubble = thrownBubbles[i];
 
 					if (thrownBubble != null && thrownBubble.alive) {
 						if (thrownBubble.state == 200) {
@@ -220,51 +244,54 @@ package
 						// scroll all the bubbles down a little
 						var newPoppableBubbles:Array = new Array();
 						newRowLocation += Math.floor(rowScrollTimer);
+						var removedNullBubbles:Boolean = false;
 						for each (var bubble:Bubble in bubbles.members) {
 							if (bubble != null && bubble.alive) {
 								var wasAnchor:Boolean = bubble.isAnchor();
 								bubble.y += Math.floor(rowScrollTimer);
 								bubble.updateAlpha();
 								if (!bubble.isAnchor() && wasAnchor) {
-									newPoppableBubbles.push(bubble);
+									if (bubble is NullBubble) {
+										bubbles.remove(bubble);
+										removedNullBubbles = true;
+									} else {
+										newPoppableBubbles.push(bubble);
+									}
 								}
 							}
+						}
+						if (removedNullBubbles && (gameState == 100 || gameState == 130)) {
+							checkForDetachedBubbles();
 						}
 						for each (var connector:Connector in connectors.members) {
 							if (connector != null && connector.alive) {
 								connector.y += Math.floor(rowScrollTimer);
 							}
 						}
-						if (newPoppableBubbles.length > 0) {
-							var positionMap:Object = newPositionMap();
-							for each (var bubble:Bubble in newPoppableBubbles) {
-								maybeAddConnector(bubble, positionMap[hashPosition(bubble.x, bubble.y + bubbleHeight)], Embed.Microbe0S);
-								maybeAddConnector(bubble, positionMap[hashPosition(bubble.x - columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Sw);
-								maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Se);
-							}
-						}
+						maybeAddConnectors(newPoppableBubbles);
 						rowScrollTimer -= Math.floor(rowScrollTimer);
 					}
-				}
-				
-				// did the player lose?
-				if (gameState == 100) {
-					for each (var bubble:Bubble in bubbles.members) {
-						if (bubble != null && bubble.alive && bubble.y > 232 && bubble.state == 0) {
-							// yes, they lost. transition to state 200
-							changeState(200);
-							var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
-							text.alignment = "center";
-							text.y = FlxG.height / 2 - text.height / 2;
-							add(text);
-							text = new FlxText(0, 0, FlxG.width, "Hit <Enter> to try again");
-							text.alignment = "center";
-							text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
-							add(text);
-							return;
+					
+					// did the player lose?
+					if (gameState == 100) {
+						for each (var bubble:Bubble in bubbles.members) {
+							if (bubble != null && bubble.alive && bubble.y > 232 && bubble.state == 0) {
+								// yes, they lost. transition to state 200
+								changeState(200);
+								var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
+								text.alignment = "center";
+								text.y = FlxG.height / 2 - text.height / 2;
+								add(text);
+								text = new FlxText(0, 0, FlxG.width, "Hit <Enter> to try again");
+								text.alignment = "center";
+								text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
+								add(text);
+								return;
+							}
 						}
 					}
 				}
+
 				// did the player win?
 				if (elapsed > levelDetails.levelDuration) {
 					var text:FlxText = new FlxText(0, 0, FlxG.width, "You win!");
@@ -283,17 +310,21 @@ package
 				// change the bubble colors
 				var popAnimState:int = (stateTime * 3) / levelDetails.popDelay;
 				if (popAnimState == 0 || popAnimState == 2) {
-					for each (var bubble:Bubble in poppedBubbles) {
-						bubble.loadPopGraphic();
+					for each (var defaultBubble:DefaultBubble in poppedBubbles) {
+						if (defaultBubble != null) {
+							defaultBubble.loadPopGraphic();
+						}
 					}
 				} else {
-					for each (var bubble:Bubble in poppedBubbles) {
-						bubble.loadRegularGraphic();
+					for each (var defaultBubble:DefaultBubble in poppedBubbles) {
+						if (defaultBubble != null) {
+							defaultBubble.loadRegularGraphic();	
+						}
 					}
 				}
 				for (var i:int = 0; i < poppedBubbles.length; i++) {
 					if ((i + 1) * levelDetails.popPerBubbleDelay + levelDetails.popDelay < stateTime) {
-						var poppedBubble:Bubble = poppedBubbles[i];
+						var poppedBubble:DefaultBubble = poppedBubbles[i];
 						if (poppedBubble.visible) {
 							poppedBubble.visible = false;
 							poppedBubble.killConnectors();
@@ -328,7 +359,9 @@ package
 						if (bubble.acceleration.y == 0) {
 							Embed.play(Embed.SfxBlip0);
 							bubbles.remove(bubble);
-							bubble.killConnectors();
+							if (bubble is DefaultBubble) {
+								DefaultBubble(bubble).killConnectors();
+							}
 							fallingBubbles.add(bubble);
 							bubble.flicker(1000);
 							bubble.velocity.y = 20;
@@ -368,21 +401,28 @@ package
 			if (newPoppableBubbles.length > 0) {
 				var positionMap:Object = newPositionMap();
 				for each (var bubble:Bubble in newPoppableBubbles) {
-					maybeAddConnector(bubble, positionMap[hashPosition(bubble.x, bubble.y + bubbleHeight)], Embed.Microbe0S);
-					maybeAddConnector(bubble, positionMap[hashPosition(bubble.x - columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Sw);
-					maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Se);
+					if (bubble is DefaultBubble) {
+						var defaultBubble:DefaultBubble = DefaultBubble(bubble);
+						maybeAddConnector(defaultBubble, positionMap[hashPosition(defaultBubble.x, defaultBubble.y + bubbleHeight)], Embed.Microbe0S);
+						maybeAddConnector(defaultBubble, positionMap[hashPosition(defaultBubble.x - columnWidth, defaultBubble.y + bubbleHeight / 2)], Embed.Microbe0Sw);
+						maybeAddConnector(defaultBubble, positionMap[hashPosition(defaultBubble.x + columnWidth, defaultBubble.y + bubbleHeight / 2)], Embed.Microbe0Se);
+					}
 				}
 			}
 		}
 		
 		public function maybeAddConnector(bubble:Bubble, bubbleS:Bubble, graphic:Class):void {
-			if (bubbleS != null && bubbleS.bubbleColor == bubble.bubbleColor) {
-				var connector:Connector = connectors.recycle(Connector) as Connector;
-				connector.revive();
-				connector.init(bubble, bubbleS, graphic);
-				connectors.add(connector);
-				bubble.connectors.push(connector);
-				bubbleS.connectors.push(connector);
+			if (bubble is DefaultBubble && bubbleS is DefaultBubble) {
+				var defaultBubble:DefaultBubble = bubble as DefaultBubble;
+				var defaultBubbleS:DefaultBubble = bubbleS as DefaultBubble;
+				if (defaultBubbleS.bubbleColor == defaultBubble.bubbleColor) {
+					var connector:DefaultConnector = connectors.recycle(DefaultConnector) as DefaultConnector;
+					connector.revive();
+					connector.init(defaultBubble, defaultBubbleS, graphic);
+					connectors.add(connector);
+					defaultBubble.connectors.push(connector);
+					defaultBubbleS.connectors.push(connector);
+				}
 			}
 		}
 		
@@ -436,11 +476,11 @@ package
 		}
 		
 		private function grabBubbles():void {
-			var maxBubble:Bubble = lowestBubble();
+			var maxBubble:DefaultBubble = lowestBubble() as DefaultBubble;
 			if (maxBubble == null || maxBubble.isAnchor()) {
 				return;
 			}
-			var heldBubble:Bubble = heldBubbles.getFirstAlive() as Bubble;
+			var heldBubble:DefaultBubble = heldBubbles.getFirstAlive() as DefaultBubble;
 			var positionMap:Object = newPositionMap();
 			var y:Number = maxBubble.y;
 			while(maxBubble != null) {
