@@ -20,12 +20,12 @@ package
 				var bubbleToCheck:Bubble = bubblesToCheck[iBubblesToCheck];
 				positionMap[p.hashPosition(bubbleToCheck.x, bubbleToCheck.y)] = null;
 				for each (var position:String in [
-					p.hashPosition(bubbleToCheck.x, bubbleToCheck.y - p.bubbleHeight),
-					p.hashPosition(bubbleToCheck.x + p.columnWidth, bubbleToCheck.y - p.bubbleHeight/2),
-					p.hashPosition(bubbleToCheck.x + p.columnWidth, bubbleToCheck.y + p.bubbleHeight/2),
-					p.hashPosition(bubbleToCheck.x, bubbleToCheck.y + p.bubbleHeight),
-					p.hashPosition(bubbleToCheck.x - p.columnWidth, bubbleToCheck.y + p.bubbleHeight/2),
-					p.hashPosition(bubbleToCheck.x - p.columnWidth, bubbleToCheck.y - p.bubbleHeight/2)
+					p.hashPosition(bubbleToCheck.x, bubbleToCheck.y - PlayState.bubbleHeight),
+					p.hashPosition(bubbleToCheck.x + PlayState.columnWidth, bubbleToCheck.y - PlayState.bubbleHeight/2),
+					p.hashPosition(bubbleToCheck.x + PlayState.columnWidth, bubbleToCheck.y + PlayState.bubbleHeight/2),
+					p.hashPosition(bubbleToCheck.x, bubbleToCheck.y + PlayState.bubbleHeight),
+					p.hashPosition(bubbleToCheck.x - PlayState.columnWidth, bubbleToCheck.y + PlayState.bubbleHeight/2),
+					p.hashPosition(bubbleToCheck.x - PlayState.columnWidth, bubbleToCheck.y - PlayState.bubbleHeight/2)
 				]) {
 					var neighbor:Bubble = positionMap[position];
 					if (neighbor != null && neighbor.bubbleColor == bubbleToCheck.bubbleColor) {

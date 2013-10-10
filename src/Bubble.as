@@ -20,14 +20,14 @@ package
 		public var state:int = 0;
 		private var playerSprite:FlxSprite;
 		private var stateTime:Number = 0;
-		public static const GRAB_DURATION:Number = 0.22;
-		public static const THROW_DURATION:Number = 0.11;
 		private var regularGraphic:BitmapData;
 		private var popGraphic:BitmapData;
+		private var levelDetails:LevelDetails;
 		
-		public function Bubble(x:Number,y:Number,bubbleColor:int) 
+		public function Bubble(levelDetails:LevelDetails,x:Number,y:Number,bubbleColor:int) 
 		{
 			super(x, y);
+			this.levelDetails = levelDetails;
 			
 			this.bubbleColor = bubbleColor;
 			
@@ -127,12 +127,12 @@ package
 			super.update();
 			stateTime += FlxG.elapsed;
 			if (state == 100) {
-				var statePct:Number = Math.min(1, Math.pow(stateTime / GRAB_DURATION, 2.5));
+				var statePct:Number = Math.min(1, Math.pow(stateTime / levelDetails.grabDuration, 2.5));
 				offset.x = statePct * ((x + width / 2) - (playerSprite.x + playerSprite.width / 2));
 				offset.y = statePct * ((y + height / 2) - (playerSprite.y + playerSprite.height / 2));
 			}
 			if (state == 200) {
-				var statePct:Number = Math.min(1, Math.pow(stateTime / THROW_DURATION, 1.5));
+				var statePct:Number = Math.min(1, Math.pow(stateTime / levelDetails.throwDuration, 1.5));
 				offset.x = (1 - statePct) * ((x + width / 2) - (playerSprite.x + playerSprite.width / 2));
 				offset.y = (1 - statePct) * ((y + height / 2) - (playerSprite.y + playerSprite.height / 2));
 				if (statePct >= 1.0) {

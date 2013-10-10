@@ -5,8 +5,8 @@ package
  
 	public class PlayState extends FlxState
 	{
-		public var bubbleHeight:int = 17;
-		public var columnWidth:int = 15;
+		public static const bubbleHeight:int = 17;
+		public static const columnWidth:int = 15;
 		
 		private var playerSprite:FlxSprite;
 		private var bubbles:FlxGroup;
@@ -14,7 +14,6 @@ package
 		private var fallingBubbles:FlxGroup = new FlxGroup();
 		private var heldBubbles:FlxGroup = new FlxGroup();
 		private var popperEmitter:FlxEmitter = new FlxEmitter();
-		private var bubbleRate:Number = 120; // bubbles per minute
 		
 		private var elapsed:Number = 0;
 		private var rowScrollTimer:Number = 0;
@@ -23,7 +22,8 @@ package
 		 * 110 == popping
 		 * 120 == dropping
 		 * 130 == scrolling paused
-		 * 200 == game over
+		 * 200 == game over (lose)
+		 * 300 == game over (win)
 		 */
 		private var gameState:int = 100;
 		private var stateTime:Number = 0;
@@ -33,20 +33,19 @@ package
 		private var thrownBubbles:Array = new Array();
 		private var poppedBubbles:Array = new Array();
 		
-		private var newRowLocation:Number = -bubbleHeight;
+		private var newRowLocation:Number = 6*bubbleHeight;
 		
 		private var leftTimer:Number = 0;
 		private var rightTimer:Number = 0;
 		
-		private const POP_DELAY:Number = 0.4;
-		private const POP_PER_BUBBLE_DELAY:Number = 0.1;
-		private const DROP_DELAY:Number = 0;
-		private const DROP_PER_BUBBLE_DELAY:Number = 0.03;
-		
 		private var timerText:FlxText;
+		
+		private var levelDetails:LevelDetails;
 		
 		override public function create():void
 		{
+			levelDetails = new ThreeColorBlitz();
+			
 			bubbles = new FlxGroup();
 			add(bubbles);
 			connectors = new FlxGroup();
@@ -70,19 +69,19 @@ package
 			timerText.text = String(Math.round(stateTime * 100) / 100);
 			if (gameState < 200) {
 				elapsed += FlxG.elapsed;
-				bubbleRate += FlxG.elapsed * 3;
+				levelDetails.update(elapsed);
 				// handle player input
 				if (FlxG.keys.justPressed("LEFT")) {
 					playerSprite.x = Math.max(playerSprite.x-columnWidth, 0);
 				}
 				if (FlxG.keys.justPressed("RIGHT")) {
-					playerSprite.x = Math.min(playerSprite.x+columnWidth, columnWidth * 5);
+					playerSprite.x = Math.min(playerSprite.x+columnWidth, columnWidth * (levelDetails.columnCount - 1));
 				}
 				if (FlxG.keys.justPressed("DOWN")) {
-					playerSprite.x = columnWidth;
+					playerSprite.x = columnWidth*(Math.floor(0.33333333 * (levelDetails.columnCount - 1)));
 				}
 				if (FlxG.keys.justPressed("UP")) {
-					playerSprite.x = columnWidth*4;
+					playerSprite.x = columnWidth*(Math.ceil(0.66666667 * (levelDetails.columnCount - 1)));
 				}
 				if (FlxG.keys.pressed("LEFT")) {
 					leftTimer += FlxG.elapsed;
@@ -95,7 +94,7 @@ package
 				if (FlxG.keys.pressed("RIGHT")) {
 					rightTimer += FlxG.elapsed;
 					if (rightTimer > 0.175) {
-						playerSprite.x = columnWidth * 5;
+						playerSprite.x = columnWidth * (levelDetails.columnCount - 1);
 					}
 				} else {
 					rightTimer = 0;
@@ -131,27 +130,27 @@ package
 							connector.y += bubbleHeight;
 						}
 					}
-					if (newPoppableBubbles.length > 0) {
-						var positionMap:Object = newPositionMap();
-						for each (var bubble:Bubble in newPoppableBubbles) {
-							maybeAddConnector(bubble, positionMap[hashPosition(bubble.x, bubble.y + bubbleHeight)], Embed.Microbe0S);
-							maybeAddConnector(bubble, positionMap[hashPosition(bubble.x - columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Sw);
-							maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Se);
-						}
-					}					
+					maybeAddConnectors(newPoppableBubbles);
 					newRowLocation += bubbleHeight;
 				}
 			}
 			// do we need to add new rows?
 			if (gameState < 200 && newRowLocation > -bubbleHeight * 1.5) {
 				// add new rows
+				var newPoppableBubbles:Array = new Array();
 				do {
-					for each (var position:Array in [[0, newRowLocation], [columnWidth, newRowLocation-bubbleHeight*.5], [columnWidth*2, newRowLocation], [columnWidth*3, newRowLocation-bubbleHeight*.5], [columnWidth*4, newRowLocation], [columnWidth*5, newRowLocation-bubbleHeight*.5]]) {
-						var mySprite:FlxSprite = new Bubble(position[0], position[1], randomColor());
-						bubbles.add(mySprite);
+					for (var i:int = 0; i < levelDetails.columnCount; i++) {
+						var x:int = i * columnWidth;
+						var y = (i % 2 == 0)?newRowLocation:newRowLocation - bubbleHeight * .5;
+						var bubble:Bubble = new Bubble(levelDetails, x, y, levelDetails.nextBubbleColor());
+						bubbles.add(bubble);
+						if (!bubble.isAnchor()) {
+							newPoppableBubbles.push(bubble);
+						}
 					}
 					newRowLocation -= bubbleHeight;
 				} while (newRowLocation > -bubbleHeight * 1.5);
+				maybeAddConnectors(newPoppableBubbles);
 			}
 			if (gameState == 100 || gameState == 130) {
 				// did the player trigger a drop event?
@@ -201,7 +200,7 @@ package
 				if (popCounter.shouldPop()) {
 					poppedBubbles = popCounter.getPoppedBubbles();
 					poppedBubbles.sort(orderByPosition);
-					changeState(110, POP_DELAY + POP_PER_BUBBLE_DELAY * poppedBubbles.length);
+					changeState(110, levelDetails.popDelay + levelDetails.popPerBubbleDelay * poppedBubbles.length);
 					return;
 				}
 				if (thrownBubbleCount == 0 && thrownBubbles.length > 0) {
@@ -216,7 +215,7 @@ package
 					}
 				} else {
 					// no, it's not paused
-					rowScrollTimer += FlxG.elapsed * ((bubbleRate * bubbleHeight / 6) / 60);
+					rowScrollTimer += levelDetails.rowScrollPixels();
 					if (rowScrollTimer > 1) {
 						// scroll all the bubbles down a little
 						var newPoppableBubbles:Array = new Array();
@@ -266,10 +265,23 @@ package
 						}
 					}
 				}
+				// did the player win?
+				if (elapsed > levelDetails.levelDuration) {
+					var text:FlxText = new FlxText(0, 0, FlxG.width, "You win!");
+					text.alignment = "center";
+					text.y = FlxG.height / 2 - text.height / 2;
+					add(text);
+					text = new FlxText(0, 0, FlxG.width, "Hit <Enter> to try again");
+					text.alignment = "center";
+					text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
+					add(text);
+					changeState(300);
+					return;
+				}
 			}
 			if (gameState == 110) {
 				// change the bubble colors
-				var popAnimState:int = (stateTime * 3) / POP_DELAY;
+				var popAnimState:int = (stateTime * 3) / levelDetails.popDelay;
 				if (popAnimState == 0 || popAnimState == 2) {
 					for each (var bubble:Bubble in poppedBubbles) {
 						bubble.loadPopGraphic();
@@ -280,7 +292,7 @@ package
 					}
 				}
 				for (var i:int = 0; i < poppedBubbles.length; i++) {
-					if ((i + 1) * POP_PER_BUBBLE_DELAY + POP_DELAY < stateTime) {
+					if ((i + 1) * levelDetails.popPerBubbleDelay + levelDetails.popDelay < stateTime) {
 						var poppedBubble:Bubble = poppedBubbles[i];
 						if (poppedBubble.visible) {
 							poppedBubble.visible = false;
@@ -301,7 +313,7 @@ package
 					if (gameState == 110) {
 						if (suspendedBubbles.length > 0) {
 							// if the player has suspended bubbles, transition to the "paused state"
-							changeState(130, Bubble.THROW_DURATION);
+							changeState(130, levelDetails.throwDuration);
 						} else {
 							// otherwise, transition to state 100
 							changeState(100);
@@ -311,7 +323,7 @@ package
 			} else if (gameState == 120) {
 				// drop some bubbles
 				for (var i:int = 0; i < poppedBubbles.length; i++) {
-					if ((i + 1) * DROP_PER_BUBBLE_DELAY + DROP_DELAY < stateTime) {
+					if ((i + 1) * levelDetails.dropPerBubbleDelay + levelDetails.dropDelay < stateTime) {
 						var bubble:Bubble = poppedBubbles[i];
 						if (bubble.acceleration.y == 0) {
 							Embed.play(Embed.SfxBlip0);
@@ -319,7 +331,7 @@ package
 							bubble.killConnectors();
 							fallingBubbles.add(bubble);
 							bubble.flicker(1000);
-							bubble.velocity.y = (bubbleRate * bubbleHeight / 6) / 60;
+							bubble.velocity.y = 20;
 							bubble.velocity.x = bubble.velocity.y;
 							bubble.acceleration.y = 600;
 						}
@@ -330,13 +342,13 @@ package
 					poppedBubbles.length = 0;
 					if (suspendedBubbles.length > 0) {
 						// if the player has suspended bubbles, transition to the "paused state"
-						changeState(130, Bubble.THROW_DURATION);
+						changeState(130, levelDetails.throwDuration);
 					} else {
 						// otherwise, transition to state 100
 						changeState(100);
 					}
 				}
-			} else if (gameState == 200) {
+			} else if (gameState == 200 || gameState == 300) {
 				// game over
 				if (FlxG.keys.justPressed("ENTER")) {
 					kill();
@@ -350,6 +362,17 @@ package
 			gameState = newState;
 			stateTime = 0;
 			this.stateDuration = stateDuration;
+		}
+		
+		private function maybeAddConnectors(newPoppableBubbles:Array):void {
+			if (newPoppableBubbles.length > 0) {
+				var positionMap:Object = newPositionMap();
+				for each (var bubble:Bubble in newPoppableBubbles) {
+					maybeAddConnector(bubble, positionMap[hashPosition(bubble.x, bubble.y + bubbleHeight)], Embed.Microbe0S);
+					maybeAddConnector(bubble, positionMap[hashPosition(bubble.x - columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Sw);
+					maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Se);
+				}
+			}
 		}
 		
 		public function maybeAddConnector(bubble:Bubble, bubbleS:Bubble, graphic:Class):void {
@@ -399,7 +422,7 @@ package
 			}
 			if (poppedBubbles.length > 0) {
 				poppedBubbles.sort(orderByPosition);
-				changeState(120, DROP_DELAY + poppedBubbles.length * DROP_PER_BUBBLE_DELAY);
+				changeState(120, levelDetails.dropDelay + poppedBubbles.length * levelDetails.dropPerBubbleDelay);
 			}
 		}
 		
@@ -468,17 +491,6 @@ package
 				}
 			}
 			return maxBubble;
-		}
-		
-		private function randomColor():int {
-			var randomInt:int = Math.random() * 5;
-			switch(randomInt) {
-				case 0: return 0xffff0000;
-				case 1: return 0xffffff00;
-				case 2: return 0xff00ff00;
-				case 3: return 0xff0080ff;
-				default: return 0xff8000ff;
-			}
 		}
 		
 		private function orderByPosition(a:Bubble, b:Bubble):Number {
