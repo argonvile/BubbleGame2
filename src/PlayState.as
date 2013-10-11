@@ -9,7 +9,7 @@ package
 		public static const bubbleHeight:int = 17;
 		public static const columnWidth:int = 15;
 		
-		private var leftEdge:int = 20;
+		private var leftEdge:int = 8;
 		private var playerSprite:FlxSprite;
 		private var bubbles:FlxGroup;
 		private var connectors:FlxGroup;
@@ -105,11 +105,11 @@ package
 			add(fgSprite);
 		}
 		
-		private function scrollBg():void {
+		private function scrollBg(howMany:int=1):void {
 			var remainingTime:Number = Math.max(10, levelDetails.levelDuration - elapsed);
 			var spriteVelocity = -bgSprite.y / remainingTime;
-			bgSprite.y += spriteVelocity * FlxG.elapsed;
-			fgSprite.y += spriteVelocity * FlxG.elapsed;
+			bgSprite.y = Math.min(0, bgSprite.y + spriteVelocity * howMany * FlxG.elapsed);
+			fgSprite.y = Math.min(0, fgSprite.y + spriteVelocity * howMany * FlxG.elapsed);
 		}
 		
 		override public function update():void
@@ -190,7 +190,7 @@ package
 						}
 					}
 					maybeAddConnectors(newPoppableBubbles);
-					scrollBg();
+					scrollBg(bubbleHeight);
 					newRowLocation += bubbleHeight;
 				}
 			}
