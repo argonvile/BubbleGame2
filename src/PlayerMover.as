@@ -24,7 +24,7 @@ package
 			repeatRate = PlayerSave.getRepeatRate();
 		}
 		
-		public function movePlayer(justPressedLeft:Boolean, justPressedRight:Boolean, justPressedDown:Boolean, justPressedUp:Boolean, pressedLeft:Boolean, pressedRight:Boolean) {
+		public function movePlayer(justPressedLeft:Boolean, justPressedRight:Boolean, justPressedDown:Boolean, justPressedUp:Boolean, pressedLeft:Boolean, pressedRight:Boolean):void {
 			if (justPressedLeft) {
 				moveLeft();
 			}
@@ -57,11 +57,11 @@ package
 			}
 		}
 		
-		private function moveLeft() {
+		private function moveLeft():void {
 			playerSprite.x = Math.max(playerSprite.x - PlayState.columnWidth, minX);
 		}
 		
-		private function moveRight() {
+		private function moveRight():void {
 			playerSprite.x = Math.min(playerSprite.x + PlayState.columnWidth, maxX);
 		}
 		

@@ -107,7 +107,7 @@ package
 		
 		private function scrollBg(howMany:int=1):void {
 			var remainingTime:Number = Math.max(10, levelDetails.levelDuration - elapsed);
-			var spriteVelocity = -bgSprite.y / remainingTime;
+			var spriteVelocity:Number = -bgSprite.y / remainingTime;
 			bgSprite.y = Math.min(0, bgSprite.y + spriteVelocity * howMany * FlxG.elapsed);
 			fgSprite.y = Math.min(0, fgSprite.y + spriteVelocity * howMany * FlxG.elapsed);
 		}
