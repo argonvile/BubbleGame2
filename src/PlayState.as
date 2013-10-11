@@ -9,6 +9,7 @@ package
 		public static const bubbleHeight:int = 17;
 		public static const columnWidth:int = 15;
 		
+		private var leftEdge:int = 20;
 		private var playerSprite:FlxSprite;
 		private var bubbles:FlxGroup;
 		private var connectors:FlxGroup;
@@ -43,7 +44,10 @@ package
 		
 		private var levelDetails:LevelDetails;
 		
-		public function PlayState(levelDetails:LevelDetails) {
+		private var bgSprite:FlxSprite;
+		private var fgSprite:FlxSprite;
+		
+		public function PlayState(levelDetails:LevelDetails=null) {
 			this.levelDetails = levelDetails;
 		}
 		
@@ -53,13 +57,43 @@ package
 				levelDetails = new SonicTheEdgehog(3);
 			}
 			
+			var tempSprite:FlxSprite;
+			tempSprite = new FlxSprite(0, 0, Embed.GutsBg);
+			tempSprite.alpha = 0.6;
+			tempSprite.scale.x = 480 / tempSprite.width;
+			tempSprite.scale.y = 480 / tempSprite.height;
+			tempSprite.width = 480;
+			tempSprite.height = 480;
+			tempSprite.setOriginToCorner();
+			
+			bgSprite = new FlxSprite(0, -240);
+			bgSprite.makeGraphic(480, 480, 0xff000000);
+			bgSprite.stamp(tempSprite, 0, 0);
+			
+			tempSprite.loadGraphic(Embed.GutsFg);
+			tempSprite.alpha = 1.0;
+			tempSprite.setOriginToCorner();
+			
+			fgSprite = new FlxSprite(0, -240);
+			fgSprite.makeGraphic(480, 480, 0x00000000);
+			fgSprite.stamp(tempSprite, leftEdge - 480, 0);
+			fgSprite.stamp(tempSprite, leftEdge + levelDetails.columnCount * columnWidth + 2, 0);
+			
+			tempSprite.loadGraphic(Embed.GutsEdge);
+			tempSprite.setOriginToCorner();
+			fgSprite.stamp(tempSprite, leftEdge - 5, 0);
+			fgSprite.stamp(tempSprite, leftEdge + levelDetails.columnCount * columnWidth + 2 - 5, 0);
+			
+			add(bgSprite);
+			
 			bubbles = new FlxGroup();
 			add(bubbles);
 			connectors = new FlxGroup();
 			add(connectors);
 			
-			playerSprite = new FlxSprite(0, 224);
+			playerSprite = new FlxSprite(leftEdge, 224);
 			playerSprite.makeGraphic(columnWidth, bubbleHeight, 0xffffffff);
+			playerSprite.offset.x = -1;
 			add(playerSprite);
 
 			add(heldBubbles);
@@ -67,6 +101,15 @@ package
 			
 			timerText = new FlxText(290, 0, 100, "0.0");
 			add(timerText);
+			
+			add(fgSprite);
+		}
+		
+		private function scrollBg():void {
+			var remainingTime:Number = Math.max(10, levelDetails.levelDuration - elapsed);
+			var spriteVelocity = -bgSprite.y / remainingTime;
+			bgSprite.y += spriteVelocity * FlxG.elapsed;
+			fgSprite.y += spriteVelocity * FlxG.elapsed;
 		}
 		
 		override public function update():void
@@ -79,21 +122,21 @@ package
 				levelDetails.update(elapsed);
 				// handle player input
 				if (FlxG.keys.justPressed("LEFT")) {
-					playerSprite.x = Math.max(playerSprite.x-columnWidth, 0);
+					playerSprite.x = Math.max(playerSprite.x-columnWidth, leftEdge);
 				}
 				if (FlxG.keys.justPressed("RIGHT")) {
-					playerSprite.x = Math.min(playerSprite.x+columnWidth, columnWidth * (levelDetails.columnCount - 1));
+					playerSprite.x = Math.min(playerSprite.x+columnWidth, leftEdge + columnWidth * (levelDetails.columnCount - 1));
 				}
 				if (FlxG.keys.justPressed("DOWN")) {
-					playerSprite.x = columnWidth*(Math.floor(0.33333333 * (levelDetails.columnCount - 1)));
+					playerSprite.x = leftEdge + columnWidth*(Math.floor(0.33333333 * (levelDetails.columnCount - 1)));
 				}
 				if (FlxG.keys.justPressed("UP")) {
-					playerSprite.x = columnWidth*(Math.ceil(0.66666667 * (levelDetails.columnCount - 1)));
+					playerSprite.x = leftEdge + columnWidth*(Math.ceil(0.66666667 * (levelDetails.columnCount - 1)));
 				}
 				if (FlxG.keys.pressed("LEFT")) {
 					leftTimer += FlxG.elapsed;
 					if (leftTimer > 0.175) {
-						playerSprite.x = 0;
+						playerSprite.x = leftEdge;
 					}
 				} else {
 					leftTimer = 0;
@@ -101,7 +144,7 @@ package
 				if (FlxG.keys.pressed("RIGHT")) {
 					rightTimer += FlxG.elapsed;
 					if (rightTimer > 0.175) {
-						playerSprite.x = columnWidth * (levelDetails.columnCount - 1);
+						playerSprite.x = leftEdge + columnWidth * (levelDetails.columnCount - 1);
 					}
 				} else {
 					rightTimer = 0;
@@ -147,6 +190,7 @@ package
 						}
 					}
 					maybeAddConnectors(newPoppableBubbles);
+					scrollBg();
 					newRowLocation += bubbleHeight;
 				}
 			}
@@ -157,7 +201,7 @@ package
 				var newPoppableBubbles:Array = new Array();
 				do {
 					for (var i:int = 0; i < levelDetails.columnCount; i++) {
-						var x:int = i * columnWidth;
+						var x:int = leftEdge + i * columnWidth;
 						var y:int = (i % 2 == 0)?newRowLocation:newRowLocation - bubbleHeight * .5;
 						var bubbleColor:int = levelDetails.nextBubbleColor();
 						if (bubbleColor == 0) {
@@ -246,6 +290,7 @@ package
 				} else {
 					// no, it's not paused
 					rowScrollTimer += levelDetails.rowScrollPixels();
+					scrollBg();
 					if (rowScrollTimer > 1) {
 						// scroll all the bubbles down a little
 						var newPoppableBubbles:Array = new Array();

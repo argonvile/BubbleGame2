@@ -1,26 +1,12 @@
-*Add pulling animation
-*Add tossing animation
-*Add popping animation
-*fix "catch and throw" bug
-* -- throw-catch causes bubbles to hover in mid air
-* -- other weird behaviors
-*fix weird "too fast" bug, where stuff was disappearing haphazardly?
-*Add dropping animation
----Give prototype to Nogard!
-*Getting a combo should prevent the level from dropping
-*Add "hurry up" button
-*Fix bug where sometimes new bubbles don't appear connected
-*Fix bug where connectors are disconnected if you throw-catch
-*Fix bug where throw-catching a ton of bubbles results in you only grabbing some?
-Add stage select
-Popping animation should pop one-at-a-time
-Dropping animation should drop one-at-a-time
+*throw-catching a ton of bubbles results in you only grabbing some?
+*Add stage select
+*Popping animation should pop one-at-a-time
+*Dropping animation should drop one-at-a-time
+Add background
+
 add vertical "where am i and what am i holding" line
-
-
 Improve hurry up animation
 Eyes shouldn't get covered by connectors
-Add background
 Bubbles should "wiggle"
 Bubble eyes should look around
 Bubble eyes should look surprised
