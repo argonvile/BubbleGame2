@@ -43,9 +43,15 @@ package
 		
 		private var levelDetails:LevelDetails;
 		
+		public function PlayState(levelDetails:LevelDetails) {
+			this.levelDetails = levelDetails;
+		}
+		
 		override public function create():void
 		{
-			levelDetails = new FilmReel(3);
+			if (levelDetails == null) {
+				levelDetails = new SonicTheEdgehog(3);
+			}
 			
 			bubbles = new FlxGroup();
 			add(bubbles);
@@ -282,7 +288,7 @@ package
 								text.alignment = "center";
 								text.y = FlxG.height / 2 - text.height / 2;
 								add(text);
-								text = new FlxText(0, 0, FlxG.width, "Hit <Enter> to try again");
+								text = new FlxText(0, 0, FlxG.width, "Hit <Enter>");
 								text.alignment = "center";
 								text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
 								add(text);
@@ -298,7 +304,7 @@ package
 					text.alignment = "center";
 					text.y = FlxG.height / 2 - text.height / 2;
 					add(text);
-					text = new FlxText(0, 0, FlxG.width, "Hit <Enter> to try again");
+					text = new FlxText(0, 0, FlxG.width, "Hit <Enter>");
 					text.alignment = "center";
 					text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
 					add(text);
@@ -385,7 +391,7 @@ package
 				// game over
 				if (FlxG.keys.justPressed("ENTER")) {
 					kill();
-					FlxG.switchState(new PlayState());
+					FlxG.switchState(new LevelSelect());
 					return;
 				}
 			}

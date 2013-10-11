@@ -80,9 +80,9 @@ package
 		
 		public static function shiftHueBitmapData(spritePixels:BitmapData, color:uint):void {
 			if (color == 0xff000000) {
-				return whitenBitmapData(spritePixels, 0.5, 0.85);
-			} else if (color == 0xffffffff) {
 				return whitenBitmapData(spritePixels, 0.15, 0.5);
+			} else if (color == 0xffffffff) {
+				return whitenBitmapData(spritePixels, 0.5, 0.85);
 			}
 			var targetHsv:Object = FlxColor.RGBtoHSV(color);
 			for (var pixelX:int = 0; pixelX < spritePixels.width; pixelX++) {
