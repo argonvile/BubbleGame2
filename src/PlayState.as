@@ -37,15 +37,13 @@ package
 		
 		private var newRowLocation:Number = 6*bubbleHeight;
 		
-		private var leftTimer:Number = 0;
-		private var rightTimer:Number = 0;
-		
 		private var timerText:FlxText;
 		
 		private var levelDetails:LevelDetails;
 		
 		private var bgSprite:FlxSprite;
 		private var fgSprite:FlxSprite;
+		private var playerMover:PlayerMover;
 		
 		public function PlayState(levelDetails:LevelDetails=null) {
 			this.levelDetails = levelDetails;
@@ -95,7 +93,9 @@ package
 			playerSprite.makeGraphic(columnWidth, bubbleHeight, 0xffffffff);
 			playerSprite.offset.x = -1;
 			add(playerSprite);
-
+			
+			playerMover = new PlayerMover(playerSprite, leftEdge, levelDetails.columnCount);
+			
 			add(heldBubbles);
 			add(fallingBubbles);
 			
@@ -120,35 +120,7 @@ package
 			if (gameState < 200) {
 				elapsed += FlxG.elapsed;
 				levelDetails.update(elapsed);
-				// handle player input
-				if (FlxG.keys.justPressed("LEFT")) {
-					playerSprite.x = Math.max(playerSprite.x-columnWidth, leftEdge);
-				}
-				if (FlxG.keys.justPressed("RIGHT")) {
-					playerSprite.x = Math.min(playerSprite.x+columnWidth, leftEdge + columnWidth * (levelDetails.columnCount - 1));
-				}
-				if (FlxG.keys.justPressed("DOWN")) {
-					playerSprite.x = leftEdge + columnWidth*(Math.floor(0.33333333 * (levelDetails.columnCount - 1)));
-				}
-				if (FlxG.keys.justPressed("UP")) {
-					playerSprite.x = leftEdge + columnWidth*(Math.ceil(0.66666667 * (levelDetails.columnCount - 1)));
-				}
-				if (FlxG.keys.pressed("LEFT")) {
-					leftTimer += FlxG.elapsed;
-					if (leftTimer > 0.175) {
-						playerSprite.x = leftEdge;
-					}
-				} else {
-					leftTimer = 0;
-				}
-				if (FlxG.keys.pressed("RIGHT")) {
-					rightTimer += FlxG.elapsed;
-					if (rightTimer > 0.175) {
-						playerSprite.x = leftEdge + columnWidth * (levelDetails.columnCount - 1);
-					}
-				} else {
-					rightTimer = 0;
-				}
+				playerMover.movePlayerFromInput();
 				if (FlxG.keys.justPressed("Z")) {
 					// find the next block above the player, and remove it
 					grabBubbles();
