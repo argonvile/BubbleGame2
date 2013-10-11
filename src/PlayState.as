@@ -136,32 +136,7 @@ package
 					}
 				}
 				if (FlxG.keys.justPressed("C")) {
-					var newPoppableBubbles:Array = new Array();
-					var removedNullBubbles:Boolean = false;
-					for each (var bubble:Bubble in bubbles.members) {
-						if (bubble != null && bubble.alive) {
-							var wasAnchor:Boolean = bubble.isAnchor();
-							bubble.y += bubbleHeight;
-							bubble.updateAlpha();
-							if (!bubble.isAnchor() && wasAnchor) {
-								if (bubble is NullBubble) {
-									bubbles.remove(bubble);
-									removedNullBubbles = true;
-								} else {
-									newPoppableBubbles.push(bubble);
-								}
-							}
-						}
-					}
-					if (removedNullBubbles && (gameState == 100 || gameState == 130)) {
-						checkForDetachedBubbles();
-					}
-					for each (var connector:Connector in connectors.members) {
-						if (connector != null && connectors.alive) {
-							connector.y += bubbleHeight;
-						}
-					}
-					maybeAddConnectors(newPoppableBubbles);
+					scrollBubbles(bubbleHeight);
 					scrollBg(bubbleHeight);
 					newRowLocation += bubbleHeight;
 				}
@@ -265,33 +240,8 @@ package
 					scrollBg();
 					if (rowScrollTimer > 1) {
 						// scroll all the bubbles down a little
-						var newPoppableBubbles:Array = new Array();
 						newRowLocation += Math.floor(rowScrollTimer);
-						var removedNullBubbles:Boolean = false;
-						for each (var bubble:Bubble in bubbles.members) {
-							if (bubble != null && bubble.alive) {
-								var wasAnchor:Boolean = bubble.isAnchor();
-								bubble.y += Math.floor(rowScrollTimer);
-								bubble.updateAlpha();
-								if (!bubble.isAnchor() && wasAnchor) {
-									if (bubble is NullBubble) {
-										bubbles.remove(bubble);
-										removedNullBubbles = true;
-									} else {
-										newPoppableBubbles.push(bubble);
-									}
-								}
-							}
-						}
-						if (removedNullBubbles && (gameState == 100 || gameState == 130)) {
-							checkForDetachedBubbles();
-						}
-						for each (var connector:Connector in connectors.members) {
-							if (connector != null && connector.alive) {
-								connector.y += Math.floor(rowScrollTimer);
-							}
-						}
-						maybeAddConnectors(newPoppableBubbles);
+						scrollBubbles(Math.floor(rowScrollTimer));
 						rowScrollTimer -= Math.floor(rowScrollTimer);
 					}
 					
@@ -412,6 +362,35 @@ package
 					return;
 				}
 			}
+		}
+		
+		private function scrollBubbles(scrollAmount:Number):void {
+			var newPoppableBubbles:Array = new Array();
+			var removedNullBubbles:Boolean = false;
+			for each (var bubble:Bubble in bubbles.members) {
+				if (bubble != null && bubble.alive) {
+					var wasAnchor:Boolean = bubble.isAnchor();
+					bubble.y += scrollAmount;
+					bubble.updateAlpha();
+					if (!bubble.isAnchor() && wasAnchor) {
+						if (bubble is NullBubble) {
+							bubbles.remove(bubble);
+							removedNullBubbles = true;
+						} else {
+							newPoppableBubbles.push(bubble);
+						}
+					}
+				}
+			}
+			if (removedNullBubbles && (gameState == 100 || gameState == 130)) {
+				checkForDetachedBubbles();
+			}
+			for each (var connector:Connector in connectors.members) {
+				if (connector != null && connector.alive) {
+					connector.y += scrollAmount;
+				}
+			}
+			maybeAddConnectors(newPoppableBubbles);			
 		}
 		
 		private function changeState(newState:int, stateDuration:Number=0):void {
