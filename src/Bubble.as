@@ -9,11 +9,14 @@ package
 		 * 0 = normal
 		 * 100 = grabbing
 		 * 200 = throwing
+		 * 250 = quickly approaching
+		 * 251 = just finished quickly approaching
 		 * 300 = popping
 		 */
 		public var state:int = 0;
 		public var stateTime:Number = 0;
 		protected var playerSprite:FlxSprite;
+		public var quickApproachDistance:Number;
 		
 		public function Bubble(x:Number,y:Number) 
 		{
@@ -47,6 +50,13 @@ package
 			offset.x = (x + width / 2) - (playerSprite.x + playerSprite.width / 2);
 			offset.y = (y + height / 2) - (playerSprite.y + playerSprite.height / 2);
 		}
+		
+		public function quickApproach(distance:Number):void {
+			this.quickApproachDistance = distance;
+			state = 250;
+			stateTime = 0;
+			offset.x = 0;
+			offset.y = distance;
+		}
 	}
-
 }

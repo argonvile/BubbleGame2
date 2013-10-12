@@ -13,6 +13,7 @@ package
 		private var regularGraphic:BitmapData;
 		private var popGraphic:BitmapData;
 		private var levelDetails:LevelDetails;
+		private const QUICK_APPROACH_DURATION:Number = 0.3;
 		
 		public function DefaultBubble(levelDetails:LevelDetails,x:Number,y:Number,bubbleColor:int) 
 		{
@@ -135,12 +136,36 @@ package
 					state = 0;
 				}
 			}
+			if (state == 250) {
+				var statePct:Number = Math.pow(1 - Math.min(1, stateTime / levelDetails.grabDuration), 2.5);
+				offset.x = 0;
+				offset.y = quickApproachDistance * statePct;
+				if (statePct == 0) {
+					state = 251;
+				}
+				updateConnectorOffsets();
+			} else if (state == 251) {
+				state = 0;
+			}
 			updateAlpha();
 		}
 		
 		override public function kill():void {
 			super.kill();
 			killConnectors();
+		}
+		
+		override public function quickApproach(distance:Number):void {
+			super.quickApproach(distance);
+			updateConnectorOffsets();
+		}
+		
+		private function updateConnectorOffsets():void {
+			for each (var connector:Connector in connectors) {
+				if (connector != null && connector.alive) {
+					connector.offset.y = offset.y;
+				}
+			}			
 		}
 		
 		public function killConnectors():void {

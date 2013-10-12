@@ -4,15 +4,16 @@
 *Dropping animation should drop one-at-a-time
 *Add background
 *configurable "holding the arrow key down" behavior
-new level: boredom
+*new level:shuffle
+*Improve hurry up animation
 new level: everything's red, and lots of puyo-puyo-esque garbage
 new level: eliminating 7 yellow bubbles at a time turns all yellow bubbles on the screen into another color (whichever color they're adjacent to)
-Bubbles should "wiggle"
 Add support for desaturated/light/dark bubbles
 Sound effects escalate in pitch
 
+Bubbles should "wiggle"
+new level: boredom
 add vertical "where am i and what am i holding" line
-Improve hurry up animation
 Eyes shouldn't get covered by connectors
 Bubble eyes should look around
 Bubble eyes should look surprised

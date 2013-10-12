@@ -244,7 +244,7 @@ package
 					// did the player lose?
 					if (gameState == 100) {
 						for each (var bubble:Bubble in bubbles.members) {
-							if (bubble != null && bubble.alive && bubble.y > 232 && bubble.state == 0) {
+							if (bubble != null && bubble.alive && bubble.y > 232 && (bubble.state != 200 && bubble.state != 300)) {
 								// yes, they lost. transition to state 200
 								changeState(200);
 								var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
@@ -368,6 +368,9 @@ package
 				if (bubble != null && bubble.alive) {
 					var wasAnchor:Boolean = bubble.isAnchor();
 					bubble.y += scrollAmount;
+					if (scrollAmount >= bubbleHeight) {
+						bubble.quickApproach(scrollAmount);
+					}
 					bubble.updateAlpha();
 					if (!bubble.isAnchor() && wasAnchor) {
 						if (bubble is NullBubble) {
@@ -419,17 +422,25 @@ package
 		
 		public function maybeAddConnector(bubble:Bubble, bubbleS:Bubble, graphic:Class):void {
 			if (bubble is DefaultBubble && bubbleS is DefaultBubble) {
-				for each (var thrownBubble:Bubble in thrownBubbles) {
-					if (bubble == thrownBubble || bubbleS == thrownBubble) {
-						return;
-					}
+				if (bubble.offset.y != bubbleS.offset.y) {
+					return;
+				}
+				if (bubble.offset.x != bubbleS.offset.x) {
+					return;
+				}
+				if (bubble.isAnchor() || bubbleS.isAnchor()) {
+					return;
+				}
+				if (!bubble.visible || !bubbleS.visible) {
+					return;
 				}
 				var defaultBubble:DefaultBubble = bubble as DefaultBubble;
 				var defaultBubbleS:DefaultBubble = bubbleS as DefaultBubble;
-				if (defaultBubbleS.bubbleColor == defaultBubble.bubbleColor && defaultBubbleS.visible && defaultBubble.visible) {
+				if (defaultBubbleS.bubbleColor == defaultBubble.bubbleColor) {
 					var connector:DefaultConnector = connectors.recycle(DefaultConnector) as DefaultConnector;
 					connector.revive();
 					connector.init(defaultBubble, defaultBubbleS, graphic);
+					connector.offset.y = defaultBubble.offset.y;
 					connectors.add(connector);
 					defaultBubble.connectors.push(connector);
 					defaultBubbleS.connectors.push(connector);

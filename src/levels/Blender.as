@@ -53,6 +53,16 @@ package levels
 			} else {
 				bubbleRate = maxBubbleRate;
 			}
+			
+			var justScrolledBubbles:Array = new Array();
+			for each (var defaultBubble:DefaultBubble in playState.bubbles.members) {
+				if (defaultBubble != null && defaultBubble.alive) {
+					if (defaultBubble.state == 251) {
+						justScrolledBubbles.push(defaultBubble);
+					}
+				}
+			}
+			playState.maybeAddConnectors(justScrolledBubbles);
 		}
 		
 		override public function init(playState:PlayState):void {
@@ -84,21 +94,23 @@ package levels
 				var i:int = 0;
 				do {
 					bubblesInColumn[i].y += PlayState.bubbleHeight;
+					bubblesInColumn[i].quickApproach(PlayState.bubbleHeight);
 					i++;
 				} while (i < bubblesInColumn.length && bubblesInColumn[i - 1].y == bubblesInColumn[i].y);
 				bubblesInColumn.unshift(newBubble1);
 				i = 0;
 				do {
 					bubblesInColumn[i].y += PlayState.bubbleHeight;
+					bubblesInColumn[i].quickApproach(PlayState.bubbleHeight + bubblesInColumn[i].quickApproachDistance);
 					i++;
 				} while (i < bubblesInColumn.length && bubblesInColumn[i - 1].y == bubblesInColumn[i].y);
 				for each (var bubble:DefaultBubble in bubblesInColumn) {
 					if (!bubble.isAnchor() && bubble.visible) {
 						bubble.updateAlpha();
 						bubble.killConnectors();
-						playState.maybeAddConnectors([bubble]);
 					}
 				}
+				playState.maybeAddConnectors(bubblesInColumn);
 				playState.bubbles.add(newBubble0);
 				playState.bubbles.add(newBubble1);
 			}
