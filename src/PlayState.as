@@ -9,9 +9,9 @@ package
 		public static const bubbleHeight:int = 17;
 		public static const columnWidth:int = 15;
 		
-		private var leftEdge:int = 8;
+		public var leftEdge:int = 8;
 		private var playerSprite:FlxSprite;
-		private var bubbles:FlxGroup;
+		public var bubbles:FlxGroup;
 		private var connectors:FlxGroup;
 		private var fallingBubbles:FlxGroup = new FlxGroup();
 		private var heldBubbles:FlxGroup = new FlxGroup();
@@ -35,7 +35,7 @@ package
 		private var thrownBubbles:Array = new Array();
 		private var poppedBubbles:Array = new Array();
 		
-		private var newRowLocation:Number = 6*bubbleHeight;
+		public var newRowLocation:Number = 6*bubbleHeight;
 		
 		private var timerText:FlxText;
 		
@@ -44,6 +44,7 @@ package
 		private var bgSprite:FlxSprite;
 		private var fgSprite:FlxSprite;
 		private var playerMover:PlayerMover;
+		public var scrollBubblesFunction:Function = scrollBubbles;
 		
 		public function PlayState(levelDetails:LevelDetails=null) {
 			this.levelDetails = levelDetails;
@@ -52,8 +53,9 @@ package
 		override public function create():void
 		{
 			if (levelDetails == null) {
-				levelDetails = new SonicTheEdgehog(3);
+				levelDetails = new Blender(3);
 			}
+			levelDetails.init(this);
 			
 			var tempSprite:FlxSprite;
 			tempSprite = new FlxSprite(0, 0, Embed.GutsBg);
@@ -136,9 +138,8 @@ package
 					}
 				}
 				if (FlxG.keys.justPressed("C")) {
-					scrollBubbles(bubbleHeight);
+					scrollBubblesFunction.call(this, bubbleHeight);
 					scrollBg(bubbleHeight);
-					newRowLocation += bubbleHeight;
 				}
 			}
 			// do we need to add new rows?
@@ -148,8 +149,8 @@ package
 				var newPoppableBubbles:Array = new Array();
 				do {
 					for (var i:int = 0; i < levelDetails.columnCount; i++) {
-						var x:int = leftEdge + i * columnWidth;
-						var y:int = (i % 2 == 0)?newRowLocation:newRowLocation - bubbleHeight * .5;
+						var x:Number = leftEdge + i * columnWidth;
+						var y:Number = (i % 2 == 0)?newRowLocation:newRowLocation - bubbleHeight * .5;
 						var bubbleColor:int = levelDetails.nextBubbleColor();
 						if (bubbleColor == 0) {
 							var nullBubble:NullBubble = new NullBubble(x, y);
@@ -205,11 +206,7 @@ package
 						if (thrownBubble.state == 200) {
 							thrownBubbleCount++;
 						} else {
-							maybeAddConnector(thrownBubble, positionMap[hashPosition(thrownBubble.x - columnWidth, thrownBubble.y + bubbleHeight / 2)], Embed.Microbe0Sw); // SW
-							maybeAddConnector(thrownBubble, positionMap[hashPosition(thrownBubble.x - columnWidth, thrownBubble.y - bubbleHeight / 2)], Embed.Microbe0Se); // NW
-							maybeAddConnector(thrownBubble, positionMap[hashPosition(thrownBubble.x, thrownBubble.y - bubbleHeight)], Embed.Microbe0S); // N
-							maybeAddConnector(thrownBubble, positionMap[hashPosition(thrownBubble.x + columnWidth, thrownBubble.y - bubbleHeight / 2)], Embed.Microbe0Sw); // NE
-							maybeAddConnector(thrownBubble, positionMap[hashPosition(thrownBubble.x + columnWidth, thrownBubble.y + bubbleHeight / 2)], Embed.Microbe0Se); // SE
+							maybeAddConnectorSingle(positionMap, thrownBubble)
 					
 							thrownBubbles[i] = null;
 							popCounter.popMatches(thrownBubble);
@@ -238,11 +235,11 @@ package
 					// no, it's not paused
 					rowScrollTimer += levelDetails.rowScrollPixels();
 					scrollBg();
-					if (rowScrollTimer > 1) {
+					if (rowScrollTimer > levelDetails.minScrollPixels) {
+						var scrollAmount:Number = Math.floor(rowScrollTimer / levelDetails.minScrollPixels) * levelDetails.minScrollPixels;
 						// scroll all the bubbles down a little
-						newRowLocation += Math.floor(rowScrollTimer);
-						scrollBubbles(Math.floor(rowScrollTimer));
-						rowScrollTimer -= Math.floor(rowScrollTimer);
+						scrollBubblesFunction.call(this, scrollAmount);
+						rowScrollTimer -= scrollAmount;
 					}
 					
 					// did the player lose?
@@ -364,7 +361,8 @@ package
 			}
 		}
 		
-		private function scrollBubbles(scrollAmount:Number):void {
+		public function scrollBubbles(scrollAmount:Number):void {
+			newRowLocation += scrollAmount;
 			var newPoppableBubbles:Array = new Array();
 			var removedNullBubbles:Boolean = false;
 			for each (var bubble:Bubble in bubbles.members) {
@@ -399,25 +397,32 @@ package
 			this.stateDuration = stateDuration;
 		}
 		
-		private function maybeAddConnectors(newPoppableBubbles:Array):void {
+		public function maybeAddConnectors(newPoppableBubbles:Array):void {
 			if (newPoppableBubbles.length > 0) {
 				var positionMap:Object = newPositionMap();
 				for each (var bubble:Bubble in newPoppableBubbles) {
 					if (bubble is DefaultBubble) {
 						var defaultBubble:DefaultBubble = DefaultBubble(bubble);
-						maybeAddConnector(defaultBubble, positionMap[hashPosition(defaultBubble.x, defaultBubble.y + bubbleHeight)], Embed.Microbe0S);
-						maybeAddConnector(defaultBubble, positionMap[hashPosition(defaultBubble.x - columnWidth, defaultBubble.y + bubbleHeight / 2)], Embed.Microbe0Sw);
-						maybeAddConnector(defaultBubble, positionMap[hashPosition(defaultBubble.x + columnWidth, defaultBubble.y + bubbleHeight / 2)], Embed.Microbe0Se);
+						maybeAddConnectorSingle(positionMap, defaultBubble);
 					}
 				}
 			}
+		}
+		
+		private function maybeAddConnectorSingle(positionMap:Object, bubble:DefaultBubble):void {
+			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x, bubble.y - bubbleHeight)], Embed.Microbe0S); // N
+			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y - bubbleHeight / 2)], Embed.Microbe0Sw); // NE
+			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Se); // SE
+			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x, bubble.y + bubbleHeight)], Embed.Microbe0S); // S
+			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x - columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Sw); // SW
+			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x - columnWidth, bubble.y - bubbleHeight / 2)], Embed.Microbe0Se); // NW
 		}
 		
 		public function maybeAddConnector(bubble:Bubble, bubbleS:Bubble, graphic:Class):void {
 			if (bubble is DefaultBubble && bubbleS is DefaultBubble) {
 				var defaultBubble:DefaultBubble = bubble as DefaultBubble;
 				var defaultBubbleS:DefaultBubble = bubbleS as DefaultBubble;
-				if (defaultBubbleS.bubbleColor == defaultBubble.bubbleColor) {
+				if (defaultBubbleS.bubbleColor == defaultBubble.bubbleColor && defaultBubbleS.visible && defaultBubble.visible) {
 					var connector:DefaultConnector = connectors.recycle(DefaultConnector) as DefaultConnector;
 					connector.revive();
 					connector.init(defaultBubble, defaultBubbleS, graphic);
@@ -520,7 +525,7 @@ package
 			return Math.round(x / columnWidth) + "," + Math.round((y - newRowLocation) * 2 / bubbleHeight);
 		}
 		
-		private function lowestBubble(x:Number = -9999):Bubble {
+		public function lowestBubble(x:Number = -9999):Bubble {
 			if (x == -9999) {
 				x = playerSprite.x;
 			}

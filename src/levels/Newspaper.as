@@ -2,8 +2,8 @@ package levels
 {
 	public class Newspaper extends LevelDetails
 	{
-		public static const name:String = "A Newspaper";
-		public function Newspaper(scenario:int=2) 
+		public static const name:String = "Newspaper";
+		public function Newspaper(scenario:int) 
 		{
 			setSpeed(scenario);
 			bubbleColors = [0xffff1e00, 0xff000000, 0xffffffff];

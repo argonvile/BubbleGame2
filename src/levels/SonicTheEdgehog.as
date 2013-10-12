@@ -6,7 +6,7 @@ package levels
 		private var bubbleIndex:int = 0;
 		private var upcomingBubbleData:Array;
 		
-		public function SonicTheEdgehog(scenario:int = 2) 
+		public function SonicTheEdgehog(scenario:int) 
 		{
 			bubbleColors = [0xff4671d5,0xffffaa00,0xffffffff,0xffff0000,0xff4ae83a];
 			setSpeed(scenario < 2?scenario:scenario - 1);
