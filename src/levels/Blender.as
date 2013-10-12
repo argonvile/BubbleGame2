@@ -90,20 +90,27 @@ package levels
 				
 				bubblesInColumn.sort(orderByY);
 				var newBubble0:DefaultBubble = new DefaultBubble(this, newBubbleX, bubblesInColumn[0].y, nextBubbleColor());
-				var newBubble1:DefaultBubble = new DefaultBubble(this, newBubbleX, bubblesInColumn[0].y, (easyPair++%4==0)?newBubble0.bubbleColor:nextBubbleColor());
+				var newBubble1:DefaultBubble = new DefaultBubble(this, newBubbleX, bubblesInColumn[0].y, (easyPair++ % 4 == 0)?newBubble0.bubbleColor:nextBubbleColor());
+				var shiftedBubbles:Array = new Array();
 				var i:int = 0;
 				do {
 					bubblesInColumn[i].y += PlayState.bubbleHeight;
-					bubblesInColumn[i].quickApproach(PlayState.bubbleHeight);
+					shiftedBubbles.push(bubblesInColumn[i]);
 					i++;
 				} while (i < bubblesInColumn.length && bubblesInColumn[i - 1].y == bubblesInColumn[i].y);
 				bubblesInColumn.unshift(newBubble1);
 				i = 0;
 				do {
 					bubblesInColumn[i].y += PlayState.bubbleHeight;
-					bubblesInColumn[i].quickApproach(PlayState.bubbleHeight + bubblesInColumn[i].quickApproachDistance);
+					shiftedBubbles.push(bubblesInColumn[i]);
 					i++;
 				} while (i < bubblesInColumn.length && bubblesInColumn[i - 1].y == bubblesInColumn[i].y);
+				for each (var shiftedBubble:DefaultBubble in shiftedBubbles) {
+					shiftedBubble.quickApproachDistance = 0;
+				}
+				for each (var shiftedBubble:DefaultBubble in shiftedBubbles) {
+					shiftedBubble.quickApproach(shiftedBubble.quickApproachDistance + PlayState.bubbleHeight);
+				}
 				for each (var bubble:DefaultBubble in bubblesInColumn) {
 					if (!bubble.isAnchor() && bubble.visible) {
 						bubble.updateAlpha();
