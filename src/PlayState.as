@@ -206,9 +206,8 @@ package
 						if (thrownBubble.state == 200) {
 							thrownBubbleCount++;
 						} else {
-							maybeAddConnectorSingle(positionMap, thrownBubble)
-					
 							thrownBubbles[i] = null;
+							maybeAddConnectorSingle(positionMap, thrownBubble)
 							popCounter.popMatches(thrownBubble);
 						}
 					}
@@ -420,6 +419,11 @@ package
 		
 		public function maybeAddConnector(bubble:Bubble, bubbleS:Bubble, graphic:Class):void {
 			if (bubble is DefaultBubble && bubbleS is DefaultBubble) {
+				for each (var thrownBubble:Bubble in thrownBubbles) {
+					if (bubble == thrownBubble || bubbleS == thrownBubble) {
+						return;
+					}
+				}
 				var defaultBubble:DefaultBubble = bubble as DefaultBubble;
 				var defaultBubbleS:DefaultBubble = bubbleS as DefaultBubble;
 				if (defaultBubbleS.bubbleColor == defaultBubble.bubbleColor && defaultBubbleS.visible && defaultBubble.visible) {
