@@ -352,12 +352,14 @@ package
 				// is the drop event over?
 				if (stateTime >= stateDuration) {
 					poppedBubbles.length = 0;
-					if (suspendedBubbles.length > 0) {
-						// if the player has suspended bubbles, transition to the "paused state"
-						changeState(130, levelDetails.throwDuration);
-					} else {
-						// otherwise, transition to state 100
-						changeState(100);
+					changeState(100);
+					// check if the user triggered another drop while we were dropping...
+					checkForDetachedBubbles();
+					if (gameState == 100) {
+						if (suspendedBubbles.length > 0) {
+							// if the player has suspended bubbles, transition to the "paused state"
+							changeState(130, levelDetails.throwDuration);
+						}
 					}
 				}
 			} else if (gameState == 200 || gameState == 300) {

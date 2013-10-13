@@ -8,6 +8,7 @@ package levels
 		
 		public function Blender(scenario:int) 
 		{
+			super(scenario);
 			bubbleColors = [0xffff2300,0xffffae00,0xff133aac,0xff00bd39,0xff7c07a9];
 			var columnScrollCount:Number;
 			if (scenario == 0) {

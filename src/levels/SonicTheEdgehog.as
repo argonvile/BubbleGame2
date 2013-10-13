@@ -8,10 +8,11 @@ package levels
 		
 		public function SonicTheEdgehog(scenario:int) 
 		{
+			super(scenario);
 			bubbleColors = [0xff4671d5,0xffffaa00,0xffffffff,0xffff0000,0xff4ae83a];
 			if (scenario == 0) {
 				maxBubbleRate = 200;
-				bubbleColors = [0xffffffff,0xff000000,0xffff0000,0xff0000ff];
+				bubbleColors = [0xff4671d5,0xffffaa00,0xffffffff,0xffff0000];
 				columnCount = 7;
 				upcomingBubbleData = [
 				2, 2, 1, 1, 1, 2, 2,
