@@ -9,16 +9,13 @@ package
 	public class DefaultBubble extends Bubble
 	{
 		public var bubbleColor:int;
-		public var connectors:Array = new Array();
 		private var regularGraphic:BitmapData;
 		private var popGraphic:BitmapData;
-		private var levelDetails:LevelDetails;
 		private const QUICK_APPROACH_DURATION:Number = 0.3;
 		
 		public function DefaultBubble(levelDetails:LevelDetails,x:Number,y:Number,bubbleColor:int) 
 		{
-			super(x, y);
-			this.levelDetails = levelDetails;
+			super(levelDetails, x, y);
 			
 			this.bubbleColor = bubbleColor;
 			
@@ -119,76 +116,19 @@ package
 			hue *= 360;
 			return { hue:hue, saturation:saturation, value:value };
 		}
-
-		override public function update():void {
-			super.update();
-			stateTime += FlxG.elapsed;
-			if (state == 100) {
-				var statePct:Number = Math.min(1, Math.pow(stateTime / levelDetails.grabDuration, 2.5));
-				offset.x = statePct * ((x + width / 2) - (playerSprite.x + playerSprite.width / 2));
-				offset.y = statePct * ((y + height / 2) - (playerSprite.y + playerSprite.height / 2));
-			}
-			if (state == 200) {
-				var statePct:Number = Math.min(1, Math.pow(stateTime / levelDetails.throwDuration, 1.5));
-				offset.x = (1 - statePct) * ((x + width / 2) - (playerSprite.x + playerSprite.width / 2));
-				offset.y = (1 - statePct) * ((y + height / 2) - (playerSprite.y + playerSprite.height / 2));
-				if (statePct >= 1.0) {
-					state = 0;
+		
+		override public function isGrabbable(heldBubbles:FlxGroup, firstGrab:Boolean):Boolean {
+			var heldBubble:Bubble = heldBubbles.getFirstAlive() as Bubble;
+			if (heldBubble != null) {
+				var heldDefaultBubble:DefaultBubble = heldBubble as DefaultBubble;
+				if (heldDefaultBubble == null) {
+					return false;
+				}
+				if (bubbleColor != heldDefaultBubble.bubbleColor) {
+					return false;
 				}
 			}
-			if (state == 250) {
-				var statePct:Number = Math.pow(1 - Math.min(1, stateTime / levelDetails.grabDuration), 2.5);
-				offset.x = 0;
-				offset.y = quickApproachDistance * statePct;
-				if (statePct == 0) {
-					state = 251;
-				}
-				updateConnectorOffsets();
-			} else if (state == 251) {
-				state = 0;
-			}
-			updateAlpha();
-		}
-		
-		override public function kill():void {
-			super.kill();
-			killConnectors();
-		}
-		
-		override public function quickApproach(distance:Number):void {
-			super.quickApproach(distance);
-			updateConnectorOffsets();
-		}
-		
-		private function updateConnectorOffsets():void {
-			for each (var connector:Connector in connectors) {
-				if (connector != null && connector.alive) {
-					connector.offset.y = offset.y;
-				}
-			}			
-		}
-		
-		public function killConnectors():void {
-			for each (var connector:DefaultConnector in connectors) {
-				if (connector != null && connector.alive) {
-					connector.kill();
-					if (connector.defaultBubble0 != this) {
-						connector.defaultBubble0.removeConnector(connector);
-					}
-					if (connector.defaultBubble1 != this) {
-						connector.defaultBubble1.removeConnector(connector);
-					}
-				}
-			}
-			connectors.length = 0;
-		}
-		
-		public function removeConnector(connector:DefaultConnector):void {
-			for (var i:int = 0; i < connectors.length; i++) {
-				if (connectors[i] == connector) {
-					connectors[i] = null;
-				}
-			}
+			return super.isGrabbable(heldBubbles, firstGrab);
 		}
 	}
 }

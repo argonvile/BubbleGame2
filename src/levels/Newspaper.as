@@ -29,9 +29,5 @@ package levels
 				columnCount = 10;
 			}
 		}
-
-		public override function update(elapsed:Number):void {
-			super.update(elapsed);
-		}
 	}
 }

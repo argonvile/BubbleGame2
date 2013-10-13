@@ -17,12 +17,15 @@ package
 		
 		protected var maxBubbleRate:Number = 300;
 		protected var bubbleRate:Number = 300;
+		protected var playState:PlayState;
 		
 		public function LevelDetails(scenario:int = 2) 
 		{
+			setSpeed(scenario < 2?scenario:scenario - 1);
 		}
 		
 		public function init(playState:PlayState):void {
+			this.playState = playState;
 		}
 		
 		/**
@@ -43,6 +46,17 @@ package
 			return bubbleColors[randomInt];
 		}
 		
+		public function nextBubble(x:Number, y:Number):Bubble {
+			var bubbleColor:int = nextBubbleColor();
+			var nextBubble:Bubble;
+			if (bubbleColor == 0) {
+				nextBubble = new NullBubble(this, x, y);
+			} else {
+				nextBubble = new DefaultBubble(this, x, y, bubbleColor);
+			}
+			return nextBubble;
+		}
+		
 		public function update(elapsed:Number):void {
 			if (elapsed < 5) {
 				bubbleRate = maxBubbleRate * 0.25;
@@ -59,6 +73,12 @@ package
 		
 		public function rowScrollPixels():Number {
 			return FlxG.elapsed * ((bubbleRate * PlayState.bubbleHeight / columnCount) / 60);
+		}
+		
+		public function bubbleVanished(bubble:Bubble):void {
+		}
+		
+		public function bubblesFinishedPopping(bubbles:Array):void {
 		}
 	}
 }

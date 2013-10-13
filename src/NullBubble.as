@@ -2,9 +2,9 @@ package
 {
 	public class NullBubble extends Bubble
 	{
-		public function NullBubble(x:Number, y:Number)
+		public function NullBubble(levelDetails:LevelDetails, x:Number, y:Number)
 		{
-			super(x, y);
+			super(levelDetails, x, y);
 			visible = false;
 		}
 	}

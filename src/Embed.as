@@ -9,6 +9,7 @@ package
 		[Embed(source = "../graphics/guts-bg.png")] public static var GutsBg:Class;
 		[Embed(source = "../graphics/guts-edge.png")] public static var GutsEdge:Class;
 		[Embed(source = "../graphics/guts-fg.png")] public static var GutsFg:Class;
+		[Embed(source = "../graphics/little-friends.png")] public static var LittleFriends:Class;
 		[Embed(source = "../graphics/microbe0.png")] public static var Microbe0:Class;
 		[Embed(source = "../graphics/microbe0-s.png")] public static var Microbe0S:Class;
 		[Embed(source = "../graphics/microbe0-sw.png")] public static var Microbe0Sw:Class;

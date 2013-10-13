@@ -53,7 +53,7 @@ package
 		override public function create():void
 		{
 			if (levelDetails == null) {
-				levelDetails = new Blender(3);
+				levelDetails = new LittleFriends(2);
 			}
 			levelDetails.init(this);
 			
@@ -141,6 +141,15 @@ package
 					scrollBubblesFunction.call(this, bubbleHeight);
 					scrollBg(bubbleHeight);
 				}
+				var justScrolledBubbles:Array = new Array();
+				for each (var bubble:Bubble in bubbles.members) {
+					if (bubble != null && bubble.alive) {
+						if (bubble.justFinishedQuickApproach()) {
+							justScrolledBubbles.push(bubble);
+						}
+					}
+				}
+				maybeAddConnectors(justScrolledBubbles);				
 			}
 			// do we need to add new rows?
 			if (gameState < 200 && newRowLocation > -bubbleHeight * 2.5) {
@@ -151,20 +160,18 @@ package
 					for (var i:int = 0; i < levelDetails.columnCount; i++) {
 						var x:Number = leftEdge + i * columnWidth;
 						var y:Number = (i % 2 == 0)?newRowLocation:newRowLocation - bubbleHeight * .5;
-						var bubbleColor:int = levelDetails.nextBubbleColor();
-						if (bubbleColor == 0) {
-							var nullBubble:NullBubble = new NullBubble(x, y);
-							if (nullBubble.isAnchor()) {
-								bubbles.add(nullBubble);
+						var nextBubble:Bubble = levelDetails.nextBubble(x, y);
+						if (nextBubble is NullBubble) {
+							if (nextBubble.isAnchor()) {
+								bubbles.add(nextBubble);
 							} else {
 								removedNullBubbles = true;
 							}
 						} else {
-							var defaultBubble:DefaultBubble = new DefaultBubble(levelDetails, x, y, bubbleColor);
-							if (!defaultBubble.isAnchor()) {
-								newPoppableBubbles.push(defaultBubble);
+							bubbles.add(nextBubble);
+							if (!nextBubble.isAnchor()) {
+								newPoppableBubbles.push(nextBubble);
 							}
-							bubbles.add(defaultBubble);
 						}
 					}
 					newRowLocation -= bubbleHeight;
@@ -200,7 +207,7 @@ package
 				var thrownBubbleCount:int = 0;
 				var positionMap:Object = newPositionMap();
 				for (var i:int = 0; i < thrownBubbles.length; i++) {
-					var thrownBubble:DefaultBubble = thrownBubbles[i];
+					var thrownBubble:Bubble = thrownBubbles[i];
 
 					if (thrownBubble != null && thrownBubble.alive) {
 						if (thrownBubble.state == 200) {
@@ -217,6 +224,9 @@ package
 				if (popCounter.shouldPop()) {
 					poppedBubbles = popCounter.getPoppedBubbles();
 					poppedBubbles.sort(orderByPosition);
+					for each (var bubble:Bubble in poppedBubbles) {
+						bubble.changeState(300);
+					}
 					changeState(110, levelDetails.popDelay + levelDetails.popPerBubbleDelay * poppedBubbles.length);
 					return;
 				}
@@ -244,7 +254,7 @@ package
 					// did the player lose?
 					if (gameState == 100) {
 						for each (var bubble:Bubble in bubbles.members) {
-							if (bubble != null && bubble.alive && bubble.y > 232 && (bubble.state != 200 && bubble.state != 300)) {
+							if (bubble != null && bubble.alive && bubble.y > 232 && bubble.state != 200) {
 								// yes, they lost. transition to state 200
 								changeState(200);
 								var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
@@ -297,12 +307,14 @@ package
 						if (poppedBubble.visible) {
 							poppedBubble.visible = false;
 							poppedBubble.killConnectors();
+							levelDetails.bubbleVanished(poppedBubble);
 							Embed.play(Embed.SfxBlip0);
 						}
 					}
 				}
 				// is the pop event over?
 				if (stateTime >= stateDuration) {
+					levelDetails.bubblesFinishedPopping(poppedBubbles);
 					// if so, remove popped bubbles
 					for each (var bubble:Bubble in poppedBubbles) {
 						bubble.kill();
@@ -328,9 +340,7 @@ package
 						if (bubble.acceleration.y == 0) {
 							Embed.play(Embed.SfxBlip0);
 							bubbles.remove(bubble);
-							if (bubble is DefaultBubble) {
-								DefaultBubble(bubble).killConnectors();
-							}
+							bubble.killConnectors();
 							fallingBubbles.add(bubble);
 							bubble.flicker(1000);
 							bubble.velocity.y = 20;
@@ -403,15 +413,12 @@ package
 			if (newPoppableBubbles.length > 0) {
 				var positionMap:Object = newPositionMap();
 				for each (var bubble:Bubble in newPoppableBubbles) {
-					if (bubble is DefaultBubble) {
-						var defaultBubble:DefaultBubble = DefaultBubble(bubble);
-						maybeAddConnectorSingle(positionMap, defaultBubble);
-					}
+					maybeAddConnectorSingle(positionMap, bubble);
 				}
 			}
 		}
 		
-		private function maybeAddConnectorSingle(positionMap:Object, bubble:DefaultBubble):void {
+		private function maybeAddConnectorSingle(positionMap:Object, bubble:Bubble):void {
 			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x, bubble.y - bubbleHeight)], Embed.Microbe0S); // N
 			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y - bubbleHeight / 2)], Embed.Microbe0Sw); // NE
 			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Se); // SE
@@ -432,6 +439,9 @@ package
 					return;
 				}
 				if (!bubble.visible || !bubbleS.visible) {
+					return;
+				}
+				if (bubble.isConnected(bubbleS)) {
 					return;
 				}
 				var defaultBubble:DefaultBubble = bubble as DefaultBubble;
@@ -480,6 +490,7 @@ package
 			for (var position:String in positionMap) {
 				if (positionMap[position] != null) {
 					poppedBubbles.push(positionMap[position]);
+					positionMap[position].changeState(300);
 				}
 			}
 			if (poppedBubbles.length > 0) {
@@ -488,41 +499,26 @@ package
 			}
 		}
 		
-		private function isGrabbable(bubble:Bubble):Boolean {
-			for each (var poppedBubble:Bubble in poppedBubbles) {
-				if (poppedBubble == bubble) {
-					return false;
-				}
-			}
-			return true;
-		}
-		
 		private function grabBubbles():void {
-			var maxBubble:DefaultBubble = lowestBubble() as DefaultBubble;
-			if (maxBubble == null || maxBubble.isAnchor()) {
-				return;
-			}
-			var heldBubble:DefaultBubble = heldBubbles.getFirstAlive() as DefaultBubble;
+			var maxBubble:Bubble = lowestBubble() as Bubble;
 			var positionMap:Object = newPositionMap();
 			var y:Number = maxBubble.y;
-			while(maxBubble != null) {
-				if (heldBubble != null && maxBubble.bubbleColor != heldBubble.bubbleColor) {
+			var firstGrab:Boolean = true;
+			while (maxBubble != null) {
+				if (!maxBubble.isGrabbable(heldBubbles, firstGrab)) {
 					break;
-				} else if (!isGrabbable(maxBubble)) {
-					break;
-				} else {
-					heldBubble = maxBubble;
-					heldBubbles.add(maxBubble);
-					bubbles.remove(maxBubble);
-					maxBubble.killConnectors();
-					maxBubble.wasGrabbed(playerSprite);
-					for (var i:int = 0; i < thrownBubbles.length; i++) {
-						if (thrownBubbles[i] == maxBubble) {
-							thrownBubbles[i] = null;
-						}
+				}
+				heldBubbles.add(maxBubble);
+				bubbles.remove(maxBubble);
+				maxBubble.killConnectors();
+				maxBubble.wasGrabbed(playerSprite);
+				for (var i:int = 0; i < thrownBubbles.length; i++) {
+					if (thrownBubbles[i] == maxBubble) {
+						thrownBubbles[i] = null;
 					}
 				}
 				maxBubble = positionMap[hashPosition(maxBubble.x, maxBubble.y - bubbleHeight)];
+				firstGrab = false;
 			}
 		}
 		

@@ -4,13 +4,11 @@ package levels
 	{
 		public static const name:String = "Blender";
 		private var shuffledColumnArray:ContinuousShuffledArray;
-		private var playState:PlayState;
 		private var easyPair:int = 0;
 		
 		public function Blender(scenario:int) 
 		{
 			bubbleColors = [0xffff2300,0xffffae00,0xff133aac,0xff00bd39,0xff7c07a9];
-			setSpeed(scenario < 2?scenario:scenario - 1);
 			var columnScrollCount:Number;
 			if (scenario == 0) {
 				maxBubbleRate = 90;
@@ -53,20 +51,10 @@ package levels
 			} else {
 				bubbleRate = maxBubbleRate;
 			}
-			
-			var justScrolledBubbles:Array = new Array();
-			for each (var defaultBubble:DefaultBubble in playState.bubbles.members) {
-				if (defaultBubble != null && defaultBubble.alive) {
-					if (defaultBubble.state == 251) {
-						justScrolledBubbles.push(defaultBubble);
-					}
-				}
-			}
-			playState.maybeAddConnectors(justScrolledBubbles);
 		}
 		
 		override public function init(playState:PlayState):void {
-			this.playState = playState;
+			super.init(playState);
 			playState.scrollBubblesFunction = scrollBubbles;
 			playState.newRowLocation = PlayState.bubbleHeight * 4;
 		}

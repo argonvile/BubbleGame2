@@ -17,7 +17,10 @@ package
 			var iBubblesToCheck:int = 0;
 			
 			do {
-				var bubbleToCheck:DefaultBubble = bubblesToCheck[iBubblesToCheck];
+				var bubbleToCheck:DefaultBubble = bubblesToCheck[iBubblesToCheck] as DefaultBubble;
+				if (bubbleToCheck == null) {
+					break;
+				}
 				positionMap[p.hashPosition(bubbleToCheck.x, bubbleToCheck.y)] = null;
 				for each (var position:String in [
 					p.hashPosition(bubbleToCheck.x, bubbleToCheck.y - PlayState.bubbleHeight),
