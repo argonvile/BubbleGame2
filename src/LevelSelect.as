@@ -10,7 +10,7 @@ package
 		private const romanNumerals:Array = ["I", "II", "III", "IV", "V"];
 		
 		override public function create():void {
-			var levelArray:Array = [SonicTheEdgehog, Newspaper, Blender, LittleFriends];
+			var levelArray:Array = [LuckySeven, SonicTheEdgehog, Newspaper, Blender, LittleFriends];
 			var button:FlxButtonPlus;
 			var text:FlxText;
 			

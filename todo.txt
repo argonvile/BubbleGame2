@@ -8,16 +8,24 @@
 *Improve hurry up animation
 *new level: everything's red, and lots of puyo-puyo-esque garbage
 *fix bug where hitting "C" sometimes causes render goofs in popping bubbles
+*new level: eliminating 7 yellow bubbles at a time turns all yellow bubbles on the screen into another color (whichever color they're adjacent to)
 
-new level: eliminating 7 yellow bubbles at a time turns all yellow bubbles on the screen into another color (whichever color they're adjacent to)
-Add support for desaturated/light/dark bubbles
+add vertical "where am i and what am i holding" line
+bubble rate should increase more gradually?
 Sound effects escalate in pitch
+add halos for up/down teleport squares
 
+Add support for desaturated/light/dark bubbles
+add "Quota" feature?
+display timer
+display quota
+improve popping graphics -- little bubblets?
+
+end-of-level "FEVER" mode
 Bubbles should "wiggle"
 new level: boredom
-add vertical "where am i and what am i holding" line
-Eyes shouldn't get covered by connectors
 Bubble eyes should look around
 Bubble eyes should look surprised
 Add "danger" graphics -- column changes color? Flashes?
 Add player graphic
+Eyes shouldn't get covered by connectors

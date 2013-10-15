@@ -14,6 +14,7 @@ package
 		protected var bubbleColors:Array = [0xffff0000, 0xffffff00, 0xff00ff00, 0xff0080ff, 0xff8000ff];
 		public var levelDuration:Number = 120; // 2 minutes
 		public var minScrollPixels:Number = 1;
+		public var minNewRowLocation:Number = -PlayState.bubbleHeight * 2.5;
 		
 		protected var maxBubbleRate:Number = 300;
 		protected var bubbleRate:Number = 300;

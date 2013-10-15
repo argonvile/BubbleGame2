@@ -8,26 +8,15 @@ package
 
 	public class DefaultBubble extends Bubble
 	{
-		public var bubbleColor:int;
+		public var bubbleColor:uint;
 		private var regularGraphic:BitmapData;
 		private var popGraphic:BitmapData;
 		private const QUICK_APPROACH_DURATION:Number = 0.3;
 		
-		public function DefaultBubble(levelDetails:LevelDetails,x:Number,y:Number,bubbleColor:int) 
+		public function DefaultBubble(levelDetails:LevelDetails,x:Number,y:Number,bubbleColor:uint) 
 		{
 			super(levelDetails, x, y);
-			
-			this.bubbleColor = bubbleColor;
-			
-			var key:String = "Microbe0 " + bubbleColor.toString(16);
-			if (BitmapDataCache.getBitmap(key) == null) {
-				var newData:BitmapData = FlxG.createBitmap(17, 17, 0x00000000, true);
-				newData.draw(FlxG.addBitmap(Embed.Microbe0), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
-				shiftHueBitmapData(newData, bubbleColor);
-				newData.draw(FlxG.addBitmap(Embed.Eyes0));
-				BitmapDataCache.setBitmap(key, newData);
-			}
-			regularGraphic = BitmapDataCache.getBitmap(key);
+			setBubbleColor(bubbleColor);
 			
 			var key:String = "popped Microbe0";
 			if (BitmapDataCache.getBitmap(key) == null) {
@@ -43,6 +32,22 @@ package
 			height = 17;
 			pixels = regularGraphic;
 			updateAlpha();
+		}
+		
+		public function setBubbleColor(bubbleColor:uint):void {
+			this.bubbleColor = bubbleColor;
+			var key:String = "Microbe0 " + bubbleColor.toString(16);
+			if (BitmapDataCache.getBitmap(key) == null) {
+				var newData:BitmapData = FlxG.createBitmap(17, 17, 0x00000000, true);
+				newData.draw(FlxG.addBitmap(Embed.Microbe0), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
+				shiftHueBitmapData(newData, bubbleColor);
+				newData.draw(FlxG.addBitmap(Embed.Eyes0));
+				BitmapDataCache.setBitmap(key, newData);
+			}
+			regularGraphic = BitmapDataCache.getBitmap(key);
+			if (pixels != popGraphic) {
+				pixels = regularGraphic;
+			}
 		}
 		
 		public function loadPopGraphic():void {

@@ -14,7 +14,7 @@ package
 		public var bubbles:FlxGroup;
 		private var connectors:FlxGroup;
 		private var fallingBubbles:FlxGroup = new FlxGroup();
-		private var heldBubbles:FlxGroup = new FlxGroup();
+		public var heldBubbles:FlxGroup = new FlxGroup();
 		private var popperEmitter:FlxEmitter = new FlxEmitter();
 		
 		private var elapsed:Number = 0;
@@ -24,14 +24,15 @@ package
 		 * 110 == popping
 		 * 120 == dropping
 		 * 130 == scrolling paused
+		 * 140-149 == custom (paused, non-interactive)
 		 * 200 == game over (lose)
 		 * 300 == game over (win)
 		 */
-		private var gameState:int = 100;
-		private var stateTime:Number = 0;
-		private var stateDuration:Number = 0;
+		public var gameState:int = 100;
+		public var stateTime:Number = 0;
+		public var stateDuration:Number = 0;
 		
-		private var suspendedBubbles:Array = new Array();
+		public var suspendedBubbles:Array = new Array();
 		private var thrownBubbles:Array = new Array();
 		private var poppedBubbles:Array = new Array();
 		
@@ -53,7 +54,7 @@ package
 		override public function create():void
 		{
 			if (levelDetails == null) {
-				levelDetails = new LittleFriends(2);
+				levelDetails = new LuckySeven(4);
 			}
 			levelDetails.init(this);
 			
@@ -120,6 +121,7 @@ package
 			stateTime += FlxG.elapsed;
 			timerText.text = String(Math.round(stateTime * 100) / 100);
 			if (gameState < 200) {
+				// still alive...
 				elapsed += FlxG.elapsed;
 				levelDetails.update(elapsed);
 				playerMover.movePlayerFromInput();
@@ -151,9 +153,8 @@ package
 				}
 				maybeAddConnectors(justScrolledBubbles);				
 			}
-			// do we need to add new rows?
-			if (gameState < 200 && newRowLocation > -bubbleHeight * 2.5) {
-				// add new rows
+			if (gameState < 200 && newRowLocation > levelDetails.minNewRowLocation) {
+				// need to add new rows
 				var removedNullBubbles:Boolean = false;
 				var newPoppableBubbles:Array = new Array();
 				do {
@@ -175,13 +176,15 @@ package
 						}
 					}
 					newRowLocation -= bubbleHeight;
-				} while (newRowLocation > -bubbleHeight * 2.5);
+				} while (newRowLocation > levelDetails.minNewRowLocation);
 				if (removedNullBubbles && (gameState == 100 || gameState == 130)) {
 					checkForDetachedBubbles();
 				}
 				maybeAddConnectors(newPoppableBubbles);
 			}
 			if (gameState == 100 || gameState == 130) {
+				// playfield is currently interactive...
+				
 				// did the player trigger a drop event?
 				// if so, transition to state 120...
 				if (FlxG.keys.justPressed("Z")) {
@@ -320,8 +323,10 @@ package
 						bubble.kill();
 					}
 					poppedBubbles.length = 0;
-					// if the player triggered a drop event, transition to state 120...
-					checkForDetachedBubbles();
+					if (gameState == 110) {
+						// if the player triggered a drop event, transition to state 120...
+						checkForDetachedBubbles();
+					}
 					if (gameState == 110) {
 						if (suspendedBubbles.length > 0) {
 							// if the player has suspended bubbles, transition to the "paused state"
@@ -405,7 +410,7 @@ package
 			maybeAddConnectors(newPoppableBubbles);			
 		}
 		
-		private function changeState(newState:int, stateDuration:Number=0):void {
+		public function changeState(newState:int, stateDuration:Number=0):void {
 			gameState = newState;
 			stateTime = 0;
 			this.stateDuration = stateDuration;
@@ -420,7 +425,7 @@ package
 			}
 		}
 		
-		private function maybeAddConnectorSingle(positionMap:Object, bubble:Bubble):void {
+		public function maybeAddConnectorSingle(positionMap:Object, bubble:Bubble):void {
 			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x, bubble.y - bubbleHeight)], Embed.Microbe0S); // N
 			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y - bubbleHeight / 2)], Embed.Microbe0Sw); // NE
 			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Se); // SE
@@ -460,7 +465,7 @@ package
 			}
 		}
 		
-		private function checkForDetachedBubbles():void {
+		public function checkForDetachedBubbles():void {
 			var positionMap:Object = newPositionMap();
 			var bubblesToCheck:Array = new Array();
 			for each (var bubble:Bubble in bubbles.members) {
@@ -553,7 +558,7 @@ package
 			return maxBubble;
 		}
 		
-		private function orderByPosition(a:Bubble, b:Bubble):Number {
+		public function orderByPosition(a:Bubble, b:Bubble):Number {
 			if (a.y != b.y) {
 				return b.y - a.y;
 			}
