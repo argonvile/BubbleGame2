@@ -68,6 +68,6 @@ package levels
 			} else {
 				return super.nextBubbleColor();
 			}
-		}		
+		}
 	}
 }

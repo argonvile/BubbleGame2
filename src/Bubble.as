@@ -53,6 +53,13 @@ package
 			addQuickApproachToOffset();
 		}
 		
+		public function resetQuickApproach():void {
+			offset.y = 0;
+			this.quickApproachDistance = 0;
+			this.quickApproachTime = 0;
+			updateConnectorOffsets();
+		}
+		
 		public function quickApproach(distance:Number):void {
 			this.quickApproachDistance = distance;
 			this.quickApproachTime = 0;

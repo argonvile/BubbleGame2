@@ -36,7 +36,7 @@ package
 		private var thrownBubbles:Array = new Array();
 		private var poppedBubbles:Array = new Array();
 		
-		public var newRowLocation:Number = 6*bubbleHeight;
+		public var newRowLocation:Number;
 		
 		private var timerText:FlxText;
 		
@@ -106,6 +106,13 @@ package
 			add(timerText);
 			
 			add(fgSprite);
+			
+			levelDetails.prepareLevel();
+			for each (var bubble:Bubble in bubbles.members) {
+				if (bubble != null && bubble.alive && bubble.y < newRowLocation) {
+					newRowLocation = bubble.y;
+				}
+			}
 		}
 		
 		private function scrollBg(howMany:int=1):void {
@@ -140,7 +147,7 @@ package
 					}
 				}
 				if (FlxG.keys.justPressed("C")) {
-					scrollBubblesFunction.call(this, bubbleHeight);
+					scrollBubblesFunction.call(this, levelDetails.quickScrollPixels);
 					scrollBg(bubbleHeight);
 				}
 				var justScrolledBubbles:Array = new Array();

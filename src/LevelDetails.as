@@ -15,6 +15,9 @@ package
 		public var levelDuration:Number = 120; // 2 minutes
 		public var minScrollPixels:Number = 1;
 		public var minNewRowLocation:Number = -PlayState.bubbleHeight * 2.5;
+		public var quickScrollPixels:Number = PlayState.bubbleHeight;
+		protected var initialRowCount:Number = 6;
+		protected var initialScrollPixelCount:Number = 0;
 		
 		protected var maxBubbleRate:Number = 300;
 		protected var bubbleRate:Number = 300;
@@ -23,6 +26,51 @@ package
 		public function LevelDetails(scenario:int = 2) 
 		{
 			setSpeed(scenario < 2?scenario:scenario - 1);
+		}
+		
+		public function prepareLevel():void {
+			playState.newRowLocation = initialRowCount * PlayState.bubbleHeight;
+			
+			var removedNullBubbles:Boolean = false;
+			var newPoppableBubbles:Array = new Array();
+			while (playState.newRowLocation > minNewRowLocation) {
+				for (var i:int = 0; i < columnCount; i++) {
+					var x:Number = playState.leftEdge + i * PlayState.columnWidth;
+					var y:Number = (i % 2 == 0)?playState.newRowLocation:playState.newRowLocation - PlayState.bubbleHeight * .5;
+					var nextBubble:Bubble = nextBubble(x, y);
+					if (nextBubble is NullBubble) {
+						if (nextBubble.isAnchor()) {
+							playState.bubbles.add(nextBubble);
+						} else {
+							removedNullBubbles = true;
+						}
+					} else {
+						playState.bubbles.add(nextBubble);
+						if (!nextBubble.isAnchor()) {
+							newPoppableBubbles.push(nextBubble);
+						}
+					}
+				}
+				playState.newRowLocation -= PlayState.bubbleHeight;
+			}
+			if (removedNullBubbles && (playState.gameState == 100 || playState.gameState == 130)) {
+				playState.checkForDetachedBubbles();
+			}			
+			playState.maybeAddConnectors(newPoppableBubbles);
+			for (var pixelsScrolled:Number = 0; pixelsScrolled < initialScrollPixelCount; pixelsScrolled+= minScrollPixels) {
+				playState.scrollBubblesFunction.call(playState, minScrollPixels);
+			}
+			var positionMap:Object = playState.newPositionMap();
+			for each (var bubble:Bubble in playState.bubbles.members) {
+				if (bubble != null && bubble.alive) {
+					bubble.resetQuickApproach();
+				}
+			}
+			for each (var bubble:Bubble in playState.bubbles.members) {
+				if (bubble != null && bubble.alive) {
+					playState.maybeAddConnectorSingle(positionMap, bubble);
+				}
+			}			
 		}
 		
 		public function init(playState:PlayState):void {

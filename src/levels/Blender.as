@@ -5,6 +5,7 @@ package levels
 		public static const name:String = "Blender";
 		private var shuffledColumnArray:ContinuousShuffledArray;
 		private var easyPair:int = 0;
+		private var deadSeconds:int;
 		
 		public function Blender(scenario:int) 
 		{
@@ -15,22 +16,27 @@ package levels
 				maxBubbleRate = 90;
 				columnCount = 6;
 				columnScrollCount = 1;
+				deadSeconds = 7;
 			} else if (scenario == 1) {
 				maxBubbleRate = 180;
 				columnCount = 10;
 				columnScrollCount = 3;
+				deadSeconds = 6;
 			} else if (scenario == 2) {
 				maxBubbleRate = 360;
 				columnCount = 9;
 				columnScrollCount = 6;
+				deadSeconds = 5;
 			} else if (scenario == 3) {
 				maxBubbleRate = 720;
 				columnCount = 12;
 				columnScrollCount = 3;
+				deadSeconds = 4;
 			} else if (scenario == 4) {
 				maxBubbleRate = 1200;
 				columnCount = 10;
 				columnScrollCount = 1;
+				deadSeconds = 3;
 			}
 			minScrollPixels = (columnScrollCount / columnCount) * PlayState.bubbleHeight * 2;
 			shuffledColumnArray = new ContinuousShuffledArray(3);
@@ -38,10 +44,12 @@ package levels
 				shuffledColumnArray.push(i);
 			}
 			shuffledColumnArray.reset();
+			initialRowCount = 4;
+			initialScrollPixelCount = minScrollPixels;
 		}
 		
 		override public function update(elapsed:Number):void {
-			if (elapsed < 7) {
+			if (elapsed < deadSeconds) {
 				bubbleRate = 0;
 			} else if (elapsed < 15) {
 				bubbleRate = maxBubbleRate * 0.6;
@@ -57,7 +65,6 @@ package levels
 		override public function init(playState:PlayState):void {
 			super.init(playState);
 			playState.scrollBubblesFunction = scrollBubbles;
-			playState.newRowLocation = PlayState.bubbleHeight * 4;
 		}
 		
 		public function scrollBubbles(scrollAmount:Number):void {
