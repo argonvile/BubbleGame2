@@ -14,8 +14,14 @@
 add vertical "where am i and what am i holding" line
 bubble rate stays at minimum for initial 5s, increases gradually until hitting its max at 60s mark
 Sound effects escalate in pitch
-add halos for up/down teleport squares
+github
 
+add halos for up/down teleport squares
+Bubbles should "wiggle"
+
+new level: "relentless", bubbles don't stop even during a combo (maybe they
+slow down?)
+new level: moving causes new bubbles to appear
 new level: "red red whine", red bubbles either pop when you grab them, or change color, or something annoying
 Add support for desaturated/light/dark bubbles
 add "Quota" feature?
@@ -24,7 +30,6 @@ display quota
 improve popping graphics -- little bubblets?
 
 end-of-level "FEVER" mode
-Bubbles should "wiggle"
 new level: boredom
 Bubble eyes should look around
 Bubble eyes should look surprised

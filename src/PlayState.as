@@ -10,7 +10,7 @@ package
 		public static const columnWidth:int = 15;
 		
 		public var leftEdge:int = 8;
-		private var playerSprite:FlxSprite;
+		public var playerSprite:FlxSprite;
 		public var bubbles:FlxGroup;
 		private var connectors:FlxGroup;
 		private var fallingBubbles:FlxGroup = new FlxGroup();
@@ -46,6 +46,8 @@ package
 		private var fgSprite:FlxSprite;
 		private var playerMover:PlayerMover;
 		public var scrollBubblesFunction:Function = scrollBubbles;
+		
+		private var playerLine:PlayerLine;
 		
 		public function PlayState(levelDetails:LevelDetails=null) {
 			this.levelDetails = levelDetails;
@@ -93,7 +95,7 @@ package
 			add(connectors);
 			
 			playerSprite = new FlxSprite(leftEdge, 224);
-			playerSprite.makeGraphic(columnWidth, bubbleHeight, 0xffffffff);
+			playerSprite.makeGraphic(columnWidth, bubbleHeight, 0xffcccccc);
 			playerSprite.offset.x = -1;
 			add(playerSprite);
 			
@@ -113,6 +115,9 @@ package
 					newRowLocation = bubble.y;
 				}
 			}
+			
+			playerLine = new PlayerLine(this);
+			add(playerLine);
 		}
 		
 		private function scrollBg(howMany:int=1):void {
@@ -160,6 +165,7 @@ package
 				}
 				maybeAddConnectors(justScrolledBubbles);				
 			}
+			playerLine.finalUpdate();
 			if (gameState < 200 && newRowLocation > levelDetails.minNewRowLocation) {
 				// need to add new rows
 				var removedNullBubbles:Boolean = false;
