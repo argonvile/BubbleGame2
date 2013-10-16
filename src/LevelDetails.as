@@ -1,5 +1,6 @@
 package  
 {
+	import flash.utils.getTimer;
 	import org.flixel.*;
 
 	public class LevelDetails 
@@ -19,7 +20,10 @@ package
 		protected var initialRowCount:Number = 6;
 		protected var initialScrollPixelCount:Number = 0;
 		
+		protected var initialBubbleRatePct:Number = 0.1; 
+		protected var initialBubbleRateDuration:Number = 0; // warmup period for certain unusual levels
 		protected var maxBubbleRate:Number = 300;
+		
 		protected var bubbleRate:Number = 300;
 		protected var playState:PlayState;
 		
@@ -107,16 +111,13 @@ package
 		}
 		
 		public function update(elapsed:Number):void {
-			if (elapsed < 5) {
-				bubbleRate = maxBubbleRate * 0.25;
-			} else if (elapsed < 10) {
-				bubbleRate = maxBubbleRate * 0.5;
-			} else if (elapsed < 30) {
-				bubbleRate = maxBubbleRate * 0.75;
-			} else if (elapsed < 60) {
-				bubbleRate = maxBubbleRate* 0.875;
-			} else {
+			if (elapsed < initialBubbleRateDuration) {
+				bubbleRate = maxBubbleRate * initialBubbleRatePct;
+			} else if (elapsed >= (0.5 * levelDuration)) {
 				bubbleRate = maxBubbleRate;
+			} else {
+				var pct:Number = (elapsed - initialBubbleRateDuration) / ((0.5 * levelDuration) - initialBubbleRateDuration);
+				bubbleRate = (pct * 0.5 + 0.5) * maxBubbleRate;
 			}
 		}
 		

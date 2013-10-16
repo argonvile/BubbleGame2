@@ -13,7 +13,10 @@ package levels
 			
 			initialRowCount = 0;
 			initialScrollPixelCount = PlayState.bubbleHeight * 4;
-
+			
+			initialBubbleRatePct = 0.1;
+			initialBubbleRateDuration = 3;
+			
 			if (scenario == 0) {
 				bubbleColors = [0xffff0000, 0xff00ff00, 0xff0080ff, 0xff8000ff];
 				maxBubbleRate = 100;
@@ -44,15 +47,6 @@ package levels
 				}
 			}
 			columnScrollArray.reset();
-		}
-		
-		override public function update(elapsed:Number):void {
-			if (elapsed < 3) {
-				bubbleRate = 0.1 * maxBubbleRate;
-			} else {
-				var bubblePct:Number = Math.max(0.5, Math.min(1, elapsed / 90));
-				bubbleRate = maxBubbleRate * bubblePct;
-			}
 		}
 		
 		override public function init(playState:PlayState):void {

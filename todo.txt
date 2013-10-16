@@ -10,9 +10,9 @@
 *fix bug where hitting "C" sometimes causes render goofs in popping bubbles
 *new level: eliminating 7 yellow bubbles at a time turns all yellow bubbles on the screen into another color (whichever color they're adjacent to)
 *new level: bubbles only come from right side
+*add vertical "where am i and what am i holding" line
+*bubble rate stays at minimum for initial 5s, increases gradually until hitting its max at 60s mark
 
-add vertical "where am i and what am i holding" line
-bubble rate stays at minimum for initial 5s, increases gradually until hitting its max at 60s mark
 Sound effects escalate in pitch
 github
 

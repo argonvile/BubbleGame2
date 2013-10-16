@@ -53,7 +53,7 @@ package levels
 		}
 
 		override public function update(elapsed:Number):void {
-			bubbleRate = maxBubbleRate * (0.5 + (elapsed / 120) * 0.5);
+			super.update(elapsed);
 			if (playState.gameState == 140) {
 				var positionMap:Object;
 				for (var i:int = 0; i < changedBubbles.length; i++) {
