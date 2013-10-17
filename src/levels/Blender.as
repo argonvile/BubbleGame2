@@ -58,8 +58,8 @@ package levels
 			if (shuffledColumnArray.nextIndex - columnScrollCount < 1) {
 				shuffledColumnArray.reset();
 			}
+			var positionMap:Object = playState.newPositionMap();
 			for (var j:int = 0; j < columnScrollCount; j++) {
-				var positionMap:Object = playState.newPositionMap();
 				var columnIndex:int = shuffledColumnArray.next() as int;
 				var newBubbleX:Number = playState.leftEdge + columnIndex * PlayState.columnWidth;
 

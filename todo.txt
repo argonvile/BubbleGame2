@@ -12,13 +12,10 @@
 *new level: bubbles only come from right side
 *add vertical "where am i and what am i holding" line
 *bubble rate stays at minimum for initial 5s, increases gradually until hitting its max at 60s mark
-
-Sound effects escalate in pitch
-github
+*Sound effects escalate in pitch
 
 add halos for up/down teleport squares
 Bubbles should "wiggle"
-
 new level: "relentless", bubbles don't stop even during a combo (maybe they
 slow down?)
 new level: moving causes new bubbles to appear
