@@ -1,6 +1,7 @@
 package  
 {
 	import org.flixel.*;
+	import flash.utils.getDefinitionByName;
 	import flash.utils.getTimer;
 
 	public class Embed 
@@ -15,12 +16,21 @@ package
 		[Embed(source = "../graphics/microbe0-sw.png")] public static var Microbe0Sw:Class;
 		[Embed(source = "../graphics/microbe0-se.png")] public static var Microbe0Se:Class;
 
-		[Embed(source = "../sound/blip0.mp3")] public static var SfxBlip0:Class;
+		[Embed(source = "../sound/blipa0.mp3")] public static var SfxBlipA0:Class;
+		[Embed(source = "../sound/blipa1.mp3")] public static var SfxBlipA1:Class;
+		[Embed(source = "../sound/blipa2.mp3")] public static var SfxBlipA2:Class;
+		[Embed(source = "../sound/blipa3.mp3")] public static var SfxBlipA3:Class;
+		[Embed(source = "../sound/blipa4.mp3")] public static var SfxBlipA4:Class;
+		[Embed(source = "../sound/blipa5.mp3")] public static var SfxBlipA5:Class;
+		[Embed(source = "../sound/blipa6.mp3")] public static var SfxBlipA6:Class;
+		[Embed(source = "../sound/blipa7.mp3")] public static var SfxBlipA7:Class;
+		[Embed(source = "../sound/blipa8.mp3")] public static var SfxBlipA8:Class;
+		[Embed(source = "../sound/blipa9.mp3")] public static var SfxBlipA9:Class;
 		
 		private static var sounds:Object = new Object();
 		private static var soundStartTimes:Array = new Array();
 
-		public static function play(EmbeddedSound:Class, volume:Number = 1.0, singular:Boolean = false, restartTime:int = 25):void {
+		public static function play(EmbeddedSound:Class, volume:Number = 1.0, singular:Boolean = false, restartTime:int = 25, playbackSpeed:Number = 1.0):void {
 			var sound:FlxSound;
 			if (sounds[EmbeddedSound] == null) {
 				sound = new FlxSound();
@@ -44,6 +54,17 @@ package
 			sound.volume = volume;
 			sound.play(true);
 			soundStartTimes[EmbeddedSound] = getTimer();
-		}		
+		}
+		
+		public static function playPopSound(poppedBubbleCount:Number):void {
+			var tempBubbleNum:Number = Math.pow(poppedBubbleCount, 0.5);
+			if (tempBubbleNum < 10) {
+				var sfx:Class = getDefinitionByName("Embed_SfxBlipA" + int(tempBubbleNum)) as Class;
+				play(sfx);
+				return;
+			}
+			play(SfxBlipA9);
+			return;
+		}
 	}
 }

@@ -68,7 +68,8 @@ package levels
 							positionMap = playState.newPositionMap();
 						}
 						playState.maybeAddConnectorSingle(positionMap, poppedBubble);
-						Embed.play(Embed.SfxBlip0);
+						Embed.playPopSound(playState.comboSfxCount);
+						playState.comboSfxCount += 0.3;
 						changedBubbles[i] = null;
 					}
 				}

@@ -48,6 +48,7 @@ package
 		public var scrollBubblesFunction:Function = scrollBubbles;
 		
 		private var playerLine:PlayerLine;
+		public var comboSfxCount:Number = 0;
 		
 		public function PlayState(levelDetails:LevelDetails=null) {
 			this.levelDetails = levelDetails;
@@ -266,9 +267,11 @@ package
 						scrollBubblesFunction.call(this, scrollAmount);
 						rowScrollTimer -= scrollAmount;
 					}
-					
-					// did the player lose?
 					if (gameState == 100) {
+						// kill the combo
+						comboSfxCount = 0;
+						
+						// did the player lose?
 						for each (var bubble:Bubble in bubbles.members) {
 							if (bubble != null && bubble.alive && bubble.y > 232 && bubble.state != 200) {
 								// yes, they lost. transition to state 200
@@ -324,7 +327,8 @@ package
 							poppedBubble.visible = false;
 							poppedBubble.killConnectors();
 							levelDetails.bubbleVanished(poppedBubble);
-							Embed.play(Embed.SfxBlip0);
+							Embed.playPopSound(comboSfxCount);
+							comboSfxCount += 1;
 						}
 					}
 				}
@@ -356,7 +360,8 @@ package
 					if ((i + 1) * levelDetails.dropPerBubbleDelay + levelDetails.dropDelay < stateTime) {
 						var bubble:Bubble = poppedBubbles[i];
 						if (bubble.acceleration.y == 0) {
-							Embed.play(Embed.SfxBlip0);
+							Embed.playPopSound(comboSfxCount);
+							comboSfxCount += 0.3;
 							bubbles.remove(bubble);
 							bubble.killConnectors();
 							fallingBubbles.add(bubble);
