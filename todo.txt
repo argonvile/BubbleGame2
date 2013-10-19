@@ -13,16 +13,25 @@
 *add vertical "where am i and what am i holding" line
 *bubble rate stays at minimum for initial 5s, increases gradually until hitting its max at 60s mark
 *Sound effects escalate in pitch
+*Bubbles should "wiggle"
+new level: "relentless", bubbles don't stop even during a combo (maybe they slow down?)
+level-picking interface -- pick between six levels
+new level: fog covers the bubbles in front of you?
+display timer
+
+new "final trial" level -- no time limit, only quota, goes through phases like magical drop...
+  * "regular" phase
+  * weird phase with strange bonus bubbles, holes
+  * phase where bubbles come many-at-a-time
+  * phase where bubbles arrive in shuffly spurts
+  * (also?) phase where bubbles ripple in, left to right
+  * (also?) phase where bubbles focus on the left, middle, or right
 
 add halos for up/down teleport squares
-Bubbles should "wiggle"
-new level: "relentless", bubbles don't stop even during a combo (maybe they
-slow down?)
 new level: moving causes new bubbles to appear
 new level: "red red whine", red bubbles either pop when you grab them, or change color, or something annoying
 Add support for desaturated/light/dark bubbles
 add "Quota" feature?
-display timer
 display quota
 improve popping graphics -- little bubblets?
 

@@ -16,42 +16,61 @@ package
 		public function DefaultBubble(levelDetails:LevelDetails,x:Number,y:Number,bubbleColor:uint) 
 		{
 			super(levelDetails, x, y);
+			
 			setBubbleColor(bubbleColor);
 			
 			var key:String = "popped Microbe0";
 			if (BitmapDataCache.getBitmap(key) == null) {
-				var newData:BitmapData = FlxG.createBitmap(17, 17, 0x00000000, true);
-				newData.draw(FlxG.addBitmap(Embed.Microbe0), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
+				var newData:BitmapData = FlxG.createBitmap(85, 17, 0x00000000, true);
+				var matrix:Matrix = new Matrix();
+				matrix.scale(17 / 50, 17 / 50);
+				newData.draw(FlxG.addBitmap(Embed.Microbe0), matrix);
 				whitenBitmapData(newData);
-				newData.draw(FlxG.addBitmap(Embed.Eyes0));
+				matrix.identity();
+				var eyeData:BitmapData = FlxG.addBitmap(Embed.Eyes0);
+				for (var i:int = 0; i < 5;i++) {
+					newData.draw(eyeData, matrix);
+					matrix.translate(17, 0);
+				}
 				BitmapDataCache.setBitmap(key, newData);
 			}
 			popGraphic = BitmapDataCache.getBitmap(key);
 			
-			width = 17;
-			height = 17;
-			pixels = regularGraphic;
+			width = frameWidth = 17;
+			height = frameHeight = 17;
+			resetHelpers();
 			updateAlpha();
+			addAnimation("default", [0, 1, 2, 3, 4], 4, true);
+			play("default");
+			_curFrame = Math.random() * 5;
 		}
 		
 		public function setBubbleColor(bubbleColor:uint):void {
 			this.bubbleColor = bubbleColor;
 			var key:String = "Microbe0 " + bubbleColor.toString(16);
 			if (BitmapDataCache.getBitmap(key) == null) {
-				var newData:BitmapData = FlxG.createBitmap(17, 17, 0x00000000, true);
-				newData.draw(FlxG.addBitmap(Embed.Microbe0), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
+				var newData:BitmapData = FlxG.createBitmap(85, 17, 0x00000000, true);
+				var matrix:Matrix = new Matrix();
+				matrix.scale(17 / 50, 17 / 50);
+				newData.draw(FlxG.addBitmap(Embed.Microbe0), matrix);
 				shiftHueBitmapData(newData, bubbleColor);
-				newData.draw(FlxG.addBitmap(Embed.Eyes0));
+				matrix.identity();
+				var eyeData:BitmapData = FlxG.addBitmap(Embed.Eyes0);
+				for (var i:int = 0; i < 5;i++) {
+					newData.draw(eyeData, matrix);
+					matrix.translate(17, 0);
+				}
 				BitmapDataCache.setBitmap(key, newData);
 			}
 			regularGraphic = BitmapDataCache.getBitmap(key);
-			if (pixels != popGraphic) {
-				pixels = regularGraphic;
+			if (_pixels != popGraphic) {
+				_pixels = regularGraphic;
 			}
 		}
 		
 		public function loadPopGraphic():void {
-			pixels = popGraphic;
+			_pixels = popGraphic;
+			dirty = true;
 			for each (var connector:DefaultConnector in connectors) {
 				if (connector != null && connector.alive) {
 					connector.loadPopGraphic();
@@ -60,7 +79,8 @@ package
 		}
 		
 		public function loadRegularGraphic():void {
-			pixels = regularGraphic;
+			_pixels = regularGraphic;
+			dirty = true;
 			for each (var connector:DefaultConnector in connectors) {
 				if (connector != null && connector.alive) {
 					connector.loadRegularGraphic();

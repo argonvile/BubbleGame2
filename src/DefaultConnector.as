@@ -22,7 +22,7 @@ package
 			var bubbleColor:int = (bubble0 as DefaultBubble).bubbleColor;
 			var key:String = "connector " + getQualifiedClassName(graphic) + " " + bubbleColor.toString(16);
 			if (BitmapDataCache.getBitmap(key) == null) {
-				var newData:BitmapData = FlxG.createBitmap(17, 17, 0x00000000, true);
+				var newData:BitmapData = FlxG.createBitmap(51, 17, 0x00000000, true);
 				newData.draw(FlxG.addBitmap(graphic), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
 				DefaultBubble.shiftHueBitmapData(newData, bubbleColor);
 				BitmapDataCache.setBitmap(key, newData);
@@ -31,14 +31,20 @@ package
 			
 			var key:String = "popped connector " + getQualifiedClassName(graphic);
 			if (BitmapDataCache.getBitmap(key) == null) {
-				var newData:BitmapData = FlxG.createBitmap(17, 17, 0x00000000, true);
+				var newData:BitmapData = FlxG.createBitmap(51, 17, 0x00000000, true);
 				newData.draw(FlxG.addBitmap(graphic), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
 				DefaultBubble.whitenBitmapData(newData);
 				BitmapDataCache.setBitmap(key, newData);
 			}
 			popGraphic = BitmapDataCache.getBitmap(key);
 			
-			pixels = regularGraphic;
+			_pixels = regularGraphic;
+			width = frameWidth = 17;
+			height = frameHeight = 17;
+			resetHelpers();
+			addAnimation("default", [0, 1, 2], 4, true);
+			play("default");
+			_curFrame = Math.random() * 3;
 		}
 
 		override public function update():void {
@@ -46,11 +52,13 @@ package
 		}
 		
 		public function loadPopGraphic():void {
-			pixels = popGraphic;
+			_pixels = popGraphic;
+			dirty = true;
 		}
 		
 		public function loadRegularGraphic():void {
-			pixels = regularGraphic;
+			_pixels = regularGraphic;
+			dirty = true;
 		}
 	}
 }

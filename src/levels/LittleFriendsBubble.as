@@ -9,14 +9,21 @@ package levels
 		public function LittleFriendsBubble(levelDetails:LevelDetails, x:Number, y:Number) 
 		{
 			super(levelDetails, x, y);
-			var foo:Number = 17;
 			var key:String = "LittleFriends";
 			if (BitmapDataCache.getBitmap(key) == null) {
-				var newData:BitmapData = FlxG.createBitmap(foo, foo, 0x00000000, true);
-				newData.draw(FlxG.addBitmap(Embed.LittleFriends), new Matrix(foo / 50, 0, 0, foo / 50, 0, 0));
+				var newData:BitmapData = FlxG.createBitmap(85, 17, 0x00000000, true);
+				var matrix:Matrix = new Matrix();
+				matrix.scale(17 / 50, 17 / 50);
+				newData.draw(FlxG.addBitmap(Embed.LittleFriends), matrix);
 				BitmapDataCache.setBitmap(key, newData);
 			}
-			pixels = BitmapDataCache.getBitmap(key);
+			_pixels = BitmapDataCache.getBitmap(key);
+			resetHelpers();
+			width = frameWidth = 17;
+			height = frameHeight = 17;
+			addAnimation("default", [0, 1, 2, 3, 4], 4, true);
+			play("default");
+			_curFrame = Math.random() * 5;
 		}
 		
 		override public function isGrabbable(heldBubbles:FlxGroup, firstGrab:Boolean):Boolean {
