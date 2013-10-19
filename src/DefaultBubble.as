@@ -13,12 +13,8 @@ package
 		private var popGraphic:BitmapData;
 		private const QUICK_APPROACH_DURATION:Number = 0.3;
 		
-		public function DefaultBubble(levelDetails:LevelDetails,x:Number,y:Number,bubbleColor:uint) 
+		public function DefaultBubble() 
 		{
-			super(levelDetails, x, y);
-			
-			setBubbleColor(bubbleColor);
-			
 			var key:String = "popped Microbe0";
 			if (BitmapDataCache.getBitmap(key) == null) {
 				var newData:BitmapData = FlxG.createBitmap(85, 17, 0x00000000, true);
@@ -66,6 +62,7 @@ package
 			if (_pixels != popGraphic) {
 				_pixels = regularGraphic;
 			}
+			dirty = true;
 		}
 		
 		public function loadPopGraphic():void {

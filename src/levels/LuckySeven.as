@@ -55,6 +55,7 @@ package levels
 		override public function update(elapsed:Number):void {
 			super.update(elapsed);
 			if (playState.gameState == 140) {
+				// changing colors...
 				var positionMap:Object;
 				for (var i:int = 0; i < changedBubbles.length; i++) {
 					if (changedBubbles[i] == null) {

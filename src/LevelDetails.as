@@ -42,17 +42,8 @@ package
 					var x:Number = playState.leftEdge + i * PlayState.columnWidth;
 					var y:Number = (i % 2 == 0)?playState.newRowLocation:playState.newRowLocation - PlayState.bubbleHeight * .5;
 					var nextBubble:Bubble = nextBubble(x, y);
-					if (nextBubble is NullBubble) {
-						if (nextBubble.isAnchor()) {
-							playState.bubbles.add(nextBubble);
-						} else {
-							removedNullBubbles = true;
-						}
-					} else {
-						playState.bubbles.add(nextBubble);
-						if (!nextBubble.isAnchor()) {
-							newPoppableBubbles.push(nextBubble);
-						}
+					if (nextBubble is DefaultBubble && !nextBubble.isAnchor()) {
+						newPoppableBubbles.push(nextBubble);
 					}
 				}
 				playState.newRowLocation -= PlayState.bubbleHeight;
@@ -74,7 +65,7 @@ package
 				if (bubble != null && bubble.alive) {
 					playState.maybeAddConnectorSingle(positionMap, bubble);
 				}
-			}			
+			}
 		}
 		
 		public function init(playState:PlayState):void {
@@ -101,13 +92,19 @@ package
 		
 		public function nextBubble(x:Number, y:Number):Bubble {
 			var bubbleColor:int = nextBubbleColor();
-			var nextBubble:Bubble;
 			if (bubbleColor == 0) {
-				nextBubble = new NullBubble(this, x, y);
+				var nextNullBubble:NullBubble = playState.addBubble(NullBubble) as NullBubble;
+				nextNullBubble.init(this, x, y);
+				if (!nextNullBubble.isAnchor()) {
+					nextNullBubble.kill();
+				}
+				return nextNullBubble;
 			} else {
-				nextBubble = new DefaultBubble(this, x, y, bubbleColor);
+				var nextDefaultBubble:DefaultBubble = playState.addBubble(DefaultBubble) as DefaultBubble;
+				nextDefaultBubble.init(this, x, y);
+				nextDefaultBubble.setBubbleColor(bubbleColor);
+				return nextDefaultBubble;
 			}
-			return nextBubble;
 		}
 		
 		public function update(elapsed:Number):void {

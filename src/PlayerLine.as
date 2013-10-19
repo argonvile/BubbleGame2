@@ -20,7 +20,11 @@ package
 		}
 		
 		public function finalUpdate():void {
-			var lowestBubble:Bubble = playState.lowestBubble();
+			var lowestBubble:FlxSprite = playState.lowestBubble();
+			if (lowestBubble == null) {
+				lowestBubble = new FlxSprite(playState.playerSprite.x, -1);
+				lowestBubble.makeGraphic(playState.playerSprite.width, 1);
+			}
 			x = lowestBubble.x - lowestBubble.offset.x + lowestBubble.width / 2 - lowestBubble.offset.x;
 			fill(0x00000000);
 			var color:uint = 0x66ffffff;

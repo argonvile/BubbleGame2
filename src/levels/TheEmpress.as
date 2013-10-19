@@ -78,7 +78,9 @@ package levels
 				if (bubblesInColumn.length == 0) {
 					continue;
 				}
-				var newBubble:DefaultBubble = new DefaultBubble(this, newBubbleX, bubblesInColumn[0].y, nextBubbleColor());
+				var newBubble:DefaultBubble = playState.addBubble(DefaultBubble) as DefaultBubble;
+				newBubble.init(this, newBubbleX, bubblesInColumn[0].y);
+				newBubble.setBubbleColor(nextBubbleColor());
 				var i:int = 0;
 				do {
 					bubblesInColumn[i].y += PlayState.bubbleHeight;
@@ -92,7 +94,6 @@ package levels
 					}
 				}
 				playState.maybeAddConnectors(bubblesInColumn);
-				playState.bubbles.add(newBubble);
 			}
 		}
 		

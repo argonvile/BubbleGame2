@@ -2,9 +2,8 @@ package
 {
 	public class NullBubble extends Bubble
 	{
-		public function NullBubble(levelDetails:LevelDetails, x:Number, y:Number)
-		{
-			super(levelDetails, x, y);
+		override public function init(levelDetails:LevelDetails, x:Number, y:Number):void {
+			super.init(levelDetails, x, y);
 			visible = false;
 		}
 	}

@@ -18,13 +18,24 @@ package
 		public var quickApproachDistance:Number;
 		protected var levelDetails:LevelDetails;
 		public var connectors:Array = new Array();
-		
-		public function Bubble(levelDetails:LevelDetails, x:Number,y:Number) 
-		{
-			super(x, y);
-			this.levelDetails = levelDetails;
-		}
 
+		public function Bubble() 
+		{
+		}
+		
+		public function init(levelDetails:LevelDetails, x:Number, y:Number):void {
+			this.levelDetails = levelDetails;
+			this.x = x;
+			this.y = y;
+			this.state = 0;
+			this.stateTime = 0;
+			this.playerSprite = null;
+			this.quickApproachTime = 0;
+			this.quickApproachDistance = 0;
+			this.connectors.length = 0;
+			visible = true;
+		}
+		
 		public function updateAlpha():void {
 			if (isAnchor()) {
 				alpha = 0.6;

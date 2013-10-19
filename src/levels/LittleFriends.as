@@ -39,9 +39,14 @@ package levels
 		public override function nextBubble(x:Number, y:Number):Bubble {
 			var next:int = shuffledArray.next() as int;
 			if (next == -1) {
-				return new LittleFriendsBubble(this, x, y);
+				var newLittleFriendsBubble:LittleFriendsBubble = playState.addBubble(LittleFriendsBubble) as LittleFriendsBubble;
+				newLittleFriendsBubble.init(this, x, y);
+				return newLittleFriendsBubble;
 			} else {
-				return new DefaultBubble(this, x, y, bubbleColors[next]);
+				var newDefaultBubble:DefaultBubble = playState.addBubble(DefaultBubble) as DefaultBubble;
+				newDefaultBubble.init(this, x, y);
+				newDefaultBubble.setBubbleColor(bubbleColors[next]);
+				return newDefaultBubble;
 			}
  		}
 				

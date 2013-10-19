@@ -71,8 +71,12 @@ package levels
 				}
 				
 				bubblesInColumn.sort(orderByY);
-				var newBubble0:DefaultBubble = new DefaultBubble(this, newBubbleX, bubblesInColumn[0].y, nextBubbleColor());
-				var newBubble1:DefaultBubble = new DefaultBubble(this, newBubbleX, bubblesInColumn[0].y, (easyPair++ % 4 == 0)?newBubble0.bubbleColor:nextBubbleColor());
+				var newBubble0:DefaultBubble = playState.addBubble(DefaultBubble) as DefaultBubble;
+				newBubble0.init(this, newBubbleX, bubblesInColumn[0].y);
+				newBubble0.setBubbleColor(nextBubbleColor());
+				var newBubble1:DefaultBubble = playState.addBubble(DefaultBubble) as DefaultBubble;
+				newBubble1.init(this, newBubbleX, bubblesInColumn[0].y);
+				newBubble1.setBubbleColor((easyPair++ % 4 == 0)?newBubble0.bubbleColor:nextBubbleColor());
 				var shiftedBubbles:Array = new Array();
 				var i:int = 0;
 				do {
@@ -100,8 +104,6 @@ package levels
 					}
 				}
 				playState.maybeAddConnectors(bubblesInColumn);
-				playState.bubbles.add(newBubble0);
-				playState.bubbles.add(newBubble1);
 			}
 		}
 		

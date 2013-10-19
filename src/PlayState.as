@@ -1,5 +1,6 @@
 package
 {
+	import flash.utils.getTimer;
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.FlxColor;
 	import levels.*;
@@ -134,6 +135,9 @@ package
 			super.update();
 			stateTime += FlxG.elapsed;
 			timerText.text = String(Math.round(stateTime * 100) / 100);
+			if (Math.floor(getTimer() / 1000.0) != Math.floor(getTimer() / 1000.0 - FlxG.elapsed)) {
+				trace("Bubbles: " + bubbles.length + " Connectors: " + connectors.length);
+			}
 			if (gameState < 200) {
 				// still alive...
 				elapsed += FlxG.elapsed;
@@ -168,7 +172,7 @@ package
 				maybeAddConnectors(justScrolledBubbles);				
 			}
 			playerLine.finalUpdate();
-			if (gameState < 200 && newRowLocation > levelDetails.minNewRowLocation) {
+			if (gameState < 300 && newRowLocation > levelDetails.minNewRowLocation) {
 				// need to add new rows
 				var removedNullBubbles:Boolean = false;
 				var newPoppableBubbles:Array = new Array();
@@ -272,32 +276,24 @@ package
 						// kill the combo
 						comboSfxCount = 0;
 						
-						// did the player lose?
-						var badBubbleCount:int = 0;
-						for each (var bubble:Bubble in bubbles.members) {
-							if (bubble != null && bubble.alive && (bubble.y + bubble.height >= playerSprite.y) && bubble.state != 200) {
-								badBubbleCount++;
-								if (bubble.y > FlxG.height * 2) {
-									bubble.kill();
-								}
-							}
-						}
-						if (badBubbleCount > 0) {
-							speedupFactor += FlxG.elapsed * 10;
-							if (speedupFactor > 21) {
-								// yes, they lost. transition to state 200
-								changeState(200);
-								var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
-								text.alignment = "center";
-								text.y = FlxG.height / 2 - text.height / 2;
-								add(text);
-								text = new FlxText(0, 0, FlxG.width, "Hit <Enter>");
-								text.alignment = "center";
-								text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
-								add(text);
-								return;
-							}
+						var badBubbleCount:int = countBadBubbles();
+						if (badBubbleCount > 1000) {
+							// player lost. transition to state 200
+							changeState(200);
+							var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
+							text.alignment = "center";
+							text.y = FlxG.height / 2 - text.height / 2;
+							add(text);
+							text = new FlxText(0, 0, FlxG.width, "Hit <Enter>");
+							text.alignment = "center";
+							text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
+							add(text);
+							return;
+						} else if (badBubbleCount > 0) {
+							// player is in trouble
+							speedupFactor += FlxG.elapsed * 5;
 						} else {
+							// player is safe
 							speedupFactor = 1.0;
 						}
 					}
@@ -400,12 +396,41 @@ package
 				}
 			} else if (gameState == 200 || gameState == 300) {
 				// game over
+				if (gameState == 200) {
+					rowScrollTimer += levelDetails.rowScrollPixels() * speedupFactor;
+					if (rowScrollTimer > levelDetails.minScrollPixels) {
+						var scrollAmount:Number = Math.floor(rowScrollTimer / levelDetails.minScrollPixels) * levelDetails.minScrollPixels;
+						// scroll all the bubbles down a little
+						scrollBubblesFunction.call(this, scrollAmount);
+						rowScrollTimer -= scrollAmount;
+					}
+					// removes bubbles off bottom of screen
+					countBadBubbles();
+				}
 				if (FlxG.keys.justPressed("ENTER")) {
 					kill();
 					FlxG.switchState(new LevelSelect());
 					return;
 				}
 			}
+		}
+		
+		/**
+		 * Counts the number of bubbles off the bottom of the screen. If any bubbles are WAY off the screen, this function kills those bubbles
+		 * and returns a number greater than 9999.
+		 */
+		private function countBadBubbles():int {
+			var badBubbleCount:int = 0;
+			for each (var bubble:Bubble in bubbles.members) {
+				if (bubble != null && bubble.alive && (bubble.y + bubble.height >= playerSprite.y) && bubble.state != 200) {
+					badBubbleCount++;
+					if (bubble.y > FlxG.height * 1.5) {
+						bubble.kill();
+						badBubbleCount = 9999;
+					}
+				}
+			}
+			return badBubbleCount;
 		}
 		
 		public function scrollBubbles(scrollAmount:Number):void {
@@ -494,6 +519,12 @@ package
 					defaultBubbleS.connectors.push(connector);
 				}
 			}
+		}
+		
+		public function addBubble(bubbleClass:Class):Bubble {
+			var bubble:Bubble = bubbles.recycle(bubbleClass) as Bubble;
+			bubble.revive();
+			return bubble;
 		}
 		
 		public function checkForDetachedBubbles():void {

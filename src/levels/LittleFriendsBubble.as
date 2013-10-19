@@ -6,9 +6,9 @@ package levels
 	
 	public class LittleFriendsBubble extends Bubble
 	{
-		public function LittleFriendsBubble(levelDetails:LevelDetails, x:Number, y:Number) 
+		public function LittleFriendsBubble() 
 		{
-			super(levelDetails, x, y);
+			super();
 			var key:String = "LittleFriends";
 			if (BitmapDataCache.getBitmap(key) == null) {
 				var newData:BitmapData = FlxG.createBitmap(85, 17, 0x00000000, true);
