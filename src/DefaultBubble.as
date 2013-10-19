@@ -88,13 +88,13 @@ package
 			}
 		}
 		
-		public static function whitenBitmapData(spritePixels:BitmapData, minValue:Number = 0.5,maxValue:Number=1.0):void {
+		public static function whitenBitmapData(spritePixels:BitmapData, valueAdjustment:Number=0.5):void {
 			for (var pixelX:int = 0; pixelX < spritePixels.width; pixelX++) {
 				for (var pixelY:int = 0; pixelY < spritePixels.height; pixelY++) {
 					var pixelRgb:uint = spritePixels.getPixel32(pixelX, pixelY);
 					var pixelHsv:Object = DefaultBubble.RGBtoHSV(pixelRgb);
 					pixelHsv.saturation = 0;
-					pixelHsv.value = minValue + (maxValue - minValue) * pixelHsv.value;
+					pixelHsv.value = Math.max(0, Math.min(1, pixelHsv.value + valueAdjustment));
 					pixelRgb = FlxColor.HSVtoRGB(pixelHsv.hue, pixelHsv.saturation, pixelHsv.value, FlxColor.getAlpha(pixelRgb));
 					spritePixels.setPixel32(pixelX, pixelY, pixelRgb);
 				}
@@ -103,9 +103,9 @@ package
 		
 		public static function shiftHueBitmapData(spritePixels:BitmapData, color:uint):void {
 			if (color == 0xff000000) {
-				return whitenBitmapData(spritePixels, 0.15, 0.5);
+				return whitenBitmapData(spritePixels, -0.45);
 			} else if (color == 0xffffffff) {
-				return whitenBitmapData(spritePixels, 0.5, 0.85);
+				return whitenBitmapData(spritePixels, 0.05);
 			}
 			var targetHsv:Object = FlxColor.RGBtoHSV(color);
 			for (var pixelX:int = 0; pixelX < spritePixels.width; pixelX++) {
