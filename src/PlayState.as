@@ -49,6 +49,7 @@ package
 		
 		private var playerLine:PlayerLine;
 		public var comboSfxCount:Number = 0;
+		private var speedupFactor:Number = 1.0;
 		
 		public function PlayState(levelDetails:LevelDetails=null) {
 			this.levelDetails = levelDetails;
@@ -259,7 +260,7 @@ package
 					}
 				} else {
 					// no, it's not paused
-					rowScrollTimer += levelDetails.rowScrollPixels();
+					rowScrollTimer += levelDetails.rowScrollPixels() * speedupFactor;
 					scrollBg();
 					if (rowScrollTimer > levelDetails.minScrollPixels) {
 						var scrollAmount:Number = Math.floor(rowScrollTimer / levelDetails.minScrollPixels) * levelDetails.minScrollPixels;
@@ -272,8 +273,18 @@ package
 						comboSfxCount = 0;
 						
 						// did the player lose?
+						var badBubbleCount:int = 0;
 						for each (var bubble:Bubble in bubbles.members) {
-							if (bubble != null && bubble.alive && bubble.y > 232 && bubble.state != 200) {
+							if (bubble != null && bubble.alive && (bubble.y + bubble.height >= playerSprite.y) && bubble.state != 200) {
+								badBubbleCount++;
+								if (bubble.y > FlxG.height * 2) {
+									bubble.kill();
+								}
+							}
+						}
+						if (badBubbleCount > 0) {
+							speedupFactor += FlxG.elapsed * 10;
+							if (speedupFactor > 21) {
 								// yes, they lost. transition to state 200
 								changeState(200);
 								var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
@@ -286,6 +297,8 @@ package
 								add(text);
 								return;
 							}
+						} else {
+							speedupFactor = 1.0;
 						}
 					}
 				}
