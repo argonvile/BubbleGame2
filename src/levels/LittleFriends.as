@@ -5,6 +5,7 @@ package levels
 	public class LittleFriends extends LevelDetails
 	{
 		public static const name:String = "Little Friends";
+		public static const scenarioBpms:Array = [36.6, 87.0, 167.6, 262.1, 322.8];
 		private var shuffledArray:ShuffledArray;
 		
 		public function LittleFriends(scenario:int) 

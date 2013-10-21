@@ -3,6 +3,7 @@ package levels
 	public class Blender extends LevelDetails
 	{
 		public static const name:String = "Blender";
+		public static const scenarioBpms:Array = [47.1, 68.4, 114.3, 174.6, 273.0];
 		private var shuffledColumnArray:ContinuousShuffledArray;
 		private var easyPair:int = 0;
 		

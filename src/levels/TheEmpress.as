@@ -4,6 +4,7 @@ package levels
 	public class TheEmpress extends LevelDetails
 	{
 		public static const name:String = "The Empress";
+		public static const scenarioBpms:Array = [51.3, 87.0, 167.6, 262.1, 322.8];
 		private var columnScrollArray:ShuffledArray = new ShuffledArray();
 		public function TheEmpress(scenario:int) 
 		{

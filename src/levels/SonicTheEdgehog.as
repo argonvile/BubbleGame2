@@ -2,7 +2,8 @@ package levels
 {
 	public class SonicTheEdgehog extends LevelDetails
 	{
-		public static const name:String = "Sonic The Edgehog";
+		public static const name:String = "Edgehog";
+		public static const scenarioBpms:Array = [49.4, 77.7, 102.6, 195.9, 216.4];
 		private var bubbleIndex:int = 0;
 		private var upcomingBubbleData:Array;
 		

@@ -15,6 +15,7 @@ package
 		[Embed(source = "../graphics/microbe0-s.png")] public static var Microbe0S:Class;
 		[Embed(source = "../graphics/microbe0-sw.png")] public static var Microbe0Sw:Class;
 		[Embed(source = "../graphics/microbe0-se.png")] public static var Microbe0Se:Class;
+		[Embed(source = "../graphics/screenshot-90x44.png")] public static var Screenshot90x44:Class;
 
 		[Embed(source = "../sound/blipa0.mp3")] public static var SfxBlipA0:Class;
 		[Embed(source = "../sound/blipa1.mp3")] public static var SfxBlipA1:Class;

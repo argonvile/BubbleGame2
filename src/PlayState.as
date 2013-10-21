@@ -56,8 +56,10 @@ package
 		private var nextDifficultyIncrementTime:int;
 		private var difficultyIncrementFrequency:int = 3000;
 		private var variableDifficultyDeaths:Array = new Array();
+		private var returnClass:Class;
 		
-		public function PlayState(levelDetails:LevelDetails=null) {
+		public function PlayState(returnClass:Class, levelDetails:LevelDetails = null) {
+			this.returnClass = returnClass;
 			this.levelDetails = levelDetails;
 		}
 		
@@ -158,7 +160,7 @@ package
 				playerMover.movePlayerFromInput();
 				if (FlxG.keys.justPressed("ESCAPE")) {
 					kill();
-					FlxG.switchState(new LevelSelect());
+					FlxG.switchState(new returnClass());
 					return;					
 				}
 				if (FlxG.keys.justPressed("Z")) {
@@ -309,21 +311,14 @@ package
 									text.y = FlxG.height / 2 - text.height / 2;
 									add(text);
 									
-									var difficulties:Array = [45, 60, 75, 88, 98, 109, 121, 135, 149, 164, 181, 200, 221, 244, 270, 299, 332, 369, 409, Number.MAX_VALUE];
-									var difficultyStrings:Array = ["o", "oo", "ooo", "*", "**", "***", "****", "*****", "&", "&&", "&&&", "&&&&", "&&&&&", "&&&&&&", "&&&&&&&", "!", "!!", "!!!", "!!!!", "!!!!!"]
-									
 									text = new FlxText(0, text.y + text.height, FlxG.width);
 									var smartAverage:Number = BpmLevel.computeSmartAverage(variableDifficultyDeaths.slice(3));
 									var adjustedBpm:Number = PlayerSave.getBubblesPerMinute()/smartAverage;
 									text.text = String(BpmLevel.roundTenths(PlayerSave.getBubblesPerMinute()));
 									text.text += " / " + BpmLevel.roundTenths(smartAverage);
 									text.text += " = " + BpmLevel.roundTenths(adjustedBpm) + " rating. difficulty ";
-									for (var i:int = 0; i < difficulties.length; i++) {
-										if (difficulties[i] > adjustedBpm) {
-											text.text += i + ", " + difficultyStrings[i];
-											break;
-										}
-									}
+									text.text += i + ", " + getDifficultyString(adjustedBpm);
+									
 									text.alignment = "center";
 									add(text);
 									
@@ -480,10 +475,22 @@ package
 				}
 				if (FlxG.keys.justPressed("ENTER")) {
 					kill();
-					FlxG.switchState(new LevelSelect());
+					FlxG.switchState(new returnClass());
 					return;
 				}
 			}
+		}
+		
+		public static function getDifficultyString(adjustedBpm:Number):String {
+			var difficulties:Array = [45, 60, 75, 88, 98, 109, 121, 135, 149, 164, 181, 200, 221, 244, 270, 299, 332, 369, 409, Number.MAX_VALUE];
+			var difficultyStrings:Array = [".", "..", "...", "o", "oo", "ooo", "oooo", "ooooo", "O", "OO", "OOO", "OOOO", "OOOOO", "OOOOOO", "OOOOOOO", "@", "@@", "@@@", "@@@@", "@@@@@"]
+			
+			for (var i:int = 0; i < difficulties.length; i++) {
+				if (difficulties[i] > adjustedBpm) {
+					return difficultyStrings[i];
+				}
+			}
+			return "";
 		}
 		
 		/**

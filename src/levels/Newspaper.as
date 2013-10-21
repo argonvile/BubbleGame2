@@ -3,6 +3,7 @@ package levels
 	public class Newspaper extends LevelDetails
 	{
 		public static const name:String = "Newspaper";
+		public static const scenarioBpms:Array = [33.2, 64.8, 105.6, 157.2, 208.5];
 		public function Newspaper(scenario:int) 
 		{
 			setSpeed(scenario);
