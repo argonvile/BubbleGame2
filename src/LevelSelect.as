@@ -8,6 +8,10 @@ package
 	public class LevelSelect extends FlxState
 	{
 		private const romanNumerals:Array = ["I", "II", "III", "IV", "V"];
+		private var codeChars:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		private var code:String = "        "
+		private var codeText:FlxText
+		private var diffMode:Boolean = false;
 		
 		override public function create():void {
 			var levelArray:Array = [TheEmpress, LuckySeven, SonicTheEdgehog, Newspaper, Blender, LittleFriends];
@@ -22,15 +26,33 @@ package
 				text.alignment = "right";
 				add(text);
 				for (var i:int = 0; i < 5; i++) {
-					button = new FlxButtonPlus(160 + 25 * i , 30 + 25*j, filmReel, [levelArray[j], i], romanNumerals[i], 20, 20);
+					button = new FlxButtonPlus(160 + 25 * i , 30 + 25*j, startGame, [levelArray[j], i], romanNumerals[i], 20, 20);
 					add(button);
 				}
 			}
+			codeText = new FlxText(0, 0, FlxG.width);
+			add(codeText);
 		}
 		
 		override public function update():void {
 			super.update();
 			Mouse.show();
+			for (var i:int = 0; i < codeChars.length; i++) {
+				if (FlxG.keys.justPressed(codeChars.charAt(i))) {
+					code = code.substring(1) + codeChars.charAt(i);
+				}
+			}
+			if (codeEntered("AVBPM")) {
+				startGame(BpmLevel, 0);
+			}
+			if (codeEntered("AVDIFF")) {
+				diffMode = true;
+				codeText.text = "Variable Difficulty Mode Activated";
+			}
+		}
+		
+		private function codeEntered(expectedCode:String):Boolean {
+			return code.substring(code.length - expectedCode.length, code.length) == expectedCode;
 		}
 		
 		private function keyboardOptions():void {
@@ -38,10 +60,14 @@ package
 			FlxG.switchState(new KeyboardOptions());
 		}
 		
-		private function filmReel(clazz:Class, scenario:int):void {
+		private function startGame(clazz:Class, scenario:int):void {
 			Mouse.hide();
 			kill();
-			FlxG.switchState(new PlayState(new clazz(scenario)));
+			var playState:PlayState = new PlayState(new clazz(scenario));
+			if (diffMode) {
+				playState.variableDifficultyMode = true;
+			}
+			FlxG.switchState(playState);
 		}
 	}
 

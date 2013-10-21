@@ -52,6 +52,11 @@ package
 		public var comboSfxCount:Number = 0;
 		private var speedupFactor:Number = 1.0;
 		
+		public var variableDifficultyMode:Boolean = false;
+		private var nextDifficultyIncrementTime:int;
+		private var difficultyIncrementFrequency:int = 3000;
+		private var variableDifficultyDeaths:Array = new Array();
+		
 		public function PlayState(levelDetails:LevelDetails=null) {
 			this.levelDetails = levelDetails;
 		}
@@ -61,6 +66,13 @@ package
 			if (levelDetails == null) {
 				levelDetails = new LuckySeven(4);
 			}
+			
+			if (variableDifficultyMode) {
+				FlxG.timeScale = 6/7;
+				levelDetails.levelDuration = 10;
+				nextDifficultyIncrementTime = getTimer() + 10000 + difficultyIncrementFrequency;
+			}
+			
 			levelDetails.init(this);
 			
 			var tempSprite:FlxSprite;
@@ -123,7 +135,7 @@ package
 			add(playerLine);
 		}
 		
-		private function scrollBg(howMany:int=1):void {
+		private function scrollBg(howMany:int = 1):void {
 			var remainingTime:Number = Math.max(10, levelDetails.levelDuration - elapsed);
 			var spriteVelocity:Number = -bgSprite.y / remainingTime;
 			bgSprite.y = Math.min(0, bgSprite.y + spriteVelocity * howMany * FlxG.elapsed);
@@ -135,14 +147,20 @@ package
 			super.update();
 			stateTime += FlxG.elapsed;
 			timerText.text = String(Math.round(stateTime * 100) / 100);
-			if (Math.floor(getTimer() / 1000.0) != Math.floor(getTimer() / 1000.0 - FlxG.elapsed)) {
-				trace("Bubbles: " + bubbles.length + " Connectors: " + connectors.length);
-			}
 			if (gameState < 200) {
+				if (variableDifficultyMode && getTimer() >= nextDifficultyIncrementTime) {
+					FlxG.timeScale = Math.min(50.0, FlxG.timeScale * Math.sqrt(7 / 6));
+					nextDifficultyIncrementTime += difficultyIncrementFrequency;
+				}
 				// still alive...
 				elapsed += FlxG.elapsed;
 				levelDetails.update(elapsed);
 				playerMover.movePlayerFromInput();
+				if (FlxG.keys.justPressed("ESCAPE")) {
+					kill();
+					FlxG.switchState(new LevelSelect());
+					return;					
+				}
 				if (FlxG.keys.justPressed("Z")) {
 					// find the next block above the player, and remove it
 					grabBubbles();
@@ -278,7 +296,59 @@ package
 						
 						var badBubbleCount:int = countBadBubbles();
 						if (badBubbleCount > 1000) {
-							// player lost. transition to state 200
+							if (variableDifficultyMode) {
+								// player would have lost; eliminate some bubbles and reset them
+								changeState(130, 1.0 * FlxG.timeScale);
+								variableDifficultyDeaths.push(FlxG.timeScale);
+								if (variableDifficultyDeaths.length >= 9) {
+									FlxG.timeScale = 1.0;
+									changeState(200);
+									var text:FlxText = new FlxText(0, 0, FlxG.width);
+									text.text = BpmLevel.produceAverageText(variableDifficultyDeaths.slice(2));
+									text.alignment = "center";
+									text.y = FlxG.height / 2 - text.height / 2;
+									add(text);
+									
+									var difficulties:Array = [45, 60, 75, 88, 98, 109, 121, 135, 149, 164, 181, 200, 221, 244, 270, 299, 332, 369, 409, Number.MAX_VALUE];
+									var difficultyStrings:Array = ["o", "oo", "ooo", "*", "**", "***", "****", "*****", "&", "&&", "&&&", "&&&&", "&&&&&", "&&&&&&", "&&&&&&&", "!", "!!", "!!!", "!!!!", "!!!!!"]
+									
+									text = new FlxText(0, text.y + text.height, FlxG.width);
+									var smartAverage:Number = BpmLevel.computeSmartAverage(variableDifficultyDeaths.slice(3));
+									var adjustedBpm:Number = PlayerSave.getBubblesPerMinute()/smartAverage;
+									text.text = String(BpmLevel.roundTenths(PlayerSave.getBubblesPerMinute()));
+									text.text += " / " + BpmLevel.roundTenths(smartAverage);
+									text.text += " = " + BpmLevel.roundTenths(adjustedBpm) + " rating. difficulty ";
+									for (var i:int = 0; i < difficulties.length; i++) {
+										if (difficulties[i] > adjustedBpm) {
+											text.text += i + ", " + difficultyStrings[i];
+											break;
+										}
+									}
+									text.alignment = "center";
+									add(text);
+									
+									text = new FlxText(0, text.y + text.height, FlxG.width, "Hit <Enter>");
+									text.alignment = "center";
+									add(text);
+									return;
+								}
+								FlxG.timeScale = Math.max(0.02, FlxG.timeScale * 0.6);
+								nextDifficultyIncrementTime = getTimer() + difficultyIncrementFrequency * 2;
+								for each (var bubble:Bubble in bubbles.members) {
+									if (bubble != null && bubble.alive) {
+										bubble.kill();
+									}
+								}
+								levelDetails.prepareLevel();
+								for each (var bubble:Bubble in bubbles.members) {
+									if (bubble != null && bubble.alive && bubble.y < newRowLocation) {
+										newRowLocation = bubble.y;
+									}
+								}
+								return;
+							}
+							
+							// player loses. transition to state 200
 							changeState(200);
 							var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
 							text.alignment = "center";
@@ -300,7 +370,7 @@ package
 				}
 
 				// did the player win?
-				if (elapsed > levelDetails.levelDuration) {
+				if (elapsed > levelDetails.levelDuration && !variableDifficultyMode) {
 					var text:FlxText = new FlxText(0, 0, FlxG.width, "You win!");
 					text.alignment = "center";
 					text.y = FlxG.height / 2 - text.height / 2;
@@ -383,6 +453,7 @@ package
 				}
 				// is the drop event over?
 				if (stateTime >= stateDuration) {
+					levelDetails.bubblesFinishedDropping(poppedBubbles);
 					poppedBubbles.length = 0;
 					changeState(100);
 					// check if the user triggered another drop while we were dropping...

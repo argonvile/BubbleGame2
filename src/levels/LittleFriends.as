@@ -30,7 +30,7 @@ package levels
 				columnCount = 12;
 				shuffledArray = new ShuffledArray( -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3);
 			} else if (scenario == 4) {
-				maxBubbleRate = 1800;
+				maxBubbleRate = 1200;
 				columnCount = 7;
 				shuffledArray = new ShuffledArray( -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 1, 1, 1, 2);
 			}

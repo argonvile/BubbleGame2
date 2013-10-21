@@ -44,6 +44,11 @@ package levels
 			targetColors[bubbleColors[bubbleColors.length - 1]] = bubbleColors[0];
 		}
 		
+		override public function prepareLevel():void {
+			generatedBubbleCount = 0;
+			super.prepareLevel();
+		}
+		
 		override public function nextBubbleColor():int {
 			if (generatedBubbleCount < columnCount * 4) {
 				return bubbleColors[(generatedBubbleCount++ % columnCount) % bubbleColors.length];

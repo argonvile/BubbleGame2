@@ -15,10 +15,13 @@
 *Sound effects escalate in pitch
 *Bubbles should "wiggle"
 *delay before player dies
+*difficulty levels
+
 new level: "relentless", bubbles don't stop even during a combo (maybe they slow down?)
 level-picking interface -- pick between six levels
 new level: fog covers the bubbles in front of you?
 display timer
+
 
 new "final trial" level -- no time limit, only quota, goes through phases like magical drop...
   * "regular" phase

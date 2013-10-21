@@ -38,7 +38,7 @@ package
 				playerSprite.x = minX + PlayState.columnWidth*(Math.ceil(0.66666667 * (columnCount - 1)));
 			}
 			if (pressedLeft) {
-				leftTimer += FlxG.elapsed;
+				leftTimer += (FlxG.elapsed / FlxG.timeScale);
 				while (leftTimer > repeatDelay && leftTimer > repeatRate && playerSprite.x > minX) {
 					moveLeft();
 					leftTimer -= repeatRate;
@@ -47,7 +47,7 @@ package
 				leftTimer = 0;
 			}
 			if (pressedRight) {
-				rightTimer += FlxG.elapsed;
+				rightTimer += (FlxG.elapsed / FlxG.timeScale);
 				while (rightTimer > repeatDelay && rightTimer > repeatRate && playerSprite.x < maxX) {
 					moveRight();
 					rightTimer -= repeatRate;

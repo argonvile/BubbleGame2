@@ -127,5 +127,8 @@ package
 		
 		public function bubblesFinishedPopping(bubbles:Array):void {
 		}
+		
+		public function bubblesFinishedDropping(bubbles:Array):void {
+		}
 	}
 }

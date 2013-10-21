@@ -7,6 +7,7 @@ package
 		private static var loaded:Boolean = false;
 		private static var repeatDelay:Number;
 		private static var repeatRate:Number;
+		private static var bubblesPerMinute:Number;
 		
 		public static function getRepeatDelay():Number {
 			return get("repeatDelay") as Number;
@@ -22,6 +23,14 @@ package
 		
 		public static function setRepeatRate(value:Number):void {
 			set("repeatRate", value);
+		}
+				
+		public static function getBubblesPerMinute():Number {
+			return get("bubblesPerMinute") as Number;
+		}
+		
+		public static function setBubblesPerMinute(value:Number):void {
+			set("bubblesPerMinute", value);
 		}
 		
 		private static function get(field:String):Object {
@@ -49,6 +58,9 @@ package
 				}
 				if (save.data.repeatRate == null) {
 					save.data.repeatRate = KeyboardOptions.REPEAT_RATES[2];
+				}
+				if (save.data.bubblesPerMinute == null) {
+					save.data.bubblesPerMinute = 150;
 				}
 			}
 		}
