@@ -16,12 +16,13 @@
 *Bubbles should "wiggle"
 *delay before player dies
 *difficulty levels
+*level-picking interface -- pick between six levels
 
 new level: "relentless", bubbles don't stop even during a combo (maybe they slow down?)
-level-picking interface -- pick between six levels
 new level: fog covers the bubbles in front of you?
 display timer
 
+Level select should use real screenshots
 
 new "final trial" level -- no time limit, only quota, goes through phases like magical drop...
   * "regular" phase
@@ -33,6 +34,7 @@ new "final trial" level -- no time limit, only quota, goes through phases like m
 
 add halos for up/down teleport squares
 new level: moving causes new bubbles to appear
+new level: bubbles constantly change color
 new level: "red red whine", red bubbles either pop when you grab them, or change color, or something annoying
 Add support for desaturated/light/dark bubbles
 add "Quota" feature?

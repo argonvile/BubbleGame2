@@ -70,6 +70,9 @@ package
 		
 		public function init(playState:PlayState):void {
 			this.playState = playState;
+			if (levelDuration > 30) {
+				maxBubbleRate += (columnCount * 6) / (levelDuration / 60);
+			}
 		}
 		
 		/**
