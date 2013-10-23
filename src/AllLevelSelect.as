@@ -14,7 +14,6 @@ package
 		private var diffMode:Boolean = false;
 		
 		override public function create():void {
-			var levelArray:Array = [TheEmpress, LuckySeven, SonicTheEdgehog, Newspaper, Blender, LittleFriends];
 			var button:FlxButtonPlus;
 			var text:FlxText;
 			
@@ -23,12 +22,12 @@ package
 			button = new FlxButtonPlus(165, 5, sixLevels, null, "Six Levels", 150, 20);
 			add(button);
 
-			for (var j:int = 0; j < levelArray.length; j++) {
-				text = new FlxText(5, 33 + 25*j, 150, levelArray[j]["name"]);
+			for (var j:int = 0; j < PlayerData.levelClasses.length; j++) {
+				text = new FlxText(5, 33 + 25*j, 150, PlayerData.levelClasses[j]["name"]);
 				text.alignment = "right";
 				add(text);
 				for (var i:int = 0; i < 5; i++) {
-					button = new FlxButtonPlus(160 + 25 * i , 30 + 25*j, startGame, [levelArray[j], i], romanNumerals[i], 20, 20);
+					button = new FlxButtonPlus(160 + 25 * i , 30 + 25*j, startGame, [PlayerData.levelClasses[j], i], romanNumerals[i], 20, 20);
 					add(button);
 				}
 			}

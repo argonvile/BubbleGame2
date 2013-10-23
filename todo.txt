@@ -13,13 +13,15 @@
 *add vertical "where am i and what am i holding" line
 *bubble rate stays at minimum for initial 5s, increases gradually until hitting its max at 60s mark
 *Sound effects escalate in pitch
+
 *Bubbles should "wiggle"
 *delay before player dies
 *difficulty levels
 *level-picking interface -- pick between six levels
+*new level: "relentless", bubbles don't stop even during a combo (maybe they slow down?)
 
-new level: "relentless", bubbles don't stop even during a combo (maybe they slow down?)
 new level: fog covers the bubbles in front of you?
+  add fog particles
 display timer
 
 Level select should use real screenshots
@@ -32,6 +34,8 @@ new "final trial" level -- no time limit, only quota, goes through phases like m
   * (also?) phase where bubbles ripple in, left to right
   * (also?) phase where bubbles focus on the left, middle, or right
 
+new level: "slow pokes", like relentless but with blender-style insertions which don't stop. pop rate increases as combo continues
+thrown bubbles and sitting bubbles should both pop during a combo
 add halos for up/down teleport squares
 new level: moving causes new bubbles to appear
 new level: bubbles constantly change color

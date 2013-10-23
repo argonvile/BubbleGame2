@@ -24,7 +24,7 @@ package
 			text = new FlxText(0, 0, width, clazz["name"] + " " + romanNumerals[scenario]);
 			buttonNormal.pixels.draw(text.pixels);
 			var scenarioBpm:Number = clazz["scenarioBpms"][scenario];
-			text = new FlxText(0, 0, width, "Level: " + PlayState.getDifficultyString(scenarioBpm));
+			text = new FlxText(0, 0, width, "Level: " + PlayerData.getDifficultyString(scenarioBpm));
 			matrix.identity();
 			matrix.translate(0, 56);
 			buttonNormal.pixels.draw(text.pixels, matrix);

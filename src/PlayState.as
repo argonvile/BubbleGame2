@@ -19,7 +19,7 @@ package
 		private var popperEmitter:FlxEmitter = new FlxEmitter();
 		
 		private var elapsed:Number = 0;
-		private var rowScrollTimer:Number = 0;
+		public var rowScrollTimer:Number = 0;
 		/**
 		 * 100 == normal
 		 * 110 == popping
@@ -39,8 +39,6 @@ package
 		
 		public var newRowLocation:Number;
 		
-		private var timerText:FlxText;
-		
 		private var levelDetails:LevelDetails;
 		
 		private var bgSprite:FlxSprite;
@@ -50,7 +48,7 @@ package
 		
 		private var playerLine:PlayerLine;
 		public var comboSfxCount:Number = 0;
-		private var speedupFactor:Number = 1.0;
+		public var speedupFactor:Number = 1.0;
 		
 		public var variableDifficultyMode:Boolean = false;
 		private var nextDifficultyIncrementTime:int;
@@ -58,15 +56,18 @@ package
 		private var variableDifficultyDeaths:Array = new Array();
 		private var returnClass:Class;
 		
-		public function PlayState(returnClass:Class, levelDetails:LevelDetails = null) {
+		public function PlayState(returnClass:Class=null, levelDetails:LevelDetails = null) {
 			this.returnClass = returnClass;
 			this.levelDetails = levelDetails;
 		}
 		
 		override public function create():void
 		{
+			if (returnClass == null) {
+				returnClass = AllLevelSelect;
+			}
 			if (levelDetails == null) {
-				levelDetails = new LuckySeven(4);
+				levelDetails = new FogColumn(0);
 			}
 			
 			if (variableDifficultyMode) {
@@ -121,23 +122,20 @@ package
 			add(heldBubbles);
 			add(fallingBubbles);
 			
-			timerText = new FlxText(290, 0, 100, "0.0");
-			add(timerText);
-			
-			add(fgSprite);
-			
+			playerLine = new PlayerLine(this);
+			add(playerLine);
+
 			levelDetails.prepareLevel();
 			for each (var bubble:Bubble in bubbles.members) {
 				if (bubble != null && bubble.alive && bubble.y < newRowLocation) {
 					newRowLocation = bubble.y;
 				}
 			}
-			
-			playerLine = new PlayerLine(this);
-			add(playerLine);
+
+			add(fgSprite);
 		}
 		
-		private function scrollBg(howMany:int = 1):void {
+		public function scrollBg(howMany:int = 1):void {
 			var remainingTime:Number = Math.max(10, levelDetails.levelDuration - elapsed);
 			var spriteVelocity:Number = -bgSprite.y / remainingTime;
 			bgSprite.y = Math.min(0, bgSprite.y + spriteVelocity * howMany * FlxG.elapsed);
@@ -148,7 +146,6 @@ package
 		{
 			super.update();
 			stateTime += FlxG.elapsed;
-			timerText.text = String(Math.round(stateTime * 100) / 100);
 			if (gameState < 200) {
 				if (variableDifficultyMode && getTimer() >= nextDifficultyIncrementTime) {
 					FlxG.timeScale = Math.min(50.0, FlxG.timeScale * Math.sqrt(7 / 6));
@@ -317,7 +314,7 @@ package
 									text.text = String(BpmLevel.roundTenths(PlayerSave.getBubblesPerMinute()));
 									text.text += " / " + BpmLevel.roundTenths(smartAverage);
 									text.text += " = " + BpmLevel.roundTenths(adjustedBpm) + " rating. difficulty ";
-									text.text += i + ", " + getDifficultyString(adjustedBpm);
+									text.text += PlayerData.getDifficultyIndex(adjustedBpm) + ", " + PlayerData.getDifficultyString(adjustedBpm);
 									
 									text.alignment = "center";
 									add(text);
@@ -479,18 +476,6 @@ package
 					return;
 				}
 			}
-		}
-		
-		public static function getDifficultyString(adjustedBpm:Number):String {
-			var difficulties:Array = [45, 60, 75, 88, 98, 109, 121, 135, 149, 164, 181, 200, 221, 244, 270, 299, 332, 369, 409, Number.MAX_VALUE];
-			var difficultyStrings:Array = [".", "..", "...", "o", "oo", "ooo", "oooo", "ooooo", "O", "OO", "OOO", "OOOO", "OOOOO", "OOOOOO", "OOOOOOO", "@", "@@", "@@@", "@@@@", "@@@@@"]
-			
-			for (var i:int = 0; i < difficulties.length; i++) {
-				if (difficulties[i] > adjustedBpm) {
-					return difficultyStrings[i];
-				}
-			}
-			return "";
 		}
 		
 		/**
