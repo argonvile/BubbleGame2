@@ -67,7 +67,7 @@ package
 				returnClass = AllLevelSelect;
 			}
 			if (levelDetails == null) {
-				levelDetails = new FogColumn(0);
+				levelDetails = new Relentless(0);
 			}
 			
 			if (variableDifficultyMode) {
