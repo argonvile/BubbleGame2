@@ -7,10 +7,8 @@ package
 		public var bubble0:Bubble;
 		public var bubble1:Bubble;
 		
-		public function Connector(bubble0:Bubble=null, bubble1:Bubble=null) 
+		public function Connector() 
 		{
-			this.bubble0 = bubble0;
-			this.bubble1 = bubble1;
 		}
 		
 		public function init(bubble0:Bubble, bubble1:Bubble, graphic:Class):void {

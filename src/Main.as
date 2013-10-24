@@ -7,7 +7,7 @@ package
 	{
 		public function Main()
 		{
-			super(320, 240, LevelSelect, 2, 60, 60);
+			super(320, 240, PlayState, 2, 60, 60);
 			PlayerSave.load();
 			FlxG.debug = true;
 		}

@@ -110,6 +110,16 @@ package
 			}
 		}
 		
+		public function addConnector(defaultBubble:DefaultBubble, defaultBubbleS:DefaultBubble, graphic:Class):void {
+			var connector:DefaultConnector = playState.connectors.recycle(DefaultConnector) as DefaultConnector;
+			connector.revive();
+			connector.init(defaultBubble, defaultBubbleS, graphic);
+			connector.offset.y = defaultBubble.offset.y;
+			playState.connectors.add(connector);
+			defaultBubble.connectors.push(connector);
+			defaultBubbleS.connectors.push(connector);
+		}
+		
 		public function update(elapsed:Number):void {
 			if (elapsed < initialBubbleRateDuration) {
 				bubbleRate = maxBubbleRate * initialBubbleRatePct;

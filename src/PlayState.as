@@ -13,7 +13,7 @@ package
 		public var leftEdge:int = 8;
 		public var playerSprite:FlxSprite;
 		public var bubbles:FlxGroup;
-		private var connectors:FlxGroup;
+		public var connectors:FlxGroup;
 		private var fallingBubbles:FlxGroup = new FlxGroup();
 		public var heldBubbles:FlxGroup = new FlxGroup();
 		private var popperEmitter:FlxEmitter = new FlxEmitter();
@@ -67,7 +67,7 @@ package
 				returnClass = AllLevelSelect;
 			}
 			if (levelDetails == null) {
-				levelDetails = new Relentless(0);
+				levelDetails = new DarkStalker(3);
 			}
 			
 			if (variableDifficultyMode) {
@@ -573,13 +573,7 @@ package
 				var defaultBubble:DefaultBubble = bubble as DefaultBubble;
 				var defaultBubbleS:DefaultBubble = bubbleS as DefaultBubble;
 				if (defaultBubbleS.bubbleColor == defaultBubble.bubbleColor) {
-					var connector:DefaultConnector = connectors.recycle(DefaultConnector) as DefaultConnector;
-					connector.revive();
-					connector.init(defaultBubble, defaultBubbleS, graphic);
-					connector.offset.y = defaultBubble.offset.y;
-					connectors.add(connector);
-					defaultBubble.connectors.push(connector);
-					defaultBubbleS.connectors.push(connector);
+					levelDetails.addConnector(defaultBubble, defaultBubbleS, graphic);
 				}
 			}
 		}

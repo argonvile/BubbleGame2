@@ -9,8 +9,8 @@ package
 	public class DefaultBubble extends Bubble
 	{
 		public var bubbleColor:uint;
-		private var regularGraphic:BitmapData;
-		private var popGraphic:BitmapData;
+		protected var regularGraphic:BitmapData;
+		protected var popGraphic:BitmapData;
 		private const QUICK_APPROACH_DURATION:Number = 0.3;
 		
 		public function DefaultBubble() 
@@ -65,6 +65,10 @@ package
 			dirty = true;
 		}
 		
+		public function isPopGraphic():Boolean {
+			return _pixels == popGraphic;
+		}
+		
 		public function loadPopGraphic():void {
 			_pixels = popGraphic;
 			dirty = true;
@@ -73,6 +77,10 @@ package
 					connector.loadPopGraphic();
 				}
 			}
+		}
+		
+		public function isRegularGraphic():Boolean {
+			return _pixels == regularGraphic;
 		}
 		
 		public function loadRegularGraphic():void {

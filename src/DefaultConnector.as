@@ -10,9 +10,9 @@ package
 		private var regularGraphic:BitmapData;
 		private var popGraphic:BitmapData;
 		
-		public function DefaultConnector(bubble0:DefaultBubble=null, bubble1:DefaultBubble=null)
+		public function DefaultConnector()
 		{
-			super(bubble0, bubble1);
+			super();
 		}
 		
 		override public function init(bubble0:Bubble, bubble1:Bubble, graphic:Class):void {
@@ -59,6 +59,14 @@ package
 		public function loadRegularGraphic():void {
 			_pixels = regularGraphic;
 			dirty = true;
+		}
+		
+		public function isPopGraphic():Boolean {
+			return _pixels == popGraphic;
+		}
+		
+		public function isRegularGraphic():Boolean {
+			return _pixels == regularGraphic;
 		}
 	}
 }
