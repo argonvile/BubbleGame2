@@ -55,6 +55,7 @@ package
 		private var difficultyIncrementFrequency:int = 3000;
 		private var variableDifficultyDeaths:Array = new Array();
 		private var returnClass:Class;
+		private var ekgGraphic:EkgGraphic;
 		
 		public function PlayState(returnClass:Class=null, levelDetails:LevelDetails = null) {
 			this.returnClass = returnClass;
@@ -67,7 +68,7 @@ package
 				returnClass = AllLevelSelect;
 			}
 			if (levelDetails == null) {
-				levelDetails = new DarkStalker(3);
+				levelDetails = new Newspaper(3);
 			}
 			
 			if (variableDifficultyMode) {
@@ -133,6 +134,9 @@ package
 			}
 
 			add(fgSprite);
+			
+			ekgGraphic = new EkgGraphic(263, 120, 123);
+			add(ekgGraphic);
 		}
 		
 		public function scrollBg(howMany:int = 1):void {
@@ -146,6 +150,7 @@ package
 		{
 			super.update();
 			stateTime += FlxG.elapsed;
+			ekgGraphic.setSeconds(levelDetails.levelDuration - elapsed);
 			if (gameState < 200) {
 				if (variableDifficultyMode && getTimer() >= nextDifficultyIncrementTime) {
 					FlxG.timeScale = Math.min(50.0, FlxG.timeScale * Math.sqrt(7 / 6));

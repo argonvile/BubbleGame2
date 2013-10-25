@@ -16,6 +16,7 @@ package
 		[Embed(source = "../graphics/microbe0-sw.png")] public static var Microbe0Sw:Class;
 		[Embed(source = "../graphics/microbe0-se.png")] public static var Microbe0Se:Class;
 		[Embed(source = "../graphics/screenshot-90x44.png")] public static var Screenshot90x44:Class;
+		[Embed(source = "../graphics/ekg.png")] public static var Ekg:Class;
 
 		[Embed(source = "../sound/blipa0.mp3")] public static var SfxBlipA0:Class;
 		[Embed(source = "../sound/blipa1.mp3")] public static var SfxBlipA1:Class;
@@ -27,6 +28,8 @@ package
 		[Embed(source = "../sound/blipa7.mp3")] public static var SfxBlipA7:Class;
 		[Embed(source = "../sound/blipa8.mp3")] public static var SfxBlipA8:Class;
 		[Embed(source = "../sound/blipa9.mp3")] public static var SfxBlipA9:Class;
+		
+		[Embed(source = "../fonts/lets-go-digital-regular.ttf", fontFamily = "digital", embedAsCFF="false")] public	static var FontDigital:String;
 		
 		private static var sounds:Object = new Object();
 		private static var soundStartTimes:Array = new Array();
