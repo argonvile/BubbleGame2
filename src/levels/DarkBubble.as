@@ -9,7 +9,12 @@ package levels
 	{
 		private var darkGraphics:Array = new Array();
 		public var dark:Number = 0; // 0 == not dark; 1 == fully dark
-
+		
+		override public function init(levelDetails:LevelDetails, x:Number, y:Number):void {
+			super.init(levelDetails, x, y);
+			dark = 0;
+		}
+		
 		override public function setBubbleColor(bubbleColor:uint):void {
 			super.setBubbleColor(bubbleColor);
 			var key:String;

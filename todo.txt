@@ -19,30 +19,30 @@
 *difficulty levels
 *level-picking interface -- pick between six levels
 *new level: "relentless", bubbles don't stop even during a combo (maybe they slow down?)
-
-new level: fog covers the bubbles in front of you?
-  add fog particles
+*new level: darkness covers the bubbles in front of you?
 display timer
 
 Level select should use real screenshots
-
-new "final trial" level -- no time limit, only quota, goes through phases like magical drop...
-  * "regular" phase
-  * weird phase with strange bonus bubbles, holes
-  * phase where bubbles come many-at-a-time
-  * phase where bubbles arrive in shuffly spurts
-  * (also?) phase where bubbles ripple in, left to right
-  * (also?) phase where bubbles focus on the left, middle, or right
+Fix DarkStalkers II, III to be 3 columns
+Add stationary character graphic
+Animate character graphic for moving left/right
+Animate character graphic for pulling
+Animate character graphic for throwing
+add "Quota" feature?
+display quota
 
 new level: "slow pokes", like relentless but with blender-style insertions which don't stop. pop rate increases as combo continues
 thrown bubbles and sitting bubbles should both pop during a combo
 add halos for up/down teleport squares
+new level: pieces just suddenly EXPLODE when you leave a match, clearing out everything in a radius
+new level: colors constantly rotate, pretty but difficult
+new level: bubbles leave harmless ghosts when popped. ghosts vanish if you throw/grab a bubble past them
 new level: moving causes new bubbles to appear
 new level: bubbles constantly change color
-new level: "red red whine", red bubbles either pop when you grab them, or change color, or something annoying
+new level: "red red whine", adjacent red bubbles pop when thrown, and on higher difficulties, drop if you grab too many
+new level: orange bubbles drop when grabbed, and on higher difficulties, "pop" a replacement
+new level: yellow bubbles change to rainbow color when popped, and on higher difficulties, this rainbow includes yellow
 Add support for desaturated/light/dark bubbles
-add "Quota" feature?
-display quota
 improve popping graphics -- little bubblets?
 
 end-of-level "FEVER" mode

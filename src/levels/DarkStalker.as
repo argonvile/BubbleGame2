@@ -5,7 +5,7 @@ package levels
 	public class DarkStalker extends LevelDetails
 	{
 		public static const name:String = "Darkstalker";
-		public static const scenarioBpms:Array = [44.9, 104.6, 141.7, 205, 285.8];
+		public static const scenarioBpms:Array = [44.9, 102.7, 141.7, 205, 285.8];
 		private var fullDarkColumnCount:int;
 		private var halfDarkColumnCount:int;
 		private var darkOnRate:Number;
@@ -22,9 +22,9 @@ package levels
 				columnCount = 8;
 				maxBubbleRate = 93;
 			} else if (scenario == 1) {
-				fullDarkColumnCount = 1;
-				halfDarkColumnCount = 5;
-				darkOnRate = 4;
+				fullDarkColumnCount = 3;
+				halfDarkColumnCount = 3;
+				darkOnRate = 2;
 				darkOffRate = 2;
 				columnCount = 10;
 				maxBubbleRate = 317;
