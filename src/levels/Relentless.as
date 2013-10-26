@@ -5,39 +5,39 @@ package levels
 	public class Relentless extends LevelDetails
 	{
 		public static const name:String = "Relentless";
-		public static const scenarioBpms:Array = [56.6, 90.8, 95.7, 124.5, 136.9];
-		private var pauseSpeed:Number = 0;
+		public static const scenarioBpms:Array = [50, 90, 126, 190, 252];
+		private var pauseSpeed:Number = 1.0;
+		private var period:Number = 5.0;
 		
 		public function Relentless(scenario:int)
 		{
-			super(scenario);
 			bubbleColors = [0xffffffff, 0xffff7400, 0xff009999, 0xff1729b0, 0xff4dde00];
 			if (scenario == 0) {
 				bubbleColors = bubbleColors.slice(0, 4);
-				maxBubbleRate = 124;
+				maxBubbleRate = 65;
 				columnCount = 9;
-				pauseSpeed = 1.0;
-				setSpeed(3);
+				period = 1.25;
+				setSpeed(2);
 			} else if (scenario == 1) {
-				maxBubbleRate = 168;
+				maxBubbleRate = 99;
 				columnCount = 11;
-				pauseSpeed = 0.72;
-				setSpeed(0);
+				period = 2.5;
+				setSpeed(2);
 			} else if (scenario == 2) {
-				maxBubbleRate = 240;
+				maxBubbleRate = 139;
 				columnCount = 9;
-				pauseSpeed = 0.5;
-				setSpeed(0);
+				period = 5.0;
+				setSpeed(2);
 			} else if (scenario == 3) {
-				maxBubbleRate = 180;
+				maxBubbleRate = 209;
 				columnCount = 13;
-				pauseSpeed = 1.0;
-				setSpeed(-1);
+				period = 10.0;
+				setSpeed(3);
 			} else if (scenario == 4) {
-				maxBubbleRate = 210;
+				maxBubbleRate = 280;
 				columnCount = 11;
-				pauseSpeed = 0.85;
-				setSpeed(-1);
+				period = 20.0;
+				setSpeed(3);
 			}
 		}
 		
@@ -47,7 +47,7 @@ package levels
 		}
 		
 		override public function update(elapsed:Number):void {
-			super.update(elapsed);
+			bubbleRate = (-Math.sin((elapsed / period) * Math.PI)+1) * maxBubbleRate
 			if (playState.gameState == 110 || playState.gameState == 120 || playState.gameState == 130) {
 				playState.rowScrollTimer += rowScrollPixels() * playState.speedupFactor * pauseSpeed;
 				playState.scrollBg();

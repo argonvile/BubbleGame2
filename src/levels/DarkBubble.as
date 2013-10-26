@@ -46,6 +46,11 @@ package levels
 			}
 		}
 		
+		override public function changeState(state:int):void {
+			super.changeState(state);
+			dark = 0.0;
+		}
+		
 		override public function update():void {
 			super.update();
 			var targetGraphic:int = Math.round(dark * 4) - 1;

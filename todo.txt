@@ -20,23 +20,25 @@
 *level-picking interface -- pick between six levels
 *new level: "relentless", bubbles don't stop even during a combo (maybe they slow down?)
 *new level: darkness covers the bubbles in front of you?
-display timer
+*display timer
+*Fix DarkStalkers II, III to be 3 columns
+
+*Fix "all levels" screen to scroll
+Add stationary character graphic
+new level: "kablooie", pieces just suddenly EXPLODE when you leave a match, clearing out everything in a radius. and bombs clear even more!
+add "Quota" feature?
+new level: "slow pokes", like relentless but with blender-style insertions which don't stop. pop rate increases as combo continues
+display quota
+new level: "bubble ghost", bubbles leave harmless ghosts when popped. ghosts vanish if you throw/grab a bubble past them
+thrown bubbles and sitting bubbles should both pop during a combo
+Newspaper level could have 5 different names?
 
 Level select should use real screenshots
-Fix DarkStalkers II, III to be 3 columns
-Add stationary character graphic
 Animate character graphic for moving left/right
 Animate character graphic for pulling
 Animate character graphic for throwing
-add "Quota" feature?
-display quota
-
-new level: "slow pokes", like relentless but with blender-style insertions which don't stop. pop rate increases as combo continues
-thrown bubbles and sitting bubbles should both pop during a combo
 add halos for up/down teleport squares
-new level: pieces just suddenly EXPLODE when you leave a match, clearing out everything in a radius
 new level: colors constantly rotate, pretty but difficult
-new level: bubbles leave harmless ghosts when popped. ghosts vanish if you throw/grab a bubble past them
 new level: moving causes new bubbles to appear
 new level: bubbles constantly change color
 new level: "red red whine", adjacent red bubbles pop when thrown, and on higher difficulties, drop if you grab too many
