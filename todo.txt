@@ -23,16 +23,16 @@
 *display timer
 *Fix DarkStalkers II, III to be 3 columns
 
-*Fix "all levels" screen to scroll
+Fix "all levels" screen to scroll
 Add stationary character graphic
 new level: "kablooie", pieces just suddenly EXPLODE when you leave a match, clearing out everything in a radius. and bombs clear even more!
 add "Quota" feature?
-new level: "slow pokes", like relentless but with blender-style insertions which don't stop. pop rate increases as combo continues
 display quota
 new level: "bubble ghost", bubbles leave harmless ghosts when popped. ghosts vanish if you throw/grab a bubble past them
 thrown bubbles and sitting bubbles should both pop during a combo
 Newspaper level could have 5 different names?
 
+Level select should display descriptions/hints
 Level select should use real screenshots
 Animate character graphic for moving left/right
 Animate character graphic for pulling

@@ -41,6 +41,11 @@ package
 			_curFrame = Math.random() * 5;
 		}
 		
+		override public function init(levelDetails:LevelDetails, x:Number, y:Number):void {
+			super.init(levelDetails, x, y);
+			_pixels = regularGraphic;
+		}
+		
 		public function setBubbleColor(bubbleColor:uint):void {
 			this.bubbleColor = bubbleColor;
 			var key:String = "Microbe0 " + bubbleColor.toString(16);

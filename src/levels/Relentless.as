@@ -6,7 +6,6 @@ package levels
 	{
 		public static const name:String = "Relentless";
 		public static const scenarioBpms:Array = [50, 90, 126, 190, 252];
-		private var pauseSpeed:Number = 1.0;
 		private var period:Number = 5.0;
 		
 		public function Relentless(scenario:int)
@@ -49,7 +48,7 @@ package levels
 		override public function update(elapsed:Number):void {
 			bubbleRate = (-Math.sin((elapsed / period) * Math.PI)+1) * maxBubbleRate
 			if (playState.gameState == 110 || playState.gameState == 120 || playState.gameState == 130) {
-				playState.rowScrollTimer += rowScrollPixels() * playState.speedupFactor * pauseSpeed;
+				playState.rowScrollTimer += rowScrollPixels() * playState.speedupFactor;
 				playState.scrollBg();
 				if (playState.rowScrollTimer > minScrollPixels) {
 					var scrollAmount:Number = Math.floor(playState.rowScrollTimer / minScrollPixels) * minScrollPixels;

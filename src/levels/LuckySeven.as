@@ -5,7 +5,7 @@ package levels
 	public class LuckySeven extends LevelDetails
 	{
 		public static const name:String = "Lucky Seven";
-		public static const scenarioBpms:Array = [41.9, 77.0, 177.8, 259.1, 319.2];
+		public static const scenarioBpms:Array = [41.9, 77.0, 177.8, 259.1, 319.2 - 25];
 		private var changedBubbles:Array = new Array();
 		private var targetColors:Object = new Object();
 		private var generatedBubbleCount:int = 0;
