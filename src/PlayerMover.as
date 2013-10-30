@@ -5,7 +5,7 @@ package
 
 	public class PlayerMover 
 	{
-		private var playerSprite:FlxSprite;
+		private var playerSprite:PlayerSprite;
 		public var minX:int;
 		public var maxX:int;
 		private var columnCount:int;
@@ -14,7 +14,7 @@ package
 		public var repeatDelay:Number = 0;
 		public var repeatRate:Number = 0;
 		
-		public function PlayerMover(playerSprite:FlxSprite, leftEdge:int, columnCount:int) 
+		public function PlayerMover(playerSprite:PlayerSprite, leftEdge:int, columnCount:int) 
 		{
 			this.playerSprite = playerSprite;
 			this.minX = leftEdge;

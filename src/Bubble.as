@@ -13,7 +13,7 @@ package
 		 */
 		public var state:int = 0;
 		public var stateTime:Number = 0;
-		protected var playerSprite:FlxSprite;
+		protected var playerPoint:PlayerSprite;
 		public var quickApproachTime:Number = 0;
 		public var quickApproachDistance:Number;
 		protected var levelDetails:LevelDetails;
@@ -29,7 +29,7 @@ package
 			this.y = y;
 			this.state = 0;
 			this.stateTime = 0;
-			this.playerSprite = null;
+			this.playerPoint = null;
 			this.quickApproachTime = 0;
 			this.quickApproachDistance = 0;
 			this.connectors.length = 0;
@@ -48,19 +48,19 @@ package
 			return y < 0;
 		}
 		
-		public function wasGrabbed(playerSprite:FlxSprite):void {
+		public function wasGrabbed(playerPoint:PlayerSprite):void {
 			changeState(100);
-			this.playerSprite = playerSprite;
+			this.playerPoint = playerPoint;
 			offset.x = 0;
 			offset.y = 0;
 			addQuickApproachToOffset();
 		}
 		
-		public function wasThrown(playerSprite:FlxSprite):void {
+		public function wasThrown(playerPoint:PlayerSprite):void {
 			changeState(200);
-			this.playerSprite = playerSprite;
-			offset.x = (x + width / 2) - (playerSprite.x + playerSprite.width / 2);
-			offset.y = (y + height / 2) - (playerSprite.y + playerSprite.height / 2);
+			this.playerPoint = playerPoint;
+			offset.x = (x + width / 2) - (playerPoint.getMidpoint().x);
+			offset.y = (y + height / 2) - (playerPoint.getMidpoint().y);
 			addQuickApproachToOffset();
 		}
 		
@@ -78,19 +78,26 @@ package
 			updateConnectorOffsets();
 		}
 		
+		/**
+		 * @return True if the bubble should be displayed stationary, as held by the player
+		 */
+		public function isHeld():Boolean {
+			return state == 100 && stateTime >= levelDetails.grabDuration;
+		}
+		
 		override public function update():void {
 			super.update();
 			stateTime += FlxG.elapsed;
 			if (state == 100) {
 				// grabbing; apply grab offsets
 				var statePct:Number = Math.min(1, Math.pow(stateTime / levelDetails.grabDuration, 2.5));
-				offset.x = statePct * ((x + width / 2) - (playerSprite.x + playerSprite.width / 2));
-				offset.y = statePct * ((y + height / 2) - (playerSprite.y + playerSprite.height / 2));
+				offset.x = statePct * ((x + width / 2) - (playerPoint.getMidpoint().x));
+				offset.y = statePct * ((y + height / 2) - (playerPoint.getMidpoint().y));
 			} else if (state == 200) {
 				// throwing; apply throw offsets
 				var statePct:Number = Math.min(1, Math.pow(stateTime / levelDetails.throwDuration, 1.5));
-				offset.x = (1 - statePct) * ((x + width / 2) - (playerSprite.x + playerSprite.width / 2));
-				offset.y = (1 - statePct) * ((y + height / 2) - (playerSprite.y + playerSprite.height / 2));
+				offset.x = (1 - statePct) * ((x + width / 2) - (playerPoint.getMidpoint().x));
+				offset.y = (1 - statePct) * ((y + height / 2) - (playerPoint.getMidpoint().y));
 				if (statePct >= 1.0) {
 					changeState(0);
 				}

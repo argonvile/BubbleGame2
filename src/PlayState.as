@@ -11,11 +11,10 @@ package
 		public static const columnWidth:int = 15;
 		
 		public var leftEdge:int = 8;
-		public var playerSprite:FlxSprite;
+		public var playerSprite:PlayerSprite;
 		public var bubbles:FlxGroup;
 		public var connectors:FlxGroup;
 		private var fallingBubbles:FlxGroup = new FlxGroup();
-		public var heldBubbles:FlxGroup = new FlxGroup();
 		private var popperEmitter:FlxEmitter = new FlxEmitter();
 		
 		private var elapsed:Number = 0;
@@ -108,19 +107,16 @@ package
 			
 			add(bgSprite);
 			
+			playerSprite = new PlayerSprite(leftEdge, 215);
+			add(playerSprite);
+			
 			bubbles = new FlxGroup();
 			add(bubbles);
 			connectors = new FlxGroup();
 			add(connectors);
 			
-			playerSprite = new FlxSprite(leftEdge, 224);
-			playerSprite.makeGraphic(columnWidth, bubbleHeight, 0xffcccccc);
-			playerSprite.offset.x = -1;
-			add(playerSprite);
-			
 			playerMover = new PlayerMover(playerSprite, leftEdge, levelDetails.columnCount);
 			
-			add(heldBubbles);
 			add(fallingBubbles);
 			
 			playerLine = new PlayerLine(this);
@@ -144,6 +140,10 @@ package
 			var spriteVelocity:Number = -bgSprite.y / remainingTime;
 			bgSprite.y = Math.min(0, bgSprite.y + spriteVelocity * howMany * FlxG.elapsed);
 			fgSprite.y = Math.min(0, fgSprite.y + spriteVelocity * howMany * FlxG.elapsed);
+		}
+		
+		public function get heldBubbles():FlxGroup {
+			return playerSprite.heldBubbles;
 		}
 		
 		override public function update():void
@@ -171,10 +171,10 @@ package
 				}
 				if (FlxG.keys.justPressed("X")) {
 					// find the next block above the player, and spit out our blocks below it
-					for each (var heldBubble:Bubble in heldBubbles.members) {
+					for each (var heldBubble:Bubble in playerSprite.heldBubbles.members) {
 						if (heldBubble != null && heldBubble.alive) {
 							heldBubble.x = playerSprite.x;
-							heldBubbles.remove(heldBubble);
+							playerSprite.heldBubbles.remove(heldBubble);
 							suspendedBubbles.push(heldBubble);
 						}
 					}
@@ -636,10 +636,10 @@ package
 			var y:Number = maxBubble.y;
 			var firstGrab:Boolean = true;
 			while (maxBubble != null) {
-				if (!maxBubble.isGrabbable(heldBubbles, firstGrab)) {
+				if (!maxBubble.isGrabbable(playerSprite.heldBubbles, firstGrab)) {
 					break;
 				}
-				heldBubbles.add(maxBubble);
+				playerSprite.heldBubbles.add(maxBubble);
 				bubbles.remove(maxBubble);
 				maxBubble.killConnectors();
 				maxBubble.wasGrabbed(playerSprite);

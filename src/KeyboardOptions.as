@@ -6,9 +6,9 @@ package
 
 	public class KeyboardOptions extends FlxState
 	{
-		private var interactivePlayerSprite:FlxSprite;
+		private var interactivePlayerSprite:PlayerSprite;
 		private var interactivePlayerMover:PlayerMover;
-		private var autoPlayerSprite:FlxSprite;
+		private var autoPlayerSprite:PlayerSprite;
 		private var autoPlayerMover:PlayerMover;
 		private var pressedRight:Boolean = false;
 		private var pressedLeft:Boolean = false;
@@ -59,13 +59,11 @@ package
 			text = new FlxText(8, 108, 150, "Test");
 			add(text);
 			
-			autoPlayerSprite = new FlxSprite(5, 133);
-			autoPlayerSprite.makeGraphic(15, 15);
+			autoPlayerSprite = new PlayerSprite(5, 133);
 			add(autoPlayerSprite);
 			autoPlayerMover = new PlayerMover(autoPlayerSprite, 5, 10);
 
-			interactivePlayerSprite = new FlxSprite(165, 133);
-			interactivePlayerSprite.makeGraphic(15, 15);
+			interactivePlayerSprite = new PlayerSprite(165, 133);
 			add(interactivePlayerSprite);
 			interactivePlayerMover = new PlayerMover(interactivePlayerSprite, 165, 10);
 			

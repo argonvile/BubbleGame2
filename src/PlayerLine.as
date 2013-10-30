@@ -20,12 +20,17 @@ package
 		}
 		
 		public function finalUpdate():void {
-			var lowestBubble:FlxSprite = playState.lowestBubble();
-			if (lowestBubble == null) {
-				lowestBubble = new FlxSprite(playState.playerSprite.x, -1);
-				lowestBubble.makeGraphic(playState.playerSprite.width, 1);
+			var l:Bubble = playState.lowestBubble();
+			var lineTopY:Number;
+			if (l == null) {
+				// draw to top of screen
+				x = playState.playerSprite.getMidpoint().x;
+				lineTopY = 0;
+			} else {
+				// draw to bubble
+				x = l.x - l.offset.x + l.width / 2 - l.offset.x;
+				lineTopY = l.y - l.offset.y + l.height;
 			}
-			x = lowestBubble.x - lowestBubble.offset.x + lowestBubble.width / 2 - lowestBubble.offset.x;
 			fill(0x00000000);
 			var color:uint = 0x66ffffff;
 			var holdingBubble:Boolean = false;
@@ -38,7 +43,7 @@ package
 					break;
 				}
 			}
-			for (var drawY:int = lowestBubble.y - lowestBubble.offset.y + lowestBubble.height; drawY < playState.playerSprite.y; drawY++) {
+			for (var drawY:int = lineTopY; drawY < playState.playerSprite.y; drawY++) {
 				if (holdingBubble) {
 					if ((drawY + lineScroll) % 5 > 2) {
 						pixels.fillRect(new Rectangle(0, drawY, 2, 1), color);
