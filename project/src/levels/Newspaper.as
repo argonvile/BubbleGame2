@@ -8,6 +8,7 @@ package levels
 		{
 			setSpeed(scenario);
 			bubbleColors = [0xffff1e00, 0xff000000, 0xffffffff];
+			avgChainLength = 11;
 			if (scenario == 0) {
 				// easy
 				maxBubbleRate = 300;

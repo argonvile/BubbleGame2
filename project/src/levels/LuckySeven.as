@@ -16,6 +16,7 @@ package levels
 			setSpeed(scenario + 1);
 			minNewRowLocation = -PlayState.bubbleHeight * 8.5;
 			bubbleColors = [0xffff0000, 0xffffaa00, 0xffffff00, 0xff00cc00, 0xff1240ab, 0xff7109aa];
+			avgChainLength = 6;
 			
 			if (scenario == 0) {
 				maxBubbleRate = 300;

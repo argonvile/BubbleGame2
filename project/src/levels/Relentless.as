@@ -38,6 +38,7 @@ package levels
 				period = 20.0;
 				setSpeed(3);
 			}
+			levelQuota = Math.ceil(1.05 * (maxBubbleRate + (columnCount * 6) / (levelDuration / 60)) * levelDuration / 60);
 		}
 		
 		override public function prepareLevel():void {

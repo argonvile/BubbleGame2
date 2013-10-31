@@ -13,7 +13,8 @@ package
 		public var throwDuration:Number = 0.11;
 		public var columnCount:Number = 8;
 		protected var bubbleColors:Array = [0xffff0000, 0xffffff00, 0xff00ff00, 0xff0080ff, 0xff8000ff];
-		public var levelDuration:Number = 120; // 2 minutes
+		public var levelDuration:Number = 90; // 1 minutes 30 seconds
+		public var levelQuota:int = 0;
 		public var minScrollPixels:Number = 1;
 		public var minNewRowLocation:Number = -PlayState.bubbleHeight * 2.5;
 		public var quickScrollPixels:Number = PlayState.bubbleHeight;
@@ -26,6 +27,7 @@ package
 		
 		protected var bubbleRate:Number = 300;
 		protected var playState:PlayState;
+		protected var avgChainLength:Number = 7.5;
 		
 		public function LevelDetails(scenario:int = 2) 
 		{
@@ -72,6 +74,10 @@ package
 			this.playState = playState;
 			if (levelDuration > 30) {
 				maxBubbleRate += (columnCount * 6) / (levelDuration / 60);
+			}
+			if (levelQuota == 0) {
+				var bpmToSurvive:Number = 60 / ((60 / maxBubbleRate) + popPerBubbleDelay + popDelay / avgChainLength)
+				levelQuota = Math.ceil(1.05 * bpmToSurvive * levelDuration / 60);
 			}
 		}
 		

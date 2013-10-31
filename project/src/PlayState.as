@@ -55,6 +55,8 @@ package
 		private var variableDifficultyDeaths:Array = new Array();
 		private var returnClass:Class;
 		private var ekgGraphic:EkgGraphic;
+		public var eliminatedBubbleCount:int = 0;
+		public var quotaText:FlxText;
 		
 		public function PlayState(returnClass:Class=null, levelDetails:LevelDetails = null) {
 			this.returnClass = returnClass;
@@ -133,6 +135,14 @@ package
 			
 			ekgGraphic = new EkgGraphic(263, 120, 123);
 			add(ekgGraphic);
+			
+			var textBgSprite:FlxSprite = new FlxSprite(260, 0);
+			textBgSprite.makeGraphic(200, 13, 0xff000000);
+			add(textBgSprite);
+			
+			quotaText = new FlxText(0, 0, FlxG.width, "9999/9999");
+			quotaText.setFormat(null, 8, 0xffffffff, "right");
+			add(quotaText);
 		}
 		
 		public function scrollBg(howMany:int = 1):void {
@@ -165,6 +175,7 @@ package
 			 */
 			super.update();
 			if (gameState < 200) {
+				quotaText.text = eliminatedBubbleCount + "/" + levelDetails.levelQuota;
 				if (FlxG.keys.justPressed("ESCAPE")) {
 					kill();
 					FlxG.switchState(new returnClass());
@@ -372,7 +383,7 @@ package
 				}
 
 				// did the player win?
-				if (elapsed > levelDetails.levelDuration && !variableDifficultyMode) {
+				if (elapsed > levelDetails.levelDuration && !variableDifficultyMode || eliminatedBubbleCount >= levelDetails.levelQuota) {
 					var text:FlxText = new FlxText(0, 0, FlxG.width, "You win!");
 					text.alignment = "center";
 					text.y = FlxG.height / 2 - text.height / 2;
@@ -408,6 +419,7 @@ package
 							poppedBubble.visible = false;
 							poppedBubble.killConnectors();
 							levelDetails.bubbleVanished(poppedBubble);
+							eliminatedBubbleCount++;
 							Embed.playPopSound(comboSfxCount);
 							comboSfxCount += 1;
 						}
@@ -415,6 +427,7 @@ package
 				}
 				// is the pop event over?
 				if (stateTime >= stateDuration) {
+					popBatchCount++;
 					levelDetails.bubblesFinishedPopping(poppedBubbles);
 					// if so, remove popped bubbles
 					for each (var bubble:Bubble in poppedBubbles) {
@@ -441,6 +454,7 @@ package
 					if ((i + 1) * levelDetails.dropPerBubbleDelay + levelDetails.dropDelay < stateTime) {
 						var bubble:Bubble = poppedBubbles[i];
 						if (bubble.acceleration.y == 0) {
+							eliminatedBubbleCount++;
 							Embed.playPopSound(comboSfxCount);
 							comboSfxCount += 0.3;
 							bubbles.remove(bubble);
@@ -487,6 +501,8 @@ package
 				}
 			}
 		}
+		
+		private var popBatchCount:int = 0;
 		
 		/**
 		 * Counts the number of bubbles off the bottom of the screen. If any bubbles are WAY off the screen, this function kills those bubbles
