@@ -148,7 +148,6 @@ package
 		
 		override public function update():void
 		{
-			super.update();
 			stateTime += FlxG.elapsed;
 			ekgGraphic.setSeconds(levelDetails.levelDuration - elapsed);
 			if (gameState < 200) {
@@ -160,6 +159,12 @@ package
 				elapsed += FlxG.elapsed;
 				levelDetails.update(elapsed);
 				playerMover.movePlayerFromInput();
+			}
+			/**
+			 * Update after moving the player -- to ensure stuff like bubbles track with the player correctly
+			 */
+			super.update();
+			if (gameState < 200) {
 				if (FlxG.keys.justPressed("ESCAPE")) {
 					kill();
 					FlxG.switchState(new returnClass());
