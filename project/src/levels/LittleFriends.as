@@ -62,8 +62,9 @@ package levels
 				playState.hashPosition(bubble.x - PlayState.columnWidth, bubble.y - PlayState.bubbleHeight/2)
 			]) {
 				var neighbor:LittleFriendsBubble = positionMap[position] as LittleFriendsBubble;
-				if (neighbor != null && !neighbor.isAnchor()) {
+				if (neighbor != null && !neighbor.isAnchor() && neighbor.visible == true) {
 					neighbor.visible = false;
+					playState.eliminatedBubbleCount++;
 				}
 			}			
 		}
