@@ -14,7 +14,7 @@ package
 		public var playerSprite:PlayerSprite;
 		public var bubbles:FlxGroup;
 		public var connectors:FlxGroup;
-		private var fallingBubbles:FlxGroup = new FlxGroup();
+		public var fallingBubbles:FlxGroup = new FlxGroup();
 		private var popperEmitter:FlxEmitter = new FlxEmitter();
 		
 		private var elapsed:Number = 0;
@@ -34,7 +34,7 @@ package
 		
 		public var suspendedBubbles:Array = new Array();
 		private var thrownBubbles:Array = new Array();
-		private var poppedBubbles:Array = new Array();
+		public var poppedBubbles:Array = new Array();
 		
 		public var newRowLocation:Number;
 		
@@ -47,6 +47,8 @@ package
 		
 		private var playerLine:PlayerLine;
 		public var comboSfxCount:Number = 0;
+		public var comboLevel:int = 0;
+		public var comboLevelBubbleCount:int = 0;
 		public var speedupFactor:Number = 1.0;
 		
 		public var variableDifficultyMode:Boolean = false;
@@ -69,7 +71,7 @@ package
 				returnClass = AllLevelSelect;
 			}
 			if (levelDetails == null) {
-				levelDetails = new Newspaper(3);
+				levelDetails = new Kerosene(3);
 			}
 			
 			if (variableDifficultyMode) {
@@ -197,6 +199,7 @@ package
 				}
 				if (FlxG.keys.justPressed("C")) {
 					scrollBubblesFunction.call(this, levelDetails.quickScrollPixels);
+					levelDetails.bubblesScrolled();
 					scrollBg(bubbleHeight);
 				}
 				var justScrolledBubbles:Array = new Array();
@@ -287,6 +290,8 @@ package
 					for each (var bubble:Bubble in poppedBubbles) {
 						bubble.changeState(300);
 					}
+					comboLevelBubbleCount = 0;
+					comboLevel++;
 					changeState(110, levelDetails.popDelay + levelDetails.popPerBubbleDelay * poppedBubbles.length);
 					return;
 				}
@@ -308,11 +313,13 @@ package
 						var scrollAmount:Number = Math.floor(rowScrollTimer / levelDetails.minScrollPixels) * levelDetails.minScrollPixels;
 						// scroll all the bubbles down a little
 						scrollBubblesFunction.call(this, scrollAmount);
+						levelDetails.bubblesScrolled();
 						rowScrollTimer -= scrollAmount;
 					}
 					if (gameState == 100) {
 						// kill the combo
 						comboSfxCount = 0;
+						comboLevel = 0;
 						
 						var badBubbleCount:int = countBadBubbles();
 						if (badBubbleCount > 1000) {
@@ -406,7 +413,8 @@ package
 						}
 					}
 				} else {
-					for each (var defaultBubble:DefaultBubble in poppedBubbles) {
+					for each (var bubble:Bubble in poppedBubbles) {
+						var defaultBubble:DefaultBubble = bubble as DefaultBubble;
 						if (defaultBubble != null) {
 							defaultBubble.loadRegularGraphic();	
 						}
@@ -414,20 +422,20 @@ package
 				}
 				for (var i:int = 0; i < poppedBubbles.length; i++) {
 					if ((i + 1) * levelDetails.popPerBubbleDelay + levelDetails.popDelay < stateTime) {
-						var poppedBubble:DefaultBubble = poppedBubbles[i];
+						var poppedBubble:Bubble = poppedBubbles[i];
 						if (poppedBubble.visible) {
 							poppedBubble.visible = false;
 							poppedBubble.killConnectors();
 							levelDetails.bubbleVanished(poppedBubble);
 							eliminatedBubbleCount++;
-							Embed.playPopSound(comboSfxCount);
+							levelDetails.playPopSound(comboSfxCount, comboLevel, comboLevelBubbleCount);
+							comboLevelBubbleCount++;
 							comboSfxCount += 1;
 						}
 					}
 				}
 				// is the pop event over?
 				if (stateTime >= stateDuration) {
-					popBatchCount++;
 					levelDetails.bubblesFinishedPopping(poppedBubbles);
 					// if so, remove popped bubbles
 					for each (var bubble:Bubble in poppedBubbles) {
@@ -447,6 +455,12 @@ package
 							changeState(100);
 						}
 					}
+					for each (var fallingBubble:Bubble in fallingBubbles.members) {
+						if (fallingBubble != null && fallingBubble.y > FlxG.height) {
+							fallingBubble.kill();
+							fallingBubbles.remove(fallingBubble);
+						}
+					}
 				}
 			} else if (gameState == 120) {
 				// drop some bubbles
@@ -454,16 +468,8 @@ package
 					if ((i + 1) * levelDetails.dropPerBubbleDelay + levelDetails.dropDelay < stateTime) {
 						var bubble:Bubble = poppedBubbles[i];
 						if (bubble.acceleration.y == 0) {
-							eliminatedBubbleCount++;
 							Embed.playPopSound(comboSfxCount);
-							comboSfxCount += 0.3;
-							bubbles.remove(bubble);
-							bubble.killConnectors();
-							fallingBubbles.add(bubble);
-							bubble.flicker(1000);
-							bubble.velocity.y = 20;
-							bubble.velocity.x = bubble.velocity.y;
-							bubble.acceleration.y = 600;
+							dropBubble(bubble);
 						}
 					}
 				}
@@ -489,6 +495,7 @@ package
 						var scrollAmount:Number = Math.floor(rowScrollTimer / levelDetails.minScrollPixels) * levelDetails.minScrollPixels;
 						// scroll all the bubbles down a little
 						scrollBubblesFunction.call(this, scrollAmount);
+						levelDetails.bubblesScrolled();
 						rowScrollTimer -= scrollAmount;
 					}
 					// removes bubbles off bottom of screen
@@ -502,8 +509,18 @@ package
 			}
 		}
 		
-		private var popBatchCount:int = 0;
-		
+		public function dropBubble(bubble:Bubble):void {
+			eliminatedBubbleCount++;
+			comboSfxCount += 0.3;
+			bubbles.remove(bubble);
+			bubble.killConnectors();
+			fallingBubbles.add(bubble);
+			bubble.flicker(1000);
+			bubble.velocity.y = 20;
+			bubble.velocity.x = bubble.velocity.y;
+			bubble.acceleration.y = 600;
+		}
+
 		/**
 		 * Counts the number of bubbles off the bottom of the screen. If any bubbles are WAY off the screen, this function kills those bubbles
 		 * and returns a number greater than 9999.

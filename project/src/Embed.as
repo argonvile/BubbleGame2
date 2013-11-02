@@ -20,6 +20,8 @@ package
 		[Embed(source = "../graphics/monster-body0.png")] public static var MonsterBody0:Class;
 		[Embed(source = "../graphics/monster-arms0.png")] public static var MonsterArms0:Class;
 		[Embed(source = "../graphics/monster-arms1.png")] public static var MonsterArms1:Class;
+		[Embed(source = "../graphics/explosion.png")] public static var Explosion:Class;
+		[Embed(source = "../graphics/bomb.png")] public static var Bomb:Class;
 
 		[Embed(source = "../sound/blipa0.mp3")] public static var SfxBlipA0:Class;
 		[Embed(source = "../sound/blipa1.mp3")] public static var SfxBlipA1:Class;
@@ -31,12 +33,20 @@ package
 		[Embed(source = "../sound/blipa7.mp3")] public static var SfxBlipA7:Class;
 		[Embed(source = "../sound/blipa8.mp3")] public static var SfxBlipA8:Class;
 		[Embed(source = "../sound/blipa9.mp3")] public static var SfxBlipA9:Class;
+		[Embed(source = "../sound/big-boulder0.mp3")] public static var SfxBigBoulder0:Class;
+		[Embed(source = "../sound/big-boulder1.mp3")] public static var SfxBigBoulder1:Class;
+		[Embed(source = "../sound/big-boulder2.mp3")] public static var SfxBigBoulder2:Class;
 		
 		[Embed(source = "../fonts/lets-go-digital-regular.ttf", fontFamily = "digital", embedAsCFF="false")] public	static var FontDigital:String;
 		
 		private static var sounds:Object = new Object();
 		private static var soundStartTimes:Array = new Array();
 
+		public static function playAny(EmbeddedSounds:Array, volume:Number = 1.0, singular:Boolean = false, restartTime:int = 25):void {
+			var whichSound:int = Math.random() * EmbeddedSounds.length;
+			play(EmbeddedSounds[whichSound], volume, singular, restartTime);
+		}
+		
 		public static function play(EmbeddedSound:Class, volume:Number = 1.0, singular:Boolean = false, restartTime:int = 25, playbackSpeed:Number = 1.0):void {
 			var sound:FlxSound;
 			if (sounds[EmbeddedSound] == null) {

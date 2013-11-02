@@ -27,7 +27,7 @@
 *character graphic/bubble should scroll together appropriately, frame-by-frame
 *Fix "all levels" screen to scroll
 *add "Quota" feature?
-new level: "kablooie", pieces just suddenly EXPLODE when you leave a match, clearing out everything in a radius. and bombs clear even more!
+*new level: "kablooie", pieces just suddenly EXPLODE when you leave a match, clearing out everything in a radius. and bombs clear even more!
 display quota
 new level: "bubble ghost", bubbles leave harmless ghosts when popped. ghosts vanish if you throw/grab a bubble past them
 

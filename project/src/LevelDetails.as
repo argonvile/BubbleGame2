@@ -149,5 +149,12 @@ package
 		
 		public function bubblesFinishedDropping(bubbles:Array):void {
 		}
+		
+		public function bubblesScrolled():void {
+		}
+		
+		public function playPopSound(comboSfxCount:Number, comboLevel:int, comboLevelBubbleCount:int):void {
+			Embed.playPopSound(comboSfxCount);
+		}
 	}
 }

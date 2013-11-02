@@ -4,24 +4,26 @@ package levels
 	import flash.geom.Matrix;
 	import flash.display.BitmapData;
 	
-	public class LittleFriendsBubble extends Bubble
+	public class BombBubble extends Bubble
 	{
-		public function LittleFriendsBubble() 
+		public var detonated:Boolean = false;
+		
+		public function BombBubble() 
 		{
 			super();
-			var key:String = "LittleFriends";
+			var key:String = "Bomb";
 			if (BitmapDataCache.getBitmap(key) == null) {
-				var newData:BitmapData = FlxG.createBitmap(85, 17, 0x00000000, true);
+				var newData:BitmapData = FlxG.createBitmap(51, 17, 0x00000000, true);
 				var matrix:Matrix = new Matrix();
 				matrix.scale(17 / 50, 17 / 50);
-				newData.draw(FlxG.addBitmap(Embed.LittleFriends), matrix);
+				newData.draw(FlxG.addBitmap(Embed.Bomb), matrix);
 				BitmapDataCache.setBitmap(key, newData);
 			}
 			_pixels = BitmapDataCache.getBitmap(key);
 			width = frameWidth = 17;
 			height = frameHeight = 17;
 			resetHelpers();
-			addAnimation("default", [0, 1, 2, 3, 4], 4, true);
+			addAnimation("default", [2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0], 30, true);
 			play("default");
 			_curFrame = Math.random() * 5;
 		}
@@ -34,7 +36,7 @@ package levels
 				return false;
 			}
 			var heldBubble:Bubble = heldBubbles.getFirstAlive() as Bubble;
-			if (heldBubble != null && !(heldBubble is LittleFriendsBubble)) {
+			if (heldBubble != null && !(heldBubble is BombBubble)) {
 				return false;
 			}
 			return super.isGrabbable(heldBubbles, firstGrab);
