@@ -15,7 +15,7 @@ package levels
 		public function BlindSide(scenario:int) 
 		{
 			super(scenario);
-			bubbleColors = [0xffff00ff, 0xffff5050, 0xffffff00, 0xff33cc33, 0xff3366ff];
+			bubbleColors = [0xffff00ff, 0xffff5050, 0xffffff00, 0xff00ee00, 0xff3366ff];
 			if (scenario == 0) {
 				bubbleColors = bubbleColors.splice(1);
 				maxBubbleRate = 230;

@@ -21,7 +21,7 @@ package
 				var matrix:Matrix = new Matrix();
 				matrix.scale(17 / 50, 17 / 50);
 				newData.draw(FlxG.addBitmap(Embed.Microbe0), matrix);
-				whitenBitmapData(newData);
+				shiftHueBitmapData(newData, 0xffffffff);
 				matrix.identity();
 				var eyeData:BitmapData = FlxG.addBitmap(Embed.Eyes0);
 				for (var i:int = 0; i < 5;i++) {
@@ -98,31 +98,17 @@ package
 			}
 		}
 		
-		public static function whitenBitmapData(spritePixels:BitmapData, valueAdjustment:Number=0.5):void {
-			for (var pixelX:int = 0; pixelX < spritePixels.width; pixelX++) {
-				for (var pixelY:int = 0; pixelY < spritePixels.height; pixelY++) {
-					var pixelRgb:uint = spritePixels.getPixel32(pixelX, pixelY);
-					var pixelHsv:Object = DefaultBubble.RGBtoHSV(pixelRgb);
-					pixelHsv.saturation = 0;
-					pixelHsv.value = Math.max(0, Math.min(1, pixelHsv.value + valueAdjustment));
-					pixelRgb = FlxColor.HSVtoRGB(pixelHsv.hue, pixelHsv.saturation, pixelHsv.value, FlxColor.getAlpha(pixelRgb));
-					spritePixels.setPixel32(pixelX, pixelY, pixelRgb);
-				}
-			}
-		}
-		
 		public static function shiftHueBitmapData(spritePixels:BitmapData, color:uint):void {
-			if (color == 0xff000000) {
-				return whitenBitmapData(spritePixels, -0.45);
-			} else if (color == 0xffffffff) {
-				return whitenBitmapData(spritePixels, 0.05);
-			}
 			var targetHsv:Object = FlxColor.RGBtoHSV(color);
+			var saturationAdjustment:Number = targetHsv.saturation - 1.0;
+			var valueAdjustment:Number = targetHsv.value - 0.5;
 			for (var pixelX:int = 0; pixelX < spritePixels.width; pixelX++) {
 				for (var pixelY:int = 0; pixelY < spritePixels.height; pixelY++) {
 					var pixelRgb:uint = spritePixels.getPixel32(pixelX, pixelY);
 					var pixelHsv:Object = DefaultBubble.RGBtoHSV(pixelRgb);
 					pixelHsv.hue = (targetHsv.hue + pixelHsv.hue) % 360;
+					pixelHsv.saturation = Math.min(1, Math.max(0, pixelHsv.saturation + saturationAdjustment));
+					pixelHsv.value = Math.min(1, Math.max(0, pixelHsv.value + valueAdjustment));
 					pixelRgb = FlxColor.HSVtoRGB(pixelHsv.hue, pixelHsv.saturation, pixelHsv.value, FlxColor.getAlpha(pixelRgb));
 					spritePixels.setPixel32(pixelX, pixelY, pixelRgb);
 				}

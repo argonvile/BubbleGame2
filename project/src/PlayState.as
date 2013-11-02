@@ -390,7 +390,7 @@ package
 				}
 
 				// did the player win?
-				if (elapsed > levelDetails.levelDuration && !variableDifficultyMode || eliminatedBubbleCount >= levelDetails.levelQuota) {
+				if (!variableDifficultyMode && (elapsed > levelDetails.levelDuration || eliminatedBubbleCount >= levelDetails.levelQuota)) {
 					var text:FlxText = new FlxText(0, 0, FlxG.width, "You win!");
 					text.alignment = "center";
 					text.y = FlxG.height / 2 - text.height / 2;

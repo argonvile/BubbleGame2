@@ -6,7 +6,7 @@ package levels
 	public class Kerosene extends LevelDetails
 	{
 		public static const name:String = "Kerosene";
-		public static const scenarioBpms:Array = [47.1, 68.4, 114.3, 174.6, 273.0];
+		public static const scenarioBpms:Array = [105.4, 145.0, 204.2, 286.8, 408.4];
 		private var scrollAmounts:ShuffledArray = new ShuffledArray();
 		private var keroseneChance:ShuffledArray = new ShuffledArray();
 		private var explosionLayer:FlxGroup;
@@ -15,6 +15,7 @@ package levels
 		public function Kerosene(scenario:int) 
 		{
 			super(scenario);
+			bubbleColors = [0xff864203, 0xfff89640, 0xfff8efa6, 0xff000000, 0xff9e9e9e]
 			minNewRowLocation = -PlayState.bubbleHeight * 8.5;
 			avgChainLength = 11;
 			popPerBubbleDelay = 1 / 90;
@@ -39,12 +40,12 @@ package levels
 			} else if (scenario == 3) {
 				maxBubbleRate = 1226;
 				columnCount = 13;
-				scrollAmounts.push(1, 1, 1, 2, 3, 3, 5);
+				scrollAmounts.push(1, 1, 1, 2, 3, 3, 4);
 				keroseneChance.push(1, 1, 1, 1, 1);
 			} else if (scenario == 4) {
-				maxBubbleRate = 1839;
+				maxBubbleRate = 1426;
 				columnCount = 11;
-				scrollAmounts.push(1, 1, 1, 2, 3, 3, 5, 5);
+				scrollAmounts.push(1, 1, 1, 2, 3, 3, 4, 4);
 				keroseneChance.push(1, 1);
 			}
 			scrollAmounts.reset();
@@ -72,13 +73,13 @@ package levels
 			if (flxParticle.width == 16) {
 				// just loaded
 				flxParticle.loadGraphic(Embed.Explosion, true, false, 50, 50);
-				flxParticle.addAnimation("play0", [0,1,2], 20);
-				flxParticle.addAnimation("play1", [3,4,5], 20);
-				flxParticle.addAnimation("play2", [6,7,8], 20);
+				flxParticle.addAnimation("play0", [0,1,2,2], 10);
+				flxParticle.addAnimation("play1", [3,4,5,5], 10);
+				flxParticle.addAnimation("play2", [6,7,8,8], 10);
 				flxParticle.origin.x = 25;
 				flxParticle.origin.y = 25;
 			}
-			flxParticle.lifespan = 3/20;
+			flxParticle.lifespan = 3/10;
 			flxParticle.x = bubble.x + bubble.width / 2 - flxParticle.width / 2;
 			flxParticle.y = bubble.y + bubble.height / 2 - flxParticle.height / 2;
 			flxParticle.play("play" + int(Math.random()*3), true);
@@ -131,7 +132,7 @@ package levels
 			}
 		}
 		
-		private function bigShakeDone() {
+		private function bigShakeDone():void {
 			bigShake = false;
 		}
 		

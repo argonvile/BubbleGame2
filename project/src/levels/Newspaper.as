@@ -7,7 +7,7 @@ package levels
 		public function Newspaper(scenario:int) 
 		{
 			setSpeed(scenario);
-			bubbleColors = [0xffff1e00, 0xff000000, 0xffffffff];
+			bubbleColors = [0xffff3323, 0xff111111, 0xff999999];
 			avgChainLength = 11;
 			if (scenario == 0) {
 				// easy

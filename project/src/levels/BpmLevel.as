@@ -25,6 +25,7 @@ package levels
 		
 		override public function init(playState:PlayState):void {
 			super.init(playState);
+			levelQuota = 99999;
 		}
 		
 		override public function bubblesFinishedPopping(bubbles:Array):void {

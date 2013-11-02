@@ -11,7 +11,7 @@ package levels
 		public function LittleFriends(scenario:int) 
 		{
 			super(scenario);
-			bubbleColors = [0xff7ce700, 0xff04819e, 0xffffe800, 0xffee6b9e];
+			bubbleColors = [0xff44ff00, 0xff22ffff, 0xffffff22, 0xffff0044];
 			initialBubbleRateDuration = 5;
 			initialBubbleRatePct = 0.25;
 			if (scenario == 0) {

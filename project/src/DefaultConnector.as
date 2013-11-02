@@ -33,7 +33,7 @@ package
 			if (BitmapDataCache.getBitmap(key) == null) {
 				var newData:BitmapData = FlxG.createBitmap(51, 17, 0x00000000, true);
 				newData.draw(FlxG.addBitmap(graphic), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
-				DefaultBubble.whitenBitmapData(newData);
+				DefaultBubble.shiftHueBitmapData(newData, 0xffffffff);
 				BitmapDataCache.setBitmap(key, newData);
 			}
 			popGraphic = BitmapDataCache.getBitmap(key);
