@@ -4,6 +4,7 @@ package
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.FlxColor;
 	import levels.*;
+	import levels.boring.*;
  
 	public class PlayState extends FlxState
 	{
@@ -71,7 +72,7 @@ package
 				returnClass = AllLevelSelect;
 			}
 			if (levelDetails == null) {
-				levelDetails = new Kerosene(3);
+				levelDetails = new Hyderabad(3);
 			}
 			
 			if (variableDifficultyMode) {

@@ -10,7 +10,7 @@ package levels
 		
 		public function Relentless(scenario:int)
 		{
-			bubbleColors = [0xffffffff, 0xffff7400, 0xff009999, 0xff1729b0, 0xff4dde00];
+			bubbleColors = [0xff8a8a8a, 0xffff7400, 0xff009999, 0xff1729b0, 0xff4dde00];
 			if (scenario == 0) {
 				bubbleColors = bubbleColors.slice(0, 4);
 				maxBubbleRate = 65;

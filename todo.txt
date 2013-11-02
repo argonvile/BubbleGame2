@@ -27,10 +27,11 @@
 *character graphic/bubble should scroll together appropriately, frame-by-frame
 *Fix "all levels" screen to scroll
 *add "Quota" feature?
+
 *new level: "kablooie", pieces just suddenly EXPLODE when you leave a match, clearing out everything in a radius. and bombs clear even more!
+*Add support for desaturated/light/dark bubbles
 display quota
 new level: "bubble ghost", bubbles leave harmless ghosts when popped. ghosts vanish if you throw/grab a bubble past them
-
 thrown bubbles and sitting bubbles should both pop during a combo
 Empress, Blender should reuse "push bubble" logic
 Should grab/through through already-popped bubbles
@@ -49,7 +50,6 @@ new level: bubbles constantly change color
 new level: "red red whine", adjacent red bubbles pop when thrown, and on higher difficulties, drop if you grab too many
 new level: orange bubbles drop when grabbed, and on higher difficulties, "pop" a replacement
 new level: yellow bubbles change to rainbow color when popped, and on higher difficulties, this rainbow includes yellow
-Add support for desaturated/light/dark bubbles
 improve popping graphics -- little bubblets?
 
 end-of-level "FEVER" mode
