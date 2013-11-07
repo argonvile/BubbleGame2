@@ -39,7 +39,7 @@ package
 		
 		public var newRowLocation:Number;
 		
-		private var levelDetails:LevelDetails;
+		public var levelDetails:LevelDetails;
 		
 		private var bgSprite:FlxSprite;
 		private var fgSprite:FlxSprite;
@@ -57,9 +57,9 @@ package
 		private var difficultyIncrementFrequency:int = 3000;
 		private var variableDifficultyDeaths:Array = new Array();
 		private var returnClass:Class;
+		private var thermometerGraphic:ThermometerGraphic;
 		private var ekgGraphic:EkgGraphic;
 		public var eliminatedBubbleCount:int = 0;
-		public var quotaText:FlxText;
 		
 		public function PlayState(returnClass:Class=null, levelDetails:LevelDetails = null) {
 			this.returnClass = returnClass;
@@ -72,7 +72,7 @@ package
 				returnClass = AllLevelSelect;
 			}
 			if (levelDetails == null) {
-				levelDetails = new Hyderabad(3);
+				levelDetails = new Hyderabad(1);
 			}
 			
 			if (variableDifficultyMode) {
@@ -136,16 +136,24 @@ package
 
 			add(fgSprite);
 			
-			ekgGraphic = new EkgGraphic(263, 120, 123);
+			var thermometerPoint:FlxPoint;
+			var ekgPoint:FlxPoint;
+			if (levelDetails.columnCount <= 8) {
+				thermometerPoint = new FlxPoint(178, 40);
+				ekgPoint = new FlxPoint(233, 80);
+			} else if (levelDetails.columnCount <= 11) {
+				thermometerPoint = new FlxPoint(218, 40);
+				ekgPoint = new FlxPoint(248, 100);
+			} else {
+				thermometerPoint = new FlxPoint(258, 40);
+				ekgPoint = new FlxPoint(263, 120);
+			}
+			
+			thermometerGraphic = new ThermometerGraphic(thermometerPoint.x, thermometerPoint.y, this);
+			add(thermometerGraphic);
+			
+			ekgGraphic = new EkgGraphic(ekgPoint.x, ekgPoint.y);
 			add(ekgGraphic);
-			
-			var textBgSprite:FlxSprite = new FlxSprite(260, 0);
-			textBgSprite.makeGraphic(200, 13, 0xff000000);
-			add(textBgSprite);
-			
-			quotaText = new FlxText(0, 0, FlxG.width, "9999/9999");
-			quotaText.setFormat(null, 8, 0xffffffff, "right");
-			add(quotaText);
 		}
 		
 		public function scrollBg(howMany:int = 1):void {
@@ -178,7 +186,6 @@ package
 			 */
 			super.update();
 			if (gameState < 200) {
-				quotaText.text = eliminatedBubbleCount + "/" + levelDetails.levelQuota;
 				if (FlxG.keys.justPressed("ESCAPE")) {
 					kill();
 					FlxG.switchState(new returnClass());

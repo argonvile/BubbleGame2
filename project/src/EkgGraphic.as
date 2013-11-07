@@ -15,13 +15,12 @@ package
 		private var seconds:int = -1;
 		private var elapsed:Number = 0;
 		
-		public function EkgGraphic(x:Number,y:Number,seconds:Number) 
+		public function EkgGraphic(x:Number,y:Number) 
 		{
 			this.x = x;
 			this.y = y;
 			var ekgSprite:FlxSprite = new FlxSprite(x, y, Embed.Ekg);
 			ekgSprite.scale.x = ekgSprite.scale.y = 0.4;
-			ekgSprite.centerOffsets();
 			ekgSprite.setOriginToCorner();
 			add(ekgSprite);
 			
@@ -35,7 +34,7 @@ package
 				add(sprite);
 				sprites.push(sprite);
 			}
-			setSeconds(seconds);
+			setSeconds(123);
 			lineSprite = new FlxSprite(x + 7, y + 16);
 			lineSprite.makeGraphic(2, 1, 0xccccffff);
 			add(lineSprite);

@@ -17,6 +17,8 @@ package
 		[Embed(source = "../graphics/microbe0-se.png")] public static var Microbe0Se:Class;
 		[Embed(source = "../graphics/screenshot-90x44.png")] public static var Screenshot90x44:Class;
 		[Embed(source = "../graphics/ekg.png")] public static var Ekg:Class;
+		[Embed(source = "../graphics/thermometer.png")] public static var Thermometer:Class;
+		[Embed(source = "../graphics/thermometer-bubble.png")] public static var ThermometerBubble:Class;
 		[Embed(source = "../graphics/monster-body0.png")] public static var MonsterBody0:Class;
 		[Embed(source = "../graphics/monster-arms0.png")] public static var MonsterArms0:Class;
 		[Embed(source = "../graphics/monster-arms1.png")] public static var MonsterArms1:Class;
@@ -38,6 +40,7 @@ package
 		[Embed(source = "../sound/big-boulder2.mp3")] public static var SfxBigBoulder2:Class;
 		
 		[Embed(source = "../fonts/lets-go-digital-regular.ttf", fontFamily = "digital", embedAsCFF="false")] public	static var FontDigital:String;
+		[Embed(source = "../fonts/just-sayin.ttf", fontFamily = "handwriting", embedAsCFF="false")] public	static var FontHandwriting:String;
 		
 		private static var sounds:Object = new Object();
 		private static var soundStartTimes:Array = new Array();
