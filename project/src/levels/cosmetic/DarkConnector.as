@@ -1,4 +1,4 @@
-package levels 
+package levels.cosmetic 
 {
 	import org.flixel.*;
 	import flash.display.BitmapData;

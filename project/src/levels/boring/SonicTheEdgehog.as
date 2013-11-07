@@ -1,4 +1,4 @@
-package levels 
+package levels.boring 
 {
 	public class SonicTheEdgehog extends LevelDetails
 	{

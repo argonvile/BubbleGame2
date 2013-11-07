@@ -1,4 +1,4 @@
-package levels 
+package levels.nice 
 {
 	import org.flixel.*;
 	

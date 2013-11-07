@@ -1,6 +1,5 @@
 package  
 {
-	import levels.LittleFriends;
 	import org.flixel.*;
 	import flash.ui.Mouse;
 	import org.flixel.plugin.photonstorm.FlxButtonPlus;

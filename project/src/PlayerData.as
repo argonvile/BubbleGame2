@@ -2,6 +2,9 @@ package
 {
 	import levels.*;
 	import levels.boring.*;
+	import levels.cosmetic.*;
+	import levels.mean.*;
+	import levels.nice.*;
 	
 	public class PlayerData 
 	{

@@ -1,4 +1,4 @@
-package levels 
+package levels.mean 
 {
 
 	public class TheEmpress extends LevelDetails

@@ -1,4 +1,4 @@
-package levels 
+package levels.cosmetic 
 {
 	import flash.display.BitmapData;
 	import flash.geom.ColorTransform;
