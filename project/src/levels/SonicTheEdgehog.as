@@ -59,7 +59,7 @@ package levels
 			}
 		}
 		
-		override public function nextBubbleColor():int {
+		override public function nextBubbleColor():uint {
 			var nextBubbleType:int = upcomingBubbleData[bubbleIndex];
 			bubbleIndex = (bubbleIndex + 1) % upcomingBubbleData.length;
 			if (nextBubbleType == 0) {

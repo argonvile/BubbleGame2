@@ -46,7 +46,7 @@ package levels.boring
 			}
 		}
 		
-		override public function nextBubbleColor():int {
+		override public function nextBubbleColor():uint {
 			var nextBubbleType:int = upcomingBubbleData[bubbleIndex];
 			bubbleIndex++;
 			if (bubbleIndex > columnCount) {

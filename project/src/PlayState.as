@@ -72,7 +72,7 @@ package
 				returnClass = AllLevelSelect;
 			}
 			if (levelDetails == null) {
-				levelDetails = new Hyderabad(1);
+				levelDetails = new Shenyang(1);
 			}
 			
 			if (variableDifficultyMode) {

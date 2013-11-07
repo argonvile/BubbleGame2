@@ -51,7 +51,7 @@ package levels
 			super.prepareLevel();
 		}
 		
-		override public function nextBubbleColor():int {
+		override public function nextBubbleColor():uint {
 			if (generatedBubbleCount < columnCount * 4) {
 				return bubbleColors[(generatedBubbleCount++ % columnCount) % bubbleColors.length];
 			} else {

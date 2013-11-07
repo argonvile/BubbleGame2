@@ -86,15 +86,15 @@ package
 		 */
 		protected function setSpeed(speed:Number):void {
 			var myFactor:Number = Math.pow(1.5, 2 - speed);
-			popDelay *= myFactor;
-			popPerBubbleDelay *= myFactor;
-			dropDelay *= myFactor;
-			dropPerBubbleDelay *= myFactor;
-			grabDuration *= Math.sqrt(myFactor);
-			throwDuration *= Math.sqrt(myFactor);
+			popDelay = 0.4 * myFactor;
+			popPerBubbleDelay = 0.1 * myFactor;
+			dropDelay = 0 * myFactor;
+			dropPerBubbleDelay = 0.03 * myFactor;
+			grabDuration = 0.22 * Math.sqrt(myFactor);
+			throwDuration = 0.11 * Math.sqrt(myFactor);
 		}
 		
-		public function nextBubbleColor():int {
+		public function nextBubbleColor():uint {
 			var randomInt:int = Math.random() * bubbleColors.length;
 			return bubbleColors[randomInt];
 		}
