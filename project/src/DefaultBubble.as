@@ -46,8 +46,7 @@ package
 			_pixels = regularGraphic;
 		}
 		
-		public function setBubbleColor(bubbleColor:uint):void {
-			this.bubbleColor = bubbleColor;
+		public static function loadBubbleGraphic(bubbleColor:uint):BitmapData {
 			var key:String = "Microbe0 " + bubbleColor.toString(16);
 			if (BitmapDataCache.getBitmap(key) == null) {
 				var newData:BitmapData = FlxG.createBitmap(85, 17, 0x00000000, true);
@@ -63,7 +62,12 @@ package
 				}
 				BitmapDataCache.setBitmap(key, newData);
 			}
-			regularGraphic = BitmapDataCache.getBitmap(key);
+			return BitmapDataCache.getBitmap(key);
+		}
+		
+		public function setBubbleColor(bubbleColor:uint):void {
+			this.bubbleColor = bubbleColor;
+			regularGraphic = loadBubbleGraphic(bubbleColor);
 			if (_pixels != popGraphic) {
 				_pixels = regularGraphic;
 			}

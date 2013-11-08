@@ -7,19 +7,15 @@ package
 
 	public class DefaultConnector extends Connector
 	{
-		private var regularGraphic:BitmapData;
-		private var popGraphic:BitmapData;
+		protected var regularGraphic:BitmapData;
+		protected var popGraphic:BitmapData;
 		
 		public function DefaultConnector()
 		{
 			super();
 		}
 		
-		override public function init(bubble0:Bubble, bubble1:Bubble, graphic:Class):void {
-			super.init(bubble0, bubble1, graphic);
-			x = (bubble0.x + bubble1.x) / 2;
-			y = (bubble0.y + bubble1.y) / 2;
-			var bubbleColor:int = (bubble0 as DefaultBubble).bubbleColor;
+		public static function loadConnectorGraphic(bubbleColor:uint, graphic:Class):BitmapData {
 			var key:String = "connector " + getQualifiedClassName(graphic) + " " + bubbleColor.toString(16);
 			if (BitmapDataCache.getBitmap(key) == null) {
 				var newData:BitmapData = FlxG.createBitmap(51, 17, 0x00000000, true);
@@ -27,8 +23,15 @@ package
 				DefaultBubble.shiftHueBitmapData(newData, bubbleColor);
 				BitmapDataCache.setBitmap(key, newData);
 			}
-			regularGraphic = BitmapDataCache.getBitmap(key);
-			
+			return BitmapDataCache.getBitmap(key);
+		}
+		
+		override public function init(bubble0:Bubble, bubble1:Bubble, graphic:Class):void {
+			super.init(bubble0, bubble1, graphic);
+			x = (bubble0.x + bubble1.x) / 2;
+			y = (bubble0.y + bubble1.y) / 2;
+			var bubbleColor:int = (bubble0 as DefaultBubble).bubbleColor;
+			regularGraphic = loadConnectorGraphic(bubbleColor, graphic);
 			var key:String = "popped connector " + getQualifiedClassName(graphic);
 			if (BitmapDataCache.getBitmap(key) == null) {
 				var newData:BitmapData = FlxG.createBitmap(51, 17, 0x00000000, true);

@@ -5,6 +5,9 @@ package
 	import org.flixel.plugin.photonstorm.FlxColor;
 	import levels.*;
 	import levels.boring.*;
+	import levels.cosmetic.*;
+	import levels.mean.*;
+	import levels.nice.*;
  
 	public class PlayState extends FlxState
 	{
@@ -18,7 +21,7 @@ package
 		public var fallingBubbles:FlxGroup = new FlxGroup();
 		private var popperEmitter:FlxEmitter = new FlxEmitter();
 		
-		private var elapsed:Number = 0;
+		public var elapsed:Number = 0;
 		public var rowScrollTimer:Number = 0;
 		/**
 		 * 100 == normal
@@ -72,7 +75,7 @@ package
 				returnClass = AllLevelSelect;
 			}
 			if (levelDetails == null) {
-				levelDetails = new Shenyang(1);
+				levelDetails = new Vivid(3);
 			}
 			
 			if (variableDifficultyMode) {

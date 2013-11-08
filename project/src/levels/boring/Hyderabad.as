@@ -16,7 +16,7 @@ package levels.boring
 		public function Hyderabad(scenario:int) 
 		{
 			super(scenario);
-			bubbleColors = [0xffc50080, 0xff1437ad, 0xff530fad, 0xffffe800, 0xffabf000];
+			bubbleColors = [0xffc50080, 0xff1437ad, 0xff530fad, 0xffffe800, 0xff84f000];
 			columnCount = 8;
 			upcomingBubbleData = new Array();
 			if (scenario == 0) {

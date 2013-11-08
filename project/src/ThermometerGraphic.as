@@ -52,8 +52,8 @@ package
 			} else if (playState.levelDetails.levelQuota >= 401) {
 				midPoint = playState.levelDetails.levelQuota - 200;
 				hundredths = true;
-			} else if (playState.levelDetails.levelQuota >= 101) {
-				midPoint = playState.levelDetails.levelQuota - 50;
+			} else if (playState.levelDetails.levelQuota >= 81) {
+				midPoint = playState.levelDetails.levelQuota - 40;
 				hundredths = false;
 			} else if (playState.levelDetails.levelQuota >= 41) {
 				midPoint = playState.levelDetails.levelQuota - 20;
@@ -97,8 +97,10 @@ package
 			bubbleText.y = thermometerBubble.y + 8;
 			var number:Number = 36 + thermometerPct * 4;
 			if (hundredths) {
+				number = Math.round(number * 100) / 100;
 				bubbleText.text = number.toFixed(2);
 			} else {
+				number = Math.round(number * 10) / 10;
 				bubbleText.text = number.toFixed(1);
 			}
 		}
