@@ -32,11 +32,10 @@
 *display quota
 new level: colors constantly rotate, pretty but difficult
 
-new level: "bubble ghost", bubbles leave harmless ghosts when popped. ghosts vanish if you throw/grab a bubble past them
-thrown bubbles and sitting bubbles should both pop during a combo
+*thrown bubbles and sitting bubbles should both pop during a combo
 Empress, Blender should reuse "push bubble" logic
-Should grab/throw through already-popped bubbles
-Refactor vanish/pop logic -- can't it just kill them right away?
+*Should grab/throw through already-popped bubbles
+*Refactor vanish/pop logic -- can't it just kill them right away?
 
 Level select should display descriptions/hints
 Level select should use real screenshots
@@ -45,6 +44,8 @@ Animate character graphic for moving left/right
 Animate character graphic for pulling
 Animate character graphic for throwing
 add halos for up/down teleport squares
+new level: "moustache", some bubbles have moustaches. getting 4 moustaches in a row pops moustaches. getting four IDENTICAL moustaches in a row clears level
+new level: "bubble ghost", bubbles leave harmless ghosts when popped. ghosts vanish if you throw/grab a bubble past them
 new level: moving causes new bubbles to appear
 new level: bubbles constantly change color
 new level: "red red whine", adjacent red bubbles pop when thrown, and on higher difficulties, drop if you grab too many

@@ -63,19 +63,10 @@ package levels.mean
 			]) {
 				var neighbor:LittleFriendsBubble = positionMap[position] as LittleFriendsBubble;
 				if (neighbor != null && !neighbor.isAnchor() && neighbor.visible == true) {
-					neighbor.visible = false;
+					neighbor.kill();
 					playState.eliminatedBubbleCount++;
 				}
 			}			
-		}
-		
-		override public function bubblesFinishedPopping(bubbles:Array):void {
-			for each (var bubble:Bubble in playState.bubbles.members) {
-				var littleFriendsBubble:LittleFriendsBubble = bubble as LittleFriendsBubble;
-				if (littleFriendsBubble != null && littleFriendsBubble.visible == false) {
-					littleFriendsBubble.kill();
-				}
-			}
 		}
 	}
 }

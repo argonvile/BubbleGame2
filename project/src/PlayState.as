@@ -296,6 +296,18 @@ package
 				// did the player trigger a pop event?
 				// if so, transition to state 110...
 				if (popCounter.shouldPop()) {
+					for (var i:int = 0; i < thrownBubbles.length; i++) {
+						var thrownBubble:Bubble = thrownBubbles[i];
+						if (thrownBubble != null && thrownBubble.alive) {
+							popCounter.popMatches(thrownBubble);
+							if (popCounter.shouldPopBubble(thrownBubble)) {
+								thrownBubble.changeState(0);
+								thrownBubbles[i] = null;
+								maybeAddConnectorSingle(positionMap, thrownBubble)
+							}
+						}
+					}
+					
 					poppedBubbles = popCounter.getPoppedBubbles();
 					poppedBubbles.sort(orderByPosition);
 					for each (var bubble:Bubble in poppedBubbles) {
@@ -434,9 +446,12 @@ package
 				for (var i:int = 0; i < poppedBubbles.length; i++) {
 					if ((i + 1) * levelDetails.popPerBubbleDelay + levelDetails.popDelay < stateTime) {
 						var poppedBubble:Bubble = poppedBubbles[i];
-						if (poppedBubble.visible) {
-							poppedBubble.visible = false;
+						if (poppedBubble != null && poppedBubble.alive) {
 							poppedBubble.killConnectors();
+							poppedBubble.kill();
+							// after we kill it, it can be revived/reused for adding new bubbles.
+							// so, let's make sure we don't reuse it by mistake
+							poppedBubbles[i] = null;
 							levelDetails.bubbleVanished(poppedBubble);
 							eliminatedBubbleCount++;
 							levelDetails.playPopSound(comboSfxCount, comboLevel, comboLevelBubbleCount);
@@ -447,11 +462,8 @@ package
 				}
 				// is the pop event over?
 				if (stateTime >= stateDuration) {
-					levelDetails.bubblesFinishedPopping(poppedBubbles);
+					levelDetails.bubblesFinishedPopping();
 					// if so, remove popped bubbles
-					for each (var bubble:Bubble in poppedBubbles) {
-						bubble.kill();
-					}
 					poppedBubbles.length = 0;
 					if (gameState == 110) {
 						// if the player triggered a drop event, transition to state 120...
@@ -459,11 +471,11 @@ package
 					}
 					if (gameState == 110) {
 						if (suspendedBubbles.length > 0) {
-							// if the player has suspended bubbles, transition to the "paused state"
+							// if the player has suspended bubbles, transition to the "paused state" until they're thrown
 							changeState(130, levelDetails.throwDuration);
 						} else {
-							// otherwise, transition to state 100
-							changeState(100);
+							// otherwise, transition to the "paused state" for just 1 frame
+							changeState(130, 0);
 						}
 					}
 					for each (var fallingBubble:Bubble in fallingBubbles.members) {
@@ -488,15 +500,15 @@ package
 				if (stateTime >= stateDuration) {
 					levelDetails.bubblesFinishedDropping(poppedBubbles);
 					poppedBubbles.length = 0;
-					changeState(100);
+					if (suspendedBubbles.length > 0) {
+						// if the player has suspended bubbles, transition to the "paused state" until they're thrown
+						changeState(130, levelDetails.throwDuration);
+					} else {
+						// otherwise, transition to the "paused state" for just 1 frame
+						changeState(130, 0);
+					}
 					// check if the user triggered another drop while we were dropping...
 					checkForDetachedBubbles();
-					if (gameState == 100) {
-						if (suspendedBubbles.length > 0) {
-							// if the player has suspended bubbles, transition to the "paused state"
-							changeState(130, levelDetails.throwDuration);
-						}
-					}
 				}
 			} else if (gameState == 200 || gameState == 300) {
 				// game over

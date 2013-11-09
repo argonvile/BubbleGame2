@@ -188,6 +188,9 @@ package
 		}
 		
 		public function changeState(state:int):void {
+			if (state == 0) {
+				offset.x = offset.y = 0;
+			}
 			this.state = state;
 			this.stateTime = 0;
 		}

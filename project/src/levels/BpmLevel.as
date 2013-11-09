@@ -28,8 +28,8 @@ package levels
 			levelQuota = 99999;
 		}
 		
-		override public function bubblesFinishedPopping(bubbles:Array):void {
-			poppedBubbleCount += bubbles.length;
+		override public function bubbleVanished(bubble:Bubble):void {
+			poppedBubbleCount++;
 		}
 		
 		override public function bubblesFinishedDropping(bubbles:Array):void {

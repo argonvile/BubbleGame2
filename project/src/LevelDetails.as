@@ -144,7 +144,7 @@ package
 		public function bubbleVanished(bubble:Bubble):void {
 		}
 		
-		public function bubblesFinishedPopping(bubbles:Array):void {
+		public function bubblesFinishedPopping():void {
 		}
 		
 		public function bubblesFinishedDropping(bubbles:Array):void {

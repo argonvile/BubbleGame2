@@ -106,14 +106,15 @@ package levels.nice
 			}
 		}
 		
-		override public function bubblesFinishedPopping(bubbles:Array):void {
-			popCounts = new Object();
-			for each (var bubble:DefaultBubble in bubbles) {
-				if (popCounts[bubble.bubbleColor] == null) {
-					popCounts[bubble.bubbleColor] = 0;
-				}
-				popCounts[bubble.bubbleColor]++;
+		override public function bubbleVanished(bubble:Bubble):void {
+			var defaultBubble:DefaultBubble = bubble as DefaultBubble;
+			if (popCounts[defaultBubble.bubbleColor] == null) {
+				popCounts[defaultBubble.bubbleColor] = 0;
 			}
+			popCounts[defaultBubble.bubbleColor]++;
+		}
+		
+		override public function bubblesFinishedPopping():void {
 			var colorsToTarget:Array = new Array();
 			for each (var bubble:DefaultBubble in playState.bubbles.members) {
 				if (bubble != null && bubble.alive && bubble.visible && !bubble.isAnchor()) {
@@ -126,6 +127,7 @@ package levels.nice
 				changedBubbles.sort(playState.orderByPosition);
 				playState.changeState(140, dropDelay + dropPerBubbleDelay * changedBubbles.length);
 			}
+			popCounts = new Object();
 		}
 	}
 }

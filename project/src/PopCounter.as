@@ -52,5 +52,14 @@ package
 		public function getPoppedBubbles():Array {
 			return poppedBubbles;
 		}
+		
+		public function shouldPopBubble(bubble:Bubble):Boolean {
+			for each (var otherBubble:Bubble in poppedBubbles) {
+				if (bubble == otherBubble) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }
