@@ -697,7 +697,19 @@ package
 			var y:Number = maxBubble.y;
 			var firstGrab:Boolean = true;
 			while (maxBubble != null) {
+				if (maxBubble.y >= FlxG.height) {
+					// we don't let people grab bubbles which are below the bottom of the screen -- this prevents
+					// players from fudging their way through certain 2-3 color levels, where they could otherwise
+					// play the level blind with some success
+					if (firstGrab) {
+						Embed.play(Embed.SfxBuzz, 0.5);
+					}
+					break;
+				}
 				if (!maxBubble.isGrabbable(playerSprite.heldBubbles, firstGrab)) {
+					if (firstGrab) {
+						Embed.play(Embed.SfxBuzz, 0.5);
+					}
 					break;
 				}
 				playerSprite.heldBubbles.add(maxBubble);

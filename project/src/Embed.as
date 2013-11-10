@@ -38,6 +38,7 @@ package
 		[Embed(source = "../sound/big-boulder0.mp3")] public static var SfxBigBoulder0:Class;
 		[Embed(source = "../sound/big-boulder1.mp3")] public static var SfxBigBoulder1:Class;
 		[Embed(source = "../sound/big-boulder2.mp3")] public static var SfxBigBoulder2:Class;
+		[Embed(source = "../sound/buzz.mp3")] public static var SfxBuzz:Class;
 		
 		[Embed(source = "../fonts/lets-go-digital-regular.ttf", fontFamily = "digital", embedAsCFF="false")] public	static var FontDigital:String;
 		[Embed(source = "../fonts/just-sayin.ttf", fontFamily = "handwriting", embedAsCFF="false")] public	static var FontHandwriting:String;

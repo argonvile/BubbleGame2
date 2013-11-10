@@ -33,9 +33,9 @@
 new level: colors constantly rotate, pretty but difficult
 
 *thrown bubbles and sitting bubbles should both pop during a combo
-Empress, Blender should reuse "push bubble" logic
 *Should grab/throw through already-popped bubbles
 *Refactor vanish/pop logic -- can't it just kill them right away?
+Empress, Blender should reuse "push bubble" logic
 
 Level select should display descriptions/hints
 Level select should use real screenshots

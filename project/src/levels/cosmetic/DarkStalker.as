@@ -63,15 +63,25 @@ package levels.cosmetic
 			var darkBubble:DarkBubble = defaultBubble as DarkBubble;
 			var darkBubbleS:DarkBubble = defaultBubbleS as DarkBubble;
 			connector.dark = (darkBubble.dark + darkBubbleS.dark) / 2;
+			if (Math.abs(connector.x - playState.playerSprite.x) < PlayState.columnWidth * (fullDarkColumnCount + 1) / 2) {
+				connector.dark = 1.0;
+			} else if (Math.abs(connector.x - playState.playerSprite.x) < PlayState.columnWidth * (halfDarkColumnCount + 1) / 2) {
+				connector.dark = halfDarkAmount;
+			}
 			connector.update();
 		}
 		
 		override public function nextBubble(x:Number, y:Number):Bubble {
 			var bubbleColor:int = nextBubbleColor();
-			var nextDefaultBubble:DarkBubble = playState.addBubble(DarkBubble) as DarkBubble;
-			nextDefaultBubble.init(this, x, y);
-			nextDefaultBubble.setBubbleColor(bubbleColor);
-			return nextDefaultBubble;
+			var darkBubble:DarkBubble = playState.addBubble(DarkBubble) as DarkBubble;
+			darkBubble.init(this, x, y);
+			darkBubble.setBubbleColor(bubbleColor);
+			if (Math.abs(darkBubble.x - playState.playerSprite.x) < PlayState.columnWidth * fullDarkColumnCount / 2) {
+				darkBubble.dark = 1.0;
+			} else if (Math.abs(darkBubble.x - playState.playerSprite.x) < PlayState.columnWidth * halfDarkColumnCount / 2) {
+				darkBubble.dark = halfDarkAmount;
+			}
+			return darkBubble;
 		}
 		
 		override public function update(elapsed:Number):void {
