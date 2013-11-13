@@ -116,7 +116,7 @@ package
 			}
 		}
 		
-		public function addConnector(defaultBubble:DefaultBubble, defaultBubbleS:DefaultBubble, graphic:Class):void {
+		public function addConnector(defaultBubble:Bubble, defaultBubbleS:Bubble, graphic:Class):void {
 			var connector:DefaultConnector = playState.connectors.recycle(DefaultConnector) as DefaultConnector;
 			connector.revive();
 			connector.init(defaultBubble, defaultBubbleS, graphic);
@@ -156,5 +156,34 @@ package
 		public function playPopSound(comboSfxCount:Number, comboLevel:int, comboLevelBubbleCount:int):void {
 			Embed.playPopSound(comboSfxCount);
 		}
+		
+		public function newPopCounter(playState:PlayState):PopCounter {
+			return new PopCounter(playState);
+		}
+		
+		public function maybeAddConnector(bubble:Bubble, bubbleS:Bubble, graphic:Class):void {
+			if (bubble is DefaultBubble && bubbleS is DefaultBubble) {
+				if (bubble.offset.y != bubbleS.offset.y) {
+					return;
+				}
+				if (bubble.offset.x != bubbleS.offset.x) {
+					return;
+				}
+				if (bubble.isAnchor() || bubbleS.isAnchor()) {
+					return;
+				}
+				if (!bubble.visible || !bubbleS.visible) {
+					return;
+				}
+				if (bubble.isConnected(bubbleS)) {
+					return;
+				}
+				var defaultBubble:DefaultBubble = bubble as DefaultBubble;
+				var defaultBubbleS:DefaultBubble = bubbleS as DefaultBubble;
+				if (defaultBubbleS.bubbleColor == defaultBubble.bubbleColor) {
+					addConnector(defaultBubble, defaultBubbleS, graphic);
+				}
+			}
+		}		
 	}
 }

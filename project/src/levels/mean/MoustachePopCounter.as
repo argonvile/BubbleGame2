@@ -1,23 +1,22 @@
-package  
+package levels.mean 
 {
-	public class PopCounter 
+	public class MoustachePopCounter extends PopCounter
 	{
-		protected var positionMap:Object;
-		protected var poppedBubbles:Array = new Array();
-		protected var p:PlayState;
-		
-		public function PopCounter(playState:PlayState) 
+		public function MoustachePopCounter(playState:PlayState) 
 		{
-			this.p = playState;
-			this.positionMap = playState.newPositionMap();
+			super(playState);
 		}
 		
-		public function popMatches(bubble:Bubble):void {
+		override public function popMatches(bubble:Bubble):void {
+			if (bubble is DefaultBubble) {
+				super.popMatches(bubble);
+				return;
+			}
 			var bubblesToCheck:Array = new Array(bubble);
 			var iBubblesToCheck:int = 0;
 			
 			do {
-				var bubbleToCheck:DefaultBubble = bubblesToCheck[iBubblesToCheck] as DefaultBubble;
+				var bubbleToCheck:MoustacheBubble = bubblesToCheck[iBubblesToCheck] as MoustacheBubble;
 				if (bubbleToCheck == null) {
 					break;
 				}
@@ -30,8 +29,8 @@ package
 					p.hashPosition(bubbleToCheck.x - PlayState.columnWidth, bubbleToCheck.y + PlayState.bubbleHeight/2),
 					p.hashPosition(bubbleToCheck.x - PlayState.columnWidth, bubbleToCheck.y - PlayState.bubbleHeight/2)
 				]) {
-					var neighbor:DefaultBubble = positionMap[position] as DefaultBubble;
-					if (neighbor != null && neighbor.bubbleColor == bubbleToCheck.bubbleColor) {
+					var neighbor:MoustacheBubble = positionMap[position] as MoustacheBubble;
+					if (neighbor != null) {
 						positionMap[position] = null;
 						bubblesToCheck.push(neighbor);
 					}
@@ -43,23 +42,6 @@ package
 					poppedBubbles.push(bubble);
 				}
 			}			
-		}
-		
-		public function shouldPop():Boolean {
-			return poppedBubbles.length > 0;
-		}
-		
-		public function getPoppedBubbles():Array {
-			return poppedBubbles;
-		}
-		
-		public function shouldPopBubble(bubble:Bubble):Boolean {
-			for each (var otherBubble:Bubble in poppedBubbles) {
-				if (bubble == otherBubble) {
-					return true;
-				}
-			}
-			return false;
-		}
+		}		
 	}
 }

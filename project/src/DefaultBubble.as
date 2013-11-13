@@ -11,7 +11,6 @@ package
 		public var bubbleColor:uint;
 		protected var regularGraphic:BitmapData;
 		protected var popGraphic:BitmapData;
-		private const QUICK_APPROACH_DURATION:Number = 0.3;
 		
 		public function DefaultBubble() 
 		{
@@ -78,7 +77,7 @@ package
 			return _pixels == popGraphic;
 		}
 		
-		public function loadPopGraphic():void {
+		override public function loadPopGraphic():void {
 			_pixels = popGraphic;
 			dirty = true;
 			for each (var connector:DefaultConnector in connectors) {
@@ -92,7 +91,7 @@ package
 			return _pixels == regularGraphic;
 		}
 		
-		public function loadRegularGraphic():void {
+		override public function loadRegularGraphic():void {
 			_pixels = regularGraphic;
 			dirty = true;
 			for each (var connector:DefaultConnector in connectors) {

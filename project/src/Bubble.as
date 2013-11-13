@@ -18,6 +18,7 @@ package
 		public var quickApproachDistance:Number;
 		protected var levelDetails:LevelDetails;
 		public var connectors:Array = new Array();
+		public var countsTowardsQuota:Boolean = true;
 
 		public function Bubble() 
 		{
@@ -193,6 +194,12 @@ package
 			}
 			this.state = state;
 			this.stateTime = 0;
+		}
+		
+		public function loadPopGraphic():void {
+		}
+		
+		public function loadRegularGraphic():void {
 		}
 	}
 }

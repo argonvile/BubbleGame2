@@ -68,7 +68,7 @@ package levels.cosmetic
 			return nextDefaultBubble;
 		}
 		
-		override public function addConnector(defaultBubble:DefaultBubble, defaultBubbleS:DefaultBubble, graphic:Class):void {
+		override public function addConnector(defaultBubble:Bubble, defaultBubbleS:Bubble, graphic:Class):void {
 			var connector:VividConnector = playState.connectors.recycle(VividConnector) as VividConnector;
 			connector.revive();
 			connector.init(defaultBubble, defaultBubbleS, graphic);

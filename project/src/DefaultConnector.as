@@ -30,7 +30,7 @@ package
 			super.init(bubble0, bubble1, graphic);
 			x = (bubble0.x + bubble1.x) / 2;
 			y = (bubble0.y + bubble1.y) / 2;
-			var bubbleColor:int = (bubble0 as DefaultBubble).bubbleColor;
+			var bubbleColor:int = bubble0["bubbleColor"];
 			regularGraphic = loadConnectorGraphic(bubbleColor, graphic);
 			var key:String = "popped connector " + getQualifiedClassName(graphic);
 			if (BitmapDataCache.getBitmap(key) == null) {

@@ -11,7 +11,7 @@ package
 		private static var _levels:ContinuousShuffledArray;
 		public static const difficultyCutoffs:Array = [45, 60, 75, 88, 98, 109, 121, 135, 149, 164, 181, 200, 221, 244, 270, 299, 332, 369, 409, Number.MAX_VALUE];
 		public static const difficultyStrings:Array = [".", "..", "...", "o", "oo", "ooo", "oooo", "ooooo", "O", "OO", "OOO", "OOOO", "OOOOO", "OOOOOO", "OOOOOOO", "@", "@@", "@@@", "@@@@", "@@@@@"]
-		public static const levelClasses:Array = [Vivid, Shenyang, Hyderabad, Kerosene, BlindSide, DarkStalker, Relentless, TheEmpress, LuckySeven, SonicTheEdgehog, Newspaper, Blender, LittleFriends];
+		public static const levelClasses:Array = [Moustache, Vivid, Shenyang, Hyderabad, Kerosene, BlindSide, DarkStalker, Relentless, TheEmpress, LuckySeven, SonicTheEdgehog, Newspaper, Blender, LittleFriends];
 		
 		public static function get levels():ContinuousShuffledArray {
 			if (_levels == null) {

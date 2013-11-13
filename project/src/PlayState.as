@@ -75,7 +75,7 @@ package
 				returnClass = AllLevelSelect;
 			}
 			if (levelDetails == null) {
-				levelDetails = new Vivid(3);
+				levelDetails = new Moustache(3);
 			}
 			
 			if (variableDifficultyMode) {
@@ -173,7 +173,11 @@ package
 		override public function update():void
 		{
 			stateTime += FlxG.elapsed;
-			ekgGraphic.setSeconds(levelDetails.levelDuration - elapsed);
+			if (variableDifficultyMode) {
+				ekgGraphic.setSeconds(elapsed);
+			} else {
+				ekgGraphic.setSeconds(Math.max(0, levelDetails.levelDuration - elapsed));
+			}
 			if (gameState < 200) {
 				if (variableDifficultyMode && getTimer() >= nextDifficultyIncrementTime) {
 					FlxG.timeScale = Math.min(50.0, FlxG.timeScale * Math.sqrt(7 / 6));
@@ -277,7 +281,7 @@ package
 					suspendedBubbles.length = 0;
 				}
 				// handle thrown bubbles
-				var popCounter:PopCounter = new PopCounter(this);
+				var popCounter:PopCounter = levelDetails.newPopCounter(this);
 				var thrownBubbleCount:int = 0;
 				var positionMap:Object = newPositionMap();
 				for (var i:int = 0; i < thrownBubbles.length; i++) {
@@ -430,16 +434,13 @@ package
 				// change the bubble colors
 				var popAnimState:int = (stateTime * 3) / levelDetails.popDelay;
 				if (popAnimState == 0 || popAnimState == 2) {
-					for each (var defaultBubble:DefaultBubble in poppedBubbles) {
-						if (defaultBubble != null) {
-							defaultBubble.loadPopGraphic();
-						}
+					for each (var bubble:Bubble in poppedBubbles) {
+						bubble.loadPopGraphic();
 					}
 				} else {
 					for each (var bubble:Bubble in poppedBubbles) {
-						var defaultBubble:DefaultBubble = bubble as DefaultBubble;
-						if (defaultBubble != null) {
-							defaultBubble.loadRegularGraphic();	
+						if (bubble != null) {
+							bubble.loadRegularGraphic();
 						}
 					}
 				}
@@ -453,7 +454,9 @@ package
 							// so, let's make sure we don't reuse it by mistake
 							poppedBubbles[i] = null;
 							levelDetails.bubbleVanished(poppedBubble);
-							eliminatedBubbleCount++;
+							if (poppedBubble.countsTowardsQuota) {
+								eliminatedBubbleCount++;
+							}
 							levelDetails.playPopSound(comboSfxCount, comboLevel, comboLevelBubbleCount);
 							comboLevelBubbleCount++;
 							comboSfxCount += 1;
@@ -611,37 +614,12 @@ package
 		}
 		
 		public function maybeAddConnectorSingle(positionMap:Object, bubble:Bubble):void {
-			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x, bubble.y - bubbleHeight)], Embed.Microbe0S); // N
-			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y - bubbleHeight / 2)], Embed.Microbe0Sw); // NE
-			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Se); // SE
-			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x, bubble.y + bubbleHeight)], Embed.Microbe0S); // S
-			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x - columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Sw); // SW
-			maybeAddConnector(bubble, positionMap[hashPosition(bubble.x - columnWidth, bubble.y - bubbleHeight / 2)], Embed.Microbe0Se); // NW
-		}
-		
-		public function maybeAddConnector(bubble:Bubble, bubbleS:Bubble, graphic:Class):void {
-			if (bubble is DefaultBubble && bubbleS is DefaultBubble) {
-				if (bubble.offset.y != bubbleS.offset.y) {
-					return;
-				}
-				if (bubble.offset.x != bubbleS.offset.x) {
-					return;
-				}
-				if (bubble.isAnchor() || bubbleS.isAnchor()) {
-					return;
-				}
-				if (!bubble.visible || !bubbleS.visible) {
-					return;
-				}
-				if (bubble.isConnected(bubbleS)) {
-					return;
-				}
-				var defaultBubble:DefaultBubble = bubble as DefaultBubble;
-				var defaultBubbleS:DefaultBubble = bubbleS as DefaultBubble;
-				if (defaultBubbleS.bubbleColor == defaultBubble.bubbleColor) {
-					levelDetails.addConnector(defaultBubble, defaultBubbleS, graphic);
-				}
-			}
+			levelDetails.maybeAddConnector(bubble, positionMap[hashPosition(bubble.x, bubble.y - bubbleHeight)], Embed.Microbe0S); // N
+			levelDetails.maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y - bubbleHeight / 2)], Embed.Microbe0Sw); // NE
+			levelDetails.maybeAddConnector(bubble, positionMap[hashPosition(bubble.x + columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Se); // SE
+			levelDetails.maybeAddConnector(bubble, positionMap[hashPosition(bubble.x, bubble.y + bubbleHeight)], Embed.Microbe0S); // S
+			levelDetails.maybeAddConnector(bubble, positionMap[hashPosition(bubble.x - columnWidth, bubble.y + bubbleHeight / 2)], Embed.Microbe0Sw); // SW
+			levelDetails.maybeAddConnector(bubble, positionMap[hashPosition(bubble.x - columnWidth, bubble.y - bubbleHeight / 2)], Embed.Microbe0Se); // NW
 		}
 		
 		public function addBubble(bubbleClass:Class):Bubble {
@@ -697,7 +675,7 @@ package
 			var y:Number = maxBubble.y;
 			var firstGrab:Boolean = true;
 			while (maxBubble != null) {
-				if (maxBubble.y >= FlxG.height) {
+				if (maxBubble.y >= FlxG.height + bubbleHeight) {
 					// we don't let people grab bubbles which are below the bottom of the screen -- this prevents
 					// players from fudging their way through certain 2-3 color levels, where they could otherwise
 					// play the level blind with some success

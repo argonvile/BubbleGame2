@@ -21,6 +21,7 @@ package
 		[Embed(source = "../graphics/thermometer-bubble.png")] public static var ThermometerBubble:Class;
 		[Embed(source = "../graphics/monster-body0.png")] public static var MonsterBody0:Class;
 		[Embed(source = "../graphics/monster-arms0.png")] public static var MonsterArms0:Class;
+		[Embed(source = "../graphics/moustache1.png")] public static var Moustache1:Class;
 		[Embed(source = "../graphics/monster-arms1.png")] public static var MonsterArms1:Class;
 		[Embed(source = "../graphics/explosion.png")] public static var Explosion:Class;
 		[Embed(source = "../graphics/bomb.png")] public static var Bomb:Class;

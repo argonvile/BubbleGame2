@@ -52,7 +52,7 @@ package levels.cosmetic
 			}
 		}
 		
-		override public function addConnector(defaultBubble:DefaultBubble, defaultBubbleS:DefaultBubble, graphic:Class):void {
+		override public function addConnector(defaultBubble:Bubble, defaultBubbleS:Bubble, graphic:Class):void {
 			var connector:DarkConnector = playState.connectors.recycle(DarkConnector) as DarkConnector;
 			connector.revive();
 			connector.init(defaultBubble, defaultBubbleS, graphic);
