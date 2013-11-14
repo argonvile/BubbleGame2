@@ -64,52 +64,12 @@ package levels.mean
 				var columnIndex:int = shuffledColumnArray.next() as int;
 				var newBubbleX:Number = playState.leftEdge + columnIndex * PlayState.columnWidth;
 
-				var bubblesInColumn:Array = new Array();
-				for each (var bubble:DefaultBubble in playState.bubbles.members) {
-					if (bubble != null && bubble.alive && bubble.x == newBubbleX) {
-						bubblesInColumn.push(bubble);
-					}
+				for (var k:int = 0; k < 2;k++) {
+					var newBubble:DefaultBubble = playState.insertBubbleInColumn(DefaultBubble, newBubbleX) as DefaultBubble;
+					newBubble.init(this, newBubble.x, newBubble.y);
+					newBubble.setBubbleColor(nextBubbleColor());
 				}
-				
-				bubblesInColumn.sort(orderByY);
-				var newBubble0:DefaultBubble = playState.addBubble(DefaultBubble) as DefaultBubble;
-				newBubble0.init(this, newBubbleX, bubblesInColumn[0].y);
-				newBubble0.setBubbleColor(nextBubbleColor());
-				var newBubble1:DefaultBubble = playState.addBubble(DefaultBubble) as DefaultBubble;
-				newBubble1.init(this, newBubbleX, bubblesInColumn[0].y);
-				newBubble1.setBubbleColor((easyPair++ % 4 == 0)?newBubble0.bubbleColor:nextBubbleColor());
-				var shiftedBubbles:Array = new Array();
-				var i:int = 0;
-				do {
-					bubblesInColumn[i].y += PlayState.bubbleHeight;
-					shiftedBubbles.push(bubblesInColumn[i]);
-					i++;
-				} while (i < bubblesInColumn.length && bubblesInColumn[i - 1].y == bubblesInColumn[i].y);
-				bubblesInColumn.unshift(newBubble1);
-				i = 0;
-				do {
-					bubblesInColumn[i].y += PlayState.bubbleHeight;
-					shiftedBubbles.push(bubblesInColumn[i]);
-					i++;
-				} while (i < bubblesInColumn.length && bubblesInColumn[i - 1].y == bubblesInColumn[i].y);
-				for each (var shiftedBubble:DefaultBubble in shiftedBubbles) {
-					shiftedBubble.quickApproachDistance = 0;
-				}
-				for each (var shiftedBubble:DefaultBubble in shiftedBubbles) {
-					shiftedBubble.quickApproach(shiftedBubble.quickApproachDistance + PlayState.bubbleHeight);
-				}
-				for each (var bubble:DefaultBubble in bubblesInColumn) {
-					if (!bubble.isAnchor() && bubble.visible) {
-						bubble.updateAlpha();
-						bubble.killConnectors();
-					}
-				}
-				playState.maybeAddConnectors(bubblesInColumn);
 			}
-		}
-		
-		private function orderByY(a:Bubble, b:Bubble):Number {
-			return a.y - b.y;
 		}
 	}
 }

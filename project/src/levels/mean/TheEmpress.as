@@ -69,37 +69,10 @@ package levels.mean
 			for (var columnIndex:int = min; columnIndex <= max; columnIndex++) {
 				var bubblesInColumn:Array = new Array();
 				var newBubbleX:Number = playState.leftEdge + columnIndex * PlayState.columnWidth;
-				for each (var bubble:DefaultBubble in playState.bubbles.members) {
-					if (bubble != null && bubble.alive && bubble.x == newBubbleX) {
-						bubblesInColumn.push(bubble);
-					}
-				}
-				
-				bubblesInColumn.sort(orderByY);
-				if (bubblesInColumn.length == 0) {
-					continue;
-				}
-				var newBubble:DefaultBubble = playState.addBubble(DefaultBubble) as DefaultBubble;
-				newBubble.init(this, newBubbleX, bubblesInColumn[0].y);
+				var newBubble:DefaultBubble = playState.insertBubbleInColumn(DefaultBubble, newBubbleX) as DefaultBubble;
+				newBubble.init(this, newBubble.x, newBubble.y);
 				newBubble.setBubbleColor(nextBubbleColor());
-				var i:int = 0;
-				do {
-					bubblesInColumn[i].y += PlayState.bubbleHeight;
-					bubblesInColumn[i].quickApproach(PlayState.bubbleHeight);
-					i++;
-				} while (i < bubblesInColumn.length && bubblesInColumn[i - 1].y == bubblesInColumn[i].y);
-				for each (var bubble:DefaultBubble in bubblesInColumn) {
-					if (!bubble.isAnchor() && bubble.visible) {
-						bubble.updateAlpha();
-						bubble.killConnectors();
-					}
-				}
-				playState.maybeAddConnectors(bubblesInColumn);
 			}
-		}
-		
-		private function orderByY(a:Bubble, b:Bubble):Number {
-			return a.y - b.y;
 		}
 	}
 }

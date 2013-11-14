@@ -52,30 +52,26 @@ package
 		public function wasGrabbed(playerPoint:PlayerSprite):void {
 			changeState(100);
 			this.playerPoint = playerPoint;
-			offset.x = 0;
-			offset.y = 0;
-			addQuickApproachToOffset();
+			updateOffsets();
 		}
 		
 		public function wasThrown(playerPoint:PlayerSprite):void {
 			changeState(200);
 			this.playerPoint = playerPoint;
-			offset.x = (x + width / 2) - (playerPoint.getMidpoint().x);
-			offset.y = (y + height / 2) - (playerPoint.getMidpoint().y);
-			addQuickApproachToOffset();
+			updateOffsets();
 		}
 		
 		public function resetQuickApproach():void {
-			offset.y = 0;
 			this.quickApproachDistance = 0;
 			this.quickApproachTime = 0;
+			updateOffsets();
 			updateConnectorOffsets();
 		}
 		
 		public function quickApproach(distance:Number):void {
 			this.quickApproachDistance = distance;
 			this.quickApproachTime = 0;
-			offset.y += distance;
+			updateOffsets();
 			updateConnectorOffsets();
 		}
 		
@@ -86,49 +82,46 @@ package
 			return state == 100 && stateTime >= levelDetails.grabDuration;
 		}
 		
-		override public function update():void {
-			super.update();
-			stateTime += FlxG.elapsed;
+		private function updateOffsets():void {
+			var statePct:Number;
 			if (state == 100) {
 				// grabbing; apply grab offsets
-				var statePct:Number = Math.min(1, Math.pow(stateTime / levelDetails.grabDuration, 2.5));
+				statePct = Math.min(1, Math.pow(stateTime / levelDetails.grabDuration, 2.5));
 				offset.x = statePct * ((x + width / 2) - (playerPoint.getMidpoint().x));
 				offset.y = statePct * ((y + height / 2) - (playerPoint.getMidpoint().y));
 			} else if (state == 200) {
 				// throwing; apply throw offsets
-				var statePct:Number = Math.min(1, Math.pow(stateTime / levelDetails.throwDuration, 1.5));
+				statePct = Math.min(1, Math.pow(stateTime / levelDetails.throwDuration, 1.5));
 				offset.x = (1 - statePct) * ((x + width / 2) - (playerPoint.getMidpoint().x));
 				offset.y = (1 - statePct) * ((y + height / 2) - (playerPoint.getMidpoint().y));
-				if (statePct >= 1.0) {
-					changeState(0);
-				}
 			} else {
 				// no offsets
 				offset.x = 0;
 				offset.y = 0;
 			}
+			statePct = Math.pow(1 - Math.min(1, quickApproachTime / levelDetails.grabDuration), 2.5);
+			if (quickApproachDistance > 0) {
+				offset.y += quickApproachDistance * statePct;
+			}
+		}
+		
+		override public function update():void {
+			super.update();
+			stateTime += FlxG.elapsed;
+			updateOffsets();
+			if (state == 200 && stateTime >= levelDetails.throwDuration) {
+				changeState(0);
+			}
 			if (quickApproachDistance > 0) {
 				quickApproachTime += FlxG.elapsed;
 				// apply 'quick approach' offsets
-				var statePct:Number = addQuickApproachToOffset();
 				updateConnectorOffsets();
-				if (statePct == 0) {
-					quickApproachDistance = -1
-				}
-			} else if (quickApproachDistance == -1) {
-				quickApproachDistance = 0;
 			}
 			updateAlpha();
 		}
 		
-		private function addQuickApproachToOffset():Number {
-			var statePct:Number = Math.pow(1 - Math.min(1, quickApproachTime / levelDetails.grabDuration), 2.5);
-			offset.y += quickApproachDistance * statePct;
-			return statePct;
-		}
-		
 		public function justFinishedQuickApproach():Boolean {
-			return quickApproachDistance == -1;
+			return quickApproachTime >= levelDetails.grabDuration;
 		}
 		
 		protected function updateConnectorOffsets():void {

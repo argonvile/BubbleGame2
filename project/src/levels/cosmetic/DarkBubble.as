@@ -30,7 +30,7 @@ package levels.cosmetic
 					var matrix:Matrix = new Matrix();
 					matrix.scale(17 / 50, 17 / 50);
 					colorData.draw(FlxG.addBitmap(Embed.Microbe0), matrix);
-					shiftHueBitmapData(colorData, bubbleColor);
+					BubbleColorUtils.shiftHueBitmapData(colorData, bubbleColor);
 					var newData:BitmapData = FlxG.createBitmap(85, 17, 0x00000000, true);
 					newData.draw(colorData, null, colorTransform);
 					matrix.identity();

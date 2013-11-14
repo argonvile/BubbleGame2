@@ -75,7 +75,7 @@ package
 				returnClass = AllLevelSelect;
 			}
 			if (levelDetails == null) {
-				levelDetails = new Moustache(3);
+				levelDetails = new Blender(3);
 			}
 			
 			if (variableDifficultyMode) {
@@ -222,6 +222,7 @@ package
 					if (bubble != null && bubble.alive) {
 						if (bubble.justFinishedQuickApproach()) {
 							justScrolledBubbles.push(bubble);
+							bubble.resetQuickApproach();
 						}
 					}
 				}
@@ -739,5 +740,41 @@ package
 			}
 			return a.x - b.x;
 		}
+		
+		public function insertBubbleInColumn(bubbleClass:Class, bubbleX:Number):Bubble {
+			var positionMap:Object = new Object();
+			var bubblesInColumn:Array = new Array();
+			for each (var bubble:Bubble in bubbles.members) {
+				if (bubble != null && bubble.alive && bubble.x == bubbleX) {
+					bubblesInColumn.push(bubble);
+				}
+			}
+			bubblesInColumn.sort(orderByPosition);
+			bubblesInColumn.reverse();
+			var newBubble:Bubble = addBubble(bubbleClass);
+			newBubble.x = bubblesInColumn[0].x;
+			newBubble.y = bubblesInColumn[0].y;
+			var i:int = 0;
+			var shiftedBubbles:Array = new Array();
+			do {
+				bubblesInColumn[i].y += PlayState.bubbleHeight;
+				shiftedBubbles.push(bubblesInColumn[i]);
+				i++;
+			} while (i < bubblesInColumn.length && bubblesInColumn[i - 1].y == bubblesInColumn[i].y);
+			for each (var shiftedBubble:DefaultBubble in shiftedBubbles) {
+				shiftedBubble.quickApproachDistance = 0;
+			}
+			for each (var shiftedBubble:DefaultBubble in shiftedBubbles) {
+				shiftedBubble.quickApproach(shiftedBubble.offset.y + PlayState.bubbleHeight);
+			}
+			for each (var bubble:Bubble in bubblesInColumn) {
+				if (!bubble.isAnchor() && bubble.visible) {
+					bubble.updateAlpha();
+					bubble.killConnectors();
+				}
+			}
+			maybeAddConnectors(bubblesInColumn);
+			return newBubble;
+		}		
 	}
 }

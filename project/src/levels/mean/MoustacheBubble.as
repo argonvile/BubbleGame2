@@ -37,11 +37,11 @@ package levels.mean
 				var matrix:Matrix = new Matrix();
 				matrix.scale(17 / 50, 17 / 50);
 				newData.draw(FlxG.addBitmap(Embed.Microbe0), matrix);
-				DefaultBubble.shiftHueBitmapData(newData, bubbleColor);
+				BubbleColorUtils.shiftHueBitmapData(newData, bubbleColor);
 				matrix.identity();
 				var eyeData:BitmapData = FlxG.addBitmap(Embed.Eyes0);
 				var moustacheData:BitmapData = FlxG.addBitmap(Embed.Moustache1);
-				DefaultBubble.shiftHueBitmapData(moustacheData, 0xffffffff);
+				BubbleColorUtils.shiftHueBitmapData(moustacheData, 0xffffffff);
 				for (var i:int = 0; i < 5;i++) {
 					newData.draw(eyeData, matrix);
 					newData.draw(moustacheData, matrix);
@@ -56,7 +56,7 @@ package levels.mean
 				var matrix:Matrix = new Matrix();
 				matrix.scale(17 / 50, 17 / 50);
 				newData.draw(FlxG.addBitmap(Embed.Microbe0), matrix);
-				DefaultBubble.shiftHueBitmapData(newData, bubbleColor);
+				BubbleColorUtils.shiftHueBitmapData(newData, bubbleColor);
 				matrix.identity();
 				var eyeData:BitmapData = FlxG.addBitmap(Embed.Eyes0);
 				var moustacheData:BitmapData = FlxG.addBitmap(Embed.Moustache1, false, true);

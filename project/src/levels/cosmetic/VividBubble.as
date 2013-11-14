@@ -30,7 +30,7 @@ package levels.cosmetic
 		
 		override public function setBubbleColor(bubbleColor:uint):void {
 			super.setBubbleColor(bubbleColor);
-			var hue:int = DefaultBubble.RGBtoHSV(bubbleColor).hue;
+			var hue:int = BubbleColorUtils.RGBtoHSV(bubbleColor).hue;
 			hueIndex = hue / (360 / VividController.COLOR_COUNT);
 		}
 		
