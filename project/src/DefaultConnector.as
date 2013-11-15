@@ -2,6 +2,7 @@ package
 {
 	import flash.utils.getQualifiedClassName;
 	import org.flixel.*;
+	import org.flixel.plugin.photonstorm.FlxColor;
 	import flash.geom.Matrix;
 	import flash.display.BitmapData;
 
@@ -33,10 +34,16 @@ package
 			var bubbleColor:int = bubble0["bubbleColor"];
 			regularGraphic = loadConnectorGraphic(bubbleColor, graphic);
 			var key:String = "popped connector " + getQualifiedClassName(graphic);
+			var targetColor:uint = 0xffffffff;
+			var targetHsv:Object = FlxColor.RGBtoHSV(bubbleColor);
+			if (targetHsv.saturation == 0 && targetHsv.value >= 0.50) {
+				key = "dark" + key;
+				targetColor = 0xff444444;
+			}
 			if (BitmapDataCache.getBitmap(key) == null) {
 				var newData:BitmapData = FlxG.createBitmap(51, 17, 0x00000000, true);
 				newData.draw(FlxG.addBitmap(graphic), new Matrix(17 / 50, 0, 0, 17 / 50, 0, 0));
-				BubbleColorUtils.shiftHueBitmapData(newData, 0xffffffff);
+				BubbleColorUtils.shiftHueBitmapData(newData, targetColor);
 				BitmapDataCache.setBitmap(key, newData);
 			}
 			popGraphic = BitmapDataCache.getBitmap(key);

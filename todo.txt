@@ -39,6 +39,7 @@
 
 *REFACTOR: Empress, Blender should reuse "push bubble" logic
 *REFACTOR: Move "shiftHueBitmapData" to utility class
+*white bubbles should flash more visibly (dark grey?)
 REFACTOR: Add constants for different states
 REFACTOR: Remove function assignment for custom scrolling
 REFACTOR: Use FlxG's image cache instead of BitmapDataCache?
@@ -48,6 +49,7 @@ Level select should use real screenshots
 Character improvement: Animate character ambiently (moves feet, breathes a little?)
 Character improvement: Animate character graphic for moving left/right
 ----
+Fever timer should always hit 38 degrees around 80% complete
 
 Character improvement: Animate character graphic for pulling
 Character improvement: Animate character graphic for throwing

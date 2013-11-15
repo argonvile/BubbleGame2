@@ -3,6 +3,7 @@ package
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	import org.flixel.*;
+	import org.flixel.plugin.photonstorm.FlxColor;
 	import flash.display.BitmapData;
 
 	public class DefaultBubble extends Bubble
@@ -13,23 +14,6 @@ package
 		
 		public function DefaultBubble() 
 		{
-			var key:String = "popped Microbe0";
-			if (BitmapDataCache.getBitmap(key) == null) {
-				var newData:BitmapData = FlxG.createBitmap(85, 17, 0x00000000, true);
-				var matrix:Matrix = new Matrix();
-				matrix.scale(17 / 50, 17 / 50);
-				newData.draw(FlxG.addBitmap(Embed.Microbe0), matrix);
-				BubbleColorUtils.shiftHueBitmapData(newData, 0xffffffff);
-				matrix.identity();
-				var eyeData:BitmapData = FlxG.addBitmap(Embed.Eyes0);
-				for (var i:int = 0; i < 5;i++) {
-					newData.draw(eyeData, matrix);
-					matrix.translate(17, 0);
-				}
-				BitmapDataCache.setBitmap(key, newData);
-			}
-			popGraphic = BitmapDataCache.getBitmap(key);
-			
 			width = frameWidth = 17;
 			height = frameHeight = 17;
 			resetHelpers();
@@ -63,9 +47,35 @@ package
 			return BitmapDataCache.getBitmap(key);
 		}
 		
+		public static function loadPoppedBubbleGraphic(bubbleColor:uint):BitmapData {
+			var targetHsv:Object = FlxColor.RGBtoHSV(bubbleColor);
+			var key:String = "popped Microbe0";
+			var targetColor:uint = 0xffffffff;
+			if (targetHsv.saturation == 0 && targetHsv.value >= 0.50) {
+				key = "dark" + key;
+				targetColor = 0xff444444;
+			}
+			if (BitmapDataCache.getBitmap(key) == null) {
+				var newData:BitmapData = FlxG.createBitmap(85, 17, 0x00000000, true);
+				var matrix:Matrix = new Matrix();
+				matrix.scale(17 / 50, 17 / 50);
+				newData.draw(FlxG.addBitmap(Embed.Microbe0), matrix);
+				BubbleColorUtils.shiftHueBitmapData(newData, targetColor);
+				matrix.identity();
+				var eyeData:BitmapData = FlxG.addBitmap(Embed.Eyes0);
+				for (var i:int = 0; i < 5;i++) {
+					newData.draw(eyeData, matrix);
+					matrix.translate(17, 0);
+				}
+				BitmapDataCache.setBitmap(key, newData);
+			}
+			return BitmapDataCache.getBitmap(key);			
+		}
+		
 		public function setBubbleColor(bubbleColor:uint):void {
 			this.bubbleColor = bubbleColor;
 			regularGraphic = loadBubbleGraphic(bubbleColor);
+			popGraphic = loadPoppedBubbleGraphic(bubbleColor);
 			if (_pixels != popGraphic) {
 				_pixels = regularGraphic;
 			}
