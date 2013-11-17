@@ -10,7 +10,7 @@ package levels.cosmetic
 		private var blindColumnCount:int = 3;
 		
 		public static const name:String = "BlindSide";
-		public static const scenarioBpms:Array = [57.4, 104.7, 109.9, 164, 221.3];
+		public static const scenarioBpms:Array = [57.4 + 10, 104.7 + 15, 109.9 + 20, 164, 221.3];
 		
 		public function BlindSide(scenario:int) 
 		{

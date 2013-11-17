@@ -6,7 +6,7 @@ package levels.nice
 	public class Kerosene extends LevelDetails
 	{
 		public static const name:String = "Kerosene";
-		public static const scenarioBpms:Array = [105.4, 145.0, 204.2, 286.8 - 20, 357.9 - 20];
+		public static const scenarioBpms:Array = [105.4 - 10, 145.0 - 15, 204.2 - 20, 286.8 - 20, 357.9 - 20];
 		private var scrollAmounts:ShuffledArray = new ShuffledArray();
 		private var keroseneChance:ShuffledArray = new ShuffledArray();
 		private var explosionLayer:FlxGroup;

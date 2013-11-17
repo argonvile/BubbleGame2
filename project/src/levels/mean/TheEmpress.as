@@ -4,7 +4,7 @@ package levels.mean
 	public class TheEmpress extends LevelDetails
 	{
 		public static const name:String = "The Empress";
-		public static const scenarioBpms:Array = [51.3, 87.0, 167.6, 262.1 + 20, 322.8 + 20];
+		public static const scenarioBpms:Array = [51.3 - 10, 87.0 - 15, 167.6 - 20, 262.1 + 20, 322.8 + 20];
 		private var columnScrollArray:ShuffledArray = new ShuffledArray();
 		public function TheEmpress(scenario:int) 
 		{
