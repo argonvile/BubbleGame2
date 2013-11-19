@@ -52,11 +52,15 @@ package
 		override public function update():void {
 			super.update();
 			Mouse.show();
+			if (FlxG.keys.justPressed("ESCAPE")) {
+				kill();
+				FlxG.switchState(new MainMenu());
+			}
 		}
-				
+		
 		private function keyboardOptions():void {
 			kill();
-			FlxG.switchState(new KeyboardOptions());
+			FlxG.switchState(new KeyboardOptions(LevelSelect));
 		}
 		
 		private function allLevels():void {

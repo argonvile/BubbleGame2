@@ -81,6 +81,10 @@ package
 				diffMode = true;
 				codeText.text = "Variable Difficulty Mode Activated";
 			}
+			if (FlxG.keys.justPressed("ESCAPE")) {
+				kill();
+				FlxG.switchState(new MainMenu());
+			}
 		}
 		
 		private function codeEntered(expectedCode:String):Boolean {
@@ -89,7 +93,7 @@ package
 		
 		private function keyboardOptions():void {
 			kill();
-			FlxG.switchState(new KeyboardOptions());
+			FlxG.switchState(new KeyboardOptions(AllLevelSelect));
 		}
 		
 		private function sixLevels():void {

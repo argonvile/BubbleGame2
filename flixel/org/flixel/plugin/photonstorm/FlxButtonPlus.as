@@ -195,8 +195,8 @@ package org.flixel.plugin.photonstorm
 			
 			if (textNormal)
 			{
-				textNormal.y = _y;
-				textHighlight.y = _y;
+				textNormal.y = _y + 3;
+				textHighlight.y = _y + 3;
 			}
 		}
 		

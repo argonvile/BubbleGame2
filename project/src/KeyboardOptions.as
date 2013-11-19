@@ -17,8 +17,16 @@ package
 		private var repeatRateButtons:Array = new Array();
 		public static const REPEAT_DELAYS:Array = [0.480, 0.343, 0.245, 0.175, 0.120];
 		public static const REPEAT_RATES:Array = [0.18, 0.12, 0.08, 0.04, 0];
+		private var returnClass:Class;
+		
+		public function KeyboardOptions(returnClass:Class) {
+			this.returnClass = returnClass;
+		}
 		
 		override public function create():void {
+			if (returnClass == null) {
+				returnClass = MainMenu;
+			}
 			var button:FlxButtonPlus;
 			var text:FlxText;
 
@@ -76,7 +84,7 @@ package
 		
 		private function exit():void {
 			kill();
-			FlxG.switchState(new LevelSelect());
+			FlxG.switchState(new returnClass());
 		}
 		
 		private function updateButtons():void {
@@ -141,6 +149,9 @@ package
 				if (autoPlayerSprite.x == autoPlayerMover.minX || autoPlayerSprite.x == autoPlayerMover.maxX) {
 					autoPlayerWait = 1.0;
 				}
+			}
+			if (FlxG.keys.justPressed("ESCAPE")) {
+				exit();
 			}
 		}
 	}

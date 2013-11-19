@@ -40,15 +40,27 @@
 *REFACTOR: Empress, Blender should reuse "push bubble" logic
 *REFACTOR: Move "shiftHueBitmapData" to utility class
 *white bubbles should flash more visibly (dark grey?)
+------
+*"Normal Mode" should be functional, separate levels into 'worlds', let user pick levels
+"Normal Mode" should feature random durations from level to level
+"Normal Mode" should lock/unlock appropriately, maintain progress
+"Ranked Mode" should keep track of user's ELO
+"Ranked Mode" should pick levels according to user's ELO
+"Ranked Mode" should display message on "rank up"
+"Ranked Mode" should display "to next rank" bar after level
+"Normal mode" should increase player's rank, ELO sometimes
+
 REFACTOR: Add constants for different states
 REFACTOR: Remove function assignment for custom scrolling
 REFACTOR: Use FlxG's image cache instead of BitmapDataCache?
 
 Level select should display descriptions/hints
+Level select should use graphical difficulty icons
+----
+
 Level select should use real screenshots
 Character improvement: Animate character ambiently (moves feet, breathes a little?)
 Character improvement: Animate character graphic for moving left/right
-----
 Fever timer should always hit 38 degrees around 80% complete
 
 Character improvement: Animate character graphic for pulling
@@ -57,6 +69,8 @@ Character improvement: Character should have better holding-two-bubbles animatio
 Character improvement: Character should have a better holding-three-or-more-bubbles animation
 add halos for up/down teleport squares
 
+New level: Much slower vivid mode
+New level: Black blinking bubbles are 'bomb bubbles'
 new level: "bubble ghost", bubbles leave harmless ghosts when popped. ghosts vanish if you throw/grab a bubble past them
 new level: "red red whine", adjacent red bubbles pop when thrown, and on higher difficulties, drop if you grab too many
 new level: holding a blue bubble makes all blue bubbles orange, and all orange bubbles blue (held bubble is affected too)

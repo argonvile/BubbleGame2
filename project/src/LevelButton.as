@@ -20,8 +20,7 @@ package
 			matrix.translate(0, 12);
 			buttonNormal.pixels.draw(bitmapData, matrix);
 			var text:FlxText;
-			var romanNumerals:Array = ["I", "II", "III", "IV", "V"];
-			text = new FlxText(0, 0, width, clazz["name"] + " " + romanNumerals[scenario]);
+			text = new FlxText(0, 0, width, scenarioName(clazz, scenario));
 			buttonNormal.pixels.draw(text.pixels);
 			var scenarioBpm:Number = clazz["scenarioBpms"][scenario];
 			text = new FlxText(0, 0, width, "Level: " + PlayerData.getDifficultyString(scenarioBpm));
@@ -34,6 +33,11 @@ package
 			buttonNormal.drawLine(1, height - 1, width - 1, height - 1, 0x18000000);
 			add(buttonNormal);
 			loadGraphic(buttonNormal, buttonNormal);
+		}
+		
+		public static function scenarioName(clazz:Class, scenario:int):String {
+			var romanNumerals:Array = ["I", "II", "III", "IV", "V"];
+			return clazz["name"] + " " + romanNumerals[scenario];
 		}
 	}
 }
