@@ -64,6 +64,9 @@ package
 		private var ekgGraphic:EkgGraphic;
 		public var eliminatedBubbleCount:int = 0;
 		
+		private var winCallback:Function;
+		private var winParams:Array;
+		
 		public function PlayState(returnClass:Class=null, levelDetails:LevelDetails = null) {
 			this.returnClass = returnClass;
 			this.levelDetails = levelDetails;
@@ -419,6 +422,9 @@ package
 
 				// did the player win?
 				if (!variableDifficultyMode && (elapsed > levelDetails.levelDuration || eliminatedBubbleCount >= levelDetails.levelQuota)) {
+					if (winCallback != null) {
+						winCallback.apply(null, winParams);
+					}
 					var text:FlxText = new FlxText(0, 0, FlxG.width, "You win!");
 					text.alignment = "center";
 					text.y = FlxG.height / 2 - text.height / 2;
@@ -775,6 +781,11 @@ package
 			}
 			maybeAddConnectors(bubblesInColumn);
 			return newBubble;
-		}		
+		}
+		
+		public function setWinCallback(callback:Function, params:Array):void {
+			this.winCallback = callback;
+			this.winParams = params;
+		}
 	}
 }

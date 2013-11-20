@@ -18,9 +18,18 @@ package
 			for (var i:int = 0; i < Worlds.allWorlds.length; i++) {
 				var node:Array = getNode(["Normal"]);
 				node.push(["World " + (i + 1)]);
+				var uncleared:int = 0;
 				for (var j:int = 0; j < Worlds.allWorlds[i].length; j++) {
 					var level:Object = Worlds.allWorlds[i][j];
-					var newArray:Array = [LevelButton.scenarioName(level.levelClass, level.scenario), level.levelClass, level.scenario];
+					var scenarioName:String = LevelButton.scenarioName(level.levelClass, level.scenario);
+					if (uncleared >= 3) {
+						scenarioName = "?????";
+					} else if (PlayerSave.isClearedNormalLevel(level.levelClass, level.scenario)) {
+						scenarioName = "(" + scenarioName.toLowerCase() + ")";
+					} else {
+						uncleared++;
+					}
+					var newArray:Array = [scenarioName, level.levelClass, level.scenario];
 					getNode(["Normal","World " + (i+1)]).push(newArray);
 				}
 			}
@@ -29,12 +38,6 @@ package
 			tree.push(["Keyboard Settings"]);
 			
 			expand(treeLevel)
-			
-			/*var y:int = 5;
-			for (var i:int = 1; i < tree.length;i++) {
-				add(new FlxButtonPlus(5, y, expand, [[tree[i][0]]], tree[i][0], 150, 20));
-				y += 25;
-			}*/
 		}
 		
 		private function scrollEm(scrollAmount:Number):void {
@@ -106,7 +109,22 @@ package
 			for (var i:int = 1; i < node.length;i++) {
 				var newStrings:Array = treeLevel.slice();
 				newStrings.push(node[i][0]);
-				add(new FlxButtonPlus(5, y, expand, [newStrings], node[i][0], 150, 20));
+				var button:FlxButtonPlus = new FlxButtonPlus(5, y, expand, [newStrings], node[i][0], 150, 20);
+				if (node[i][1] is Class) {
+					var buttonText:String = node[i][0];
+					if (buttonText.substring(0, 1) == "(") {
+						button.updateActiveButtonColors([0x80800000, 0x80ff0000]);
+						button.updateInactiveButtonColors([0x80008000, 0x8000ff00]);
+					} else if (buttonText.substring(0, 1) == "?") {
+						button.updateActiveButtonColors([0xff404040, 0xff808080]);
+						button.updateInactiveButtonColors([0xff404040, 0xff808080]);
+						button.active = false;
+					} else {
+						button.updateActiveButtonColors([0xff800000, 0xffff0000]);
+						button.updateInactiveButtonColors([0xff008000, 0xff00ff00]);
+					}
+				}
+				add(button);
 				y += 25;
 			}
 			if (node.length >= 10) {
@@ -121,7 +139,12 @@ package
 			Mouse.hide();
 			kill();
 			var playState:PlayState = new PlayState(MainMenu, new clazz(scenario));
+			playState.setWinCallback(normalWin, [clazz, scenario]);
 			FlxG.switchState(playState);
+		}
+		
+		public static function normalWin(clazz:Class, scenario:int):void {
+			PlayerSave.setClearedNormalLevel(clazz, scenario);
 		}
 		
 		override public function update():void {

@@ -8,6 +8,7 @@ package
 		private static var repeatDelay:Number;
 		private static var repeatRate:Number;
 		private static var bubblesPerMinute:Number;
+		private static var clearedNormalLevels:Object;
 		
 		public static function getRepeatDelay():Number {
 			return get("repeatDelay") as Number;
@@ -49,6 +50,17 @@ package
 			}
 		}
 		
+		public static function isClearedNormalLevel(scenarioClazz:Class, scenario:int):Boolean {
+			var cnf:Object = get("clearedNormalLevels");
+			return cnf[LevelButton.scenarioName(scenarioClazz, scenario)] == true;
+		}
+		
+		public static function setClearedNormalLevel(scenarioClazz:Class, scenario:int):void {
+			var cnf:Object = get("clearedNormalLevels");
+			cnf[LevelButton.scenarioName(scenarioClazz, scenario)] = true;
+			set("clearedNormalLevels", cnf);
+		}
+		
 		public static function load():void {
 			save = new FlxSave();
 			loaded = save.bind("JurassicPopData");
@@ -61,6 +73,9 @@ package
 				}
 				if (save.data.bubblesPerMinute == null) {
 					save.data.bubblesPerMinute = 150;
+				}
+				if (save.data.clearedNormalLevels == null) {
+					save.data.clearedNormalLevels = new Object();
 				}
 			}
 		}

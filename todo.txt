@@ -39,11 +39,14 @@
 
 *REFACTOR: Empress, Blender should reuse "push bubble" logic
 *REFACTOR: Move "shiftHueBitmapData" to utility class
+================
 *white bubbles should flash more visibly (dark grey?)
 ------
 *"Normal Mode" should be functional, separate levels into 'worlds', let user pick levels
+*"Normal Mode" should lock/unlock appropriately, maintain progress
+Fever timer should always hit 38 degrees around 90% complete
+Change quota system to use hard-coded quota-per-minute
 "Normal Mode" should feature random durations from level to level
-"Normal Mode" should lock/unlock appropriately, maintain progress
 "Ranked Mode" should keep track of user's ELO
 "Ranked Mode" should pick levels according to user's ELO
 "Ranked Mode" should display message on "rank up"
@@ -61,7 +64,6 @@ Level select should use graphical difficulty icons
 Level select should use real screenshots
 Character improvement: Animate character ambiently (moves feet, breathes a little?)
 Character improvement: Animate character graphic for moving left/right
-Fever timer should always hit 38 degrees around 80% complete
 
 Character improvement: Animate character graphic for pulling
 Character improvement: Animate character graphic for throwing
@@ -69,16 +71,17 @@ Character improvement: Character should have better holding-two-bubbles animatio
 Character improvement: Character should have a better holding-three-or-more-bubbles animation
 add halos for up/down teleport squares
 
+new level: "divide", several "dead columns" in the middle of the field. bubbles thrown here just vanish
+new level: "bivibe", several "dead columns", but popping any bubbles makes more bubbles appear... have to vanish them
 New level: Much slower vivid mode
-New level: Black blinking bubbles are 'bomb bubbles'
+New level: Blue blinking bubbles are 'bomb bubbles', and they appear in specific patterns... explodable pattern, buffer, then 3 bomb bubbles... explodable pattern, buffer, etc
+new level: yellow bubbles change to rainbow color when popped, and on higher difficulties, this rainbow includes yellow
+new level: grabbing a bubble grabs all orthogonal bubbles. throwing bubbles throws them "in a blob" as well
 new level: "bubble ghost", bubbles leave harmless ghosts when popped. ghosts vanish if you throw/grab a bubble past them
 new level: "red red whine", adjacent red bubbles pop when thrown, and on higher difficulties, drop if you grab too many
 new level: holding a blue bubble makes all blue bubbles orange, and all orange bubbles blue (held bubble is affected too)
-new level: no purple bubbles -- grabbing a red bubble turns all red bubbles purple. then, grabbing a green bubble turns all green bubbles red.
 new level: orange bubbles drop when grabbed, and on higher difficulties, "pop" a replacement
-new level: "orange crush" -- oranges are squished if you throw anything in their column
-new level: yellow bubbles change to rainbow color when popped, and on higher difficulties, this rainbow includes yellow
-new level: grabbing a bubble grabs all orthogonal bubbles
+
 improve popping graphics -- little bubblets?
 
 add 0.5s warning, pause, before level speeds up
