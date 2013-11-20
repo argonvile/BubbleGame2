@@ -6,6 +6,8 @@ package levels.mean
 	{
 		public static const name:String = "Little Friends";
 		public static const scenarioBpms:Array = [36.6, 87.0, 167.6, 262.1 + 25, 322.8];
+		// TODO: Bad quotas
+		public static const quotaBpms:Array = [94, 154, 193, 313, 417];
 		private var shuffledArray:ShuffledArray;
 		
 		public function LittleFriends(scenario:int) 

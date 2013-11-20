@@ -1,5 +1,7 @@
 package  
 {
+	import flash.utils.getDefinitionByName;
+	import flash.utils.getQualifiedClassName;
 	import flash.utils.getTimer;
 	import org.flixel.*;
 
@@ -27,10 +29,11 @@ package
 		
 		protected var bubbleRate:Number = 300;
 		protected var playState:PlayState;
-		protected var avgChainLength:Number = 7.5;
+		private var scenario:int;
 		
 		public function LevelDetails(scenario:int = 2) 
 		{
+			this.scenario = scenario;
 			setSpeed(scenario < 2?scenario:scenario - 1);
 		}
 		
@@ -75,10 +78,8 @@ package
 			if (levelDuration > 30) {
 				maxBubbleRate += (columnCount * 6) / (levelDuration / 60);
 			}
-			if (levelQuota == 0) {
-				var bpmToSurvive:Number = 60 / ((60 / maxBubbleRate) + popPerBubbleDelay + popDelay / avgChainLength)
-				levelQuota = Math.ceil(1.05 * bpmToSurvive * levelDuration / 60);
-			}
+			var clazz:Class = Class(getDefinitionByName(getQualifiedClassName(this)));
+			levelQuota = clazz["quotaBpms"][scenario] * (levelDuration/60) + (columnCount * 6) / (levelDuration / 60);
 		}
 		
 		/**

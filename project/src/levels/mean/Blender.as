@@ -4,6 +4,8 @@ package levels.mean
 	{
 		public static const name:String = "Blender";
 		public static const scenarioBpms:Array = [47.1, 68.4, 114.3, 174.6, 273.0];
+		// TODO: Bad quotas
+		public static const quotaBpms:Array = [73, 125, 165, 273, 419];
 		private var shuffledColumnArray:ContinuousShuffledArray;
 		private var easyPair:int = 0;
 		

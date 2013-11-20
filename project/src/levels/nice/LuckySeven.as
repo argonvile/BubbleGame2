@@ -6,6 +6,8 @@ package levels.nice
 	{
 		public static const name:String = "Lucky Seven";
 		public static const scenarioBpms:Array = [41.9, 77.0, 177.8, 259.1, 319.2 - 25];
+		// TODO: Bad quotas
+		public static const quotaBpms:Array = [148, 227, 344, 529, 813];
 		private var changedBubbles:Array = new Array();
 		private var targetColors:Object = new Object();
 		private var generatedBubbleCount:int = 0;
@@ -16,7 +18,6 @@ package levels.nice
 			setSpeed(scenario + 1);
 			minNewRowLocation = -PlayState.bubbleHeight * 8.5;
 			bubbleColors = [0xffff0000, 0xffff8800, 0xffffff00, 0xff00cc00, 0xff1240ab, 0xff7109aa];
-			avgChainLength = 6;
 			
 			if (scenario == 0) {
 				maxBubbleRate = 300;

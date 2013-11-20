@@ -44,8 +44,9 @@
 ------
 *"Normal Mode" should be functional, separate levels into 'worlds', let user pick levels
 *"Normal Mode" should lock/unlock appropriately, maintain progress
-Fever timer should always hit 38 degrees around 90% complete
-Change quota system to use hard-coded quota-per-minute
+*Fever timer should always hit 38 degrees around 90% complete
+*Change quota system to use hard-coded quota-per-minute
+lowering moustache pops glitch out a little
 "Normal Mode" should feature random durations from level to level
 "Ranked Mode" should keep track of user's ELO
 "Ranked Mode" should pick levels according to user's ELO

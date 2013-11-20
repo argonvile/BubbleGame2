@@ -6,6 +6,8 @@ package levels.cosmetic
 	{
 		public static const name:String = "Vivid";
 		public static const scenarioBpms:Array = [82.3 + 10, 112.3 + 15, 132.4 + 20, 193, 244.9];
+		// TODO: Bad quotas
+		public static const quotaBpms:Array = [100, 163, 174, 251, 366];
 		
 		private var vividController:VividController = new VividController();
 		private var minVividRate:Number;

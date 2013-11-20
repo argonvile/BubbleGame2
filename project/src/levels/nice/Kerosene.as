@@ -7,6 +7,8 @@ package levels.nice
 	{
 		public static const name:String = "Kerosene";
 		public static const scenarioBpms:Array = [105.4 - 10, 145.0 - 15, 204.2 - 20, 286.8 - 20, 357.9 - 20];
+		// TODO: Bad quotas
+		public static const quotaBpms:Array = [265, 382, 470, 667, 827];
 		private var scrollAmounts:ShuffledArray = new ShuffledArray();
 		private var keroseneChance:ShuffledArray = new ShuffledArray();
 		private var explosionLayer:FlxGroup;
@@ -17,7 +19,6 @@ package levels.nice
 			super(scenario);
 			bubbleColors = [0xff864203, 0xfff89640, 0xfff8efa6, 0xff000000, 0xff9e9e9e]
 			minNewRowLocation = -PlayState.bubbleHeight * 8.5;
-			avgChainLength = 11;
 			popPerBubbleDelay = 1 / 90;
 			for (var i:int = 0; i < 50; i++) {
 				keroseneChance.push(0);

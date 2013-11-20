@@ -6,7 +6,8 @@ package levels.mean
 	public class Moustache extends LevelDetails
 	{
 		public static const name:String = "Moustache";
-		public static const scenarioBpms:Array = [48.5, 84.1, 116, 156.9, 229.2];
+		public static const scenarioBpms:Array = [64.7, 116.2, 129.8, 177, 231];
+		public static const quotaBpms:Array = [79.8, 101.9, 141.3, 150.1, 272.1];
 		private var moustachePct:Number = 0.33;
 		private var moustacheColorCount:int = 99;
 		

@@ -11,6 +11,8 @@ package levels.cosmetic
 		
 		public static const name:String = "BlindSide";
 		public static const scenarioBpms:Array = [57.4 + 10, 104.7 + 15, 109.9 + 20, 164, 221.3];
+		// TODO: Bad quotas
+		public static const quotaBpms:Array = [109, 156, 189, 249, 311];
 		
 		public function BlindSide(scenario:int) 
 		{

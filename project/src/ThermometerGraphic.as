@@ -46,20 +46,10 @@ package
 			bubbleText.visible = false;
 			add(bubbleText);
 			
+			midPoint = playState.levelDetails.levelQuota * 0.9;
+			
 			if (playState.levelDetails.levelQuota >= 801) {
-				midPoint = playState.levelDetails.levelQuota - 400;
 				hundredths = true;
-			} else if (playState.levelDetails.levelQuota >= 401) {
-				midPoint = playState.levelDetails.levelQuota - 200;
-				hundredths = true;
-			} else if (playState.levelDetails.levelQuota >= 81) {
-				midPoint = playState.levelDetails.levelQuota - 40;
-				hundredths = false;
-			} else if (playState.levelDetails.levelQuota >= 41) {
-				midPoint = playState.levelDetails.levelQuota - 20;
-				hundredths = false;
-			} else {
-				midPoint = playState.levelDetails.levelQuota / 2;
 			}
 		}
 		

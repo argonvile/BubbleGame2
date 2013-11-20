@@ -6,6 +6,8 @@ package levels.cosmetic
 	{
 		public static const name:String = "Darkstalker";
 		public static const scenarioBpms:Array = [44.9, 102.7, 141.7, 205, 285.8];
+		// TODO: Bad quotas
+		public static const quotaBpms:Array = [77, 159, 193, 273, 413];
 		private var fullDarkColumnCount:int;
 		private var halfDarkColumnCount:int;
 		private var darkOnRate:Number;

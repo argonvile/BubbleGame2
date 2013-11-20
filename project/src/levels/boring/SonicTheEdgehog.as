@@ -4,6 +4,8 @@ package levels.boring
 	{
 		public static const name:String = "Edgehog";
 		public static const scenarioBpms:Array = [49.4, 77.7, 102.6, 195.9, 216.4];
+		// TODO: Bad quotas
+		public static const quotaBpms:Array = [104, 155, 202, 318, 519];
 		private var bubbleIndex:int = 0;
 		private var upcomingBubbleData:Array;
 		

@@ -6,6 +6,8 @@ package levels.mean
 	{
 		public static const name:String = "Relentless";
 		public static const scenarioBpms:Array = [50, 90, 126, 190, 252];
+		// TODO: Bad quotas
+		public static const quotaBpms:Array = [107, 151, 184, 275, 341];
 		private var period:Number = 5.0;
 		
 		public function Relentless(scenario:int)

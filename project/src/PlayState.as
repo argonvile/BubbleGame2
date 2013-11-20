@@ -160,6 +160,8 @@ package
 			
 			ekgGraphic = new EkgGraphic(ekgPoint.x, ekgPoint.y);
 			add(ekgGraphic);
+			
+			trace(levelDetails + " " + levelDetails.levelQuota);
 		}
 		
 		public function scrollBg(howMany:int = 1):void {
@@ -357,6 +359,8 @@ package
 							if (variableDifficultyMode) {
 								// player would have lost; eliminate some bubbles and reset them
 								changeState(130, 1.0 * FlxG.timeScale);
+								// don't count the pause when calculating the quota
+								elapsed -= 1.0 * FlxG.timeScale;
 								variableDifficultyDeaths.push(FlxG.timeScale);
 								if (variableDifficultyDeaths.length >= 9) {
 									FlxG.timeScale = 1.0;
@@ -372,8 +376,8 @@ package
 									var adjustedBpm:Number = PlayerSave.getBubblesPerMinute()/smartAverage;
 									text.text = String(BpmLevel.roundTenths(PlayerSave.getBubblesPerMinute()));
 									text.text += " / " + BpmLevel.roundTenths(smartAverage);
-									text.text += " = " + BpmLevel.roundTenths(adjustedBpm) + " rating. difficulty ";
-									text.text += PlayerData.getDifficultyIndex(adjustedBpm) + ", " + PlayerData.getDifficultyString(adjustedBpm);
+									text.text += " = " + BpmLevel.roundTenths(adjustedBpm) + " rating. quotaBpm = ";
+									text.text += BpmLevel.roundTenths((1.05 * eliminatedBubbleCount) / (elapsed / 60));
 									
 									text.alignment = "center";
 									add(text);
