@@ -29,7 +29,7 @@ package
 					} else {
 						uncleared++;
 					}
-					var newArray:Array = [scenarioName, level.levelClass, level.scenario];
+					var newArray:Array = [scenarioName, level.levelClass, level.scenario, level.duration];
 					getNode(["Normal","World " + (i+1)]).push(newArray);
 				}
 			}
@@ -84,7 +84,7 @@ package
 			kill();
 			var node:Array = getNode(newTreeLevel);
 			if (node[1] is Class) {
-				startGame(node[1], node[2]);
+				startGame(node[1], node[2], node[3]);
 				return;
 			}
 			if (node.length == 1) {
@@ -135,10 +135,12 @@ package
 			}
 		}
 		
-		private function startGame(clazz:Class, scenario:int):void {
+		private function startGame(clazz:Class, scenario:int, duration:int):void {
 			Mouse.hide();
 			kill();
-			var playState:PlayState = new PlayState(MainMenu, new clazz(scenario));
+			var levelDetails:LevelDetails = new clazz(scenario);
+			levelDetails.levelDuration = duration;
+			var playState:PlayState = new PlayState(MainMenu, levelDetails);
 			playState.setWinCallback(normalWin, [clazz, scenario]);
 			FlxG.switchState(playState);
 		}

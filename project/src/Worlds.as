@@ -13,6 +13,7 @@ package
 						var o:Object = new Object();
 						o.levelClass = clazz;
 						o.scenario = scenario;
+						o.duration = [75, 90, 100, 115][Rndm.integer(0, 4)];
 						allLevels.push(o);
 					}
 				}

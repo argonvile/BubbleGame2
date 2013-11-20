@@ -47,7 +47,7 @@
 *Fever timer should always hit 38 degrees around 90% complete
 *Change quota system to use hard-coded quota-per-minute
 lowering moustache pops glitch out a little
-"Normal Mode" should feature random durations from level to level
+*"Normal Mode" should feature random durations from level to level
 "Ranked Mode" should keep track of user's ELO
 "Ranked Mode" should pick levels according to user's ELO
 "Ranked Mode" should display message on "rank up"
@@ -55,12 +55,14 @@ lowering moustache pops glitch out a little
 "Normal mode" should increase player's rank, ELO sometimes
 
 REFACTOR: Add constants for different states
-REFACTOR: Remove function assignment for custom scrolling
-REFACTOR: Use FlxG's image cache instead of BitmapDataCache?
 
 Level select should display descriptions/hints
 Level select should use graphical difficulty icons
+new level: "divide", several "dead columns" in the middle of the field. bubbles thrown here just vanish
 ----
+REFACTOR: Remove function assignment for custom scrolling
+REFACTOR: Use FlxG's image cache instead of BitmapDataCache?
+REFACTOR: PlayerData should be saved in a single complex object
 
 Level select should use real screenshots
 Character improvement: Animate character ambiently (moves feet, breathes a little?)
@@ -72,8 +74,10 @@ Character improvement: Character should have better holding-two-bubbles animatio
 Character improvement: Character should have a better holding-three-or-more-bubbles animation
 add halos for up/down teleport squares
 
-new level: "divide", several "dead columns" in the middle of the field. bubbles thrown here just vanish
+new level: "now you see it", popping bubbles makes different colored bubbles appear/disappear, sometimes the player disappears, or other widgets disappear
+new level: bubbles are mostly scattered but triangles of 2+ size appear sometimes
 new level: "bivibe", several "dead columns", but popping any bubbles makes more bubbles appear... have to vanish them
+new level: "rake", an invisible line sweeps from right to left swapping bubbles with eachother
 New level: Much slower vivid mode
 New level: Blue blinking bubbles are 'bomb bubbles', and they appear in specific patterns... explodable pattern, buffer, then 3 bomb bubbles... explodable pattern, buffer, etc
 new level: yellow bubbles change to rainbow color when popped, and on higher difficulties, this rainbow includes yellow
