@@ -31,7 +31,7 @@ package levels.cosmetic
 				minVividRate = 24;
 				maxVividRate = 48;
 				curveDuration = 12;
-				vividController.saturation = 1.0;
+				vividController.saturation = 0.8;
 				vividController.value = 0.9;
 			} else if (scenario == 2) {
 				maxBubbleRate = 406;
@@ -47,7 +47,7 @@ package levels.cosmetic
 				minVividRate = 48;
 				maxVividRate = 96;
 				curveDuration = 24;
-				vividController.saturation = 1.0;
+				vividController.saturation = 0.8;
 				vividController.value = 0.9;
 			} else if (scenario == 4) {
 				maxBubbleRate = 818;

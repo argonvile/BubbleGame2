@@ -44,5 +44,9 @@ package
 			hue *= 360;
 			return { hue:hue, saturation:saturation, value:value };
 		}
+		
+		public static function roundTenths(number:Number):Number {
+			return Math.round(number * 10) / 10;
+		}
 	}
 }

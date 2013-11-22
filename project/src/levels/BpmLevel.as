@@ -111,13 +111,13 @@ package levels
 			var trials:int = 0;
 			for each (var num:Number in arrayOfNumbers) {
 				if (num == min) {
-					finalText += "(" + roundTenths(num) + ") ";
+					finalText += "(" + BubbleColorUtils.roundTenths(num) + ") ";
 					min = -1;
 				} else if (num == max) {
-					finalText += "(" + roundTenths(num) + ") ";
+					finalText += "(" + BubbleColorUtils.roundTenths(num) + ") ";
 					max = -1;
 				} else {
-					finalText += roundTenths(num) + " ";
+					finalText += BubbleColorUtils.roundTenths(num) + " ";
 					trials++;
 					mean += num;
 				}
@@ -125,10 +125,6 @@ package levels
 			finalText += " = " + String(Math.round(10 * mean / trials) / 10);
 			finalText += " (was " + PlayerSave.getBubblesPerMinute() + ")";
 			return finalText;
-		}
-		
-		public static function roundTenths(number:Number):Number {
-			return Math.round(number * 10) / 10;
 		}
 	}
 }

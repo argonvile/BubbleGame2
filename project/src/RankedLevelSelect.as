@@ -25,7 +25,7 @@ package
 			}
 			
 			var flxText:FlxText;
-			flxText = new FlxText(0, 0, 100, "ELO: " + BpmLevel.roundTenths(PlayerSave.getElo()) + " ("+PlayerData.getDifficultyString(PlayerSave.getElo())+")");
+			flxText = new FlxText(0, 0, 100, "ELO: " + BubbleColorUtils.roundTenths(PlayerSave.getElo()) + " ("+PlayerData.getDifficultyString(PlayerSave.getElo())+")");
 			add(flxText);
 		}
 		

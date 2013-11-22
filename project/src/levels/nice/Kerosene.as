@@ -92,15 +92,15 @@ package levels.nice
 				Embed.playAny([Embed.SfxBigBoulder0, Embed.SfxBigBoulder1, Embed.SfxBigBoulder2]);
 				for each (var neighbor:Bubble in playState.bubbles.members) {
 					if (neighbor != null && Math.sqrt((neighbor.x - bubble.x) * (neighbor.x - bubble.x) + (neighbor.y - bubble.y) * (neighbor.y - bubble.y)) <= PlayState.bubbleHeight * 2.5) {
-						if (neighbor is DefaultBubble && !neighbor.isAnchor() && neighbor.state == 0) {
+						if (neighbor is DefaultBubble && !neighbor.isAnchor() && neighbor.state == Bubble.STATE_NORMAL) {
 							var neighborDefaultBubble:DefaultBubble = neighbor as DefaultBubble;
 							playState.dropBubble(neighbor);
 							neighbor.velocity.x = Math.random() * 50 - 25 + 15 * (neighbor.x - bubble.x);
 							neighbor.velocity.y = Math.random() * 50 - 25 + 15 * (neighbor.y - bubble.y);
 							neighborDefaultBubble.setBubbleColor(0xff000000);
-						} else if (neighbor is BombBubble && !neighbor.isAnchor() && neighbor.state == 0) {
+						} else if (neighbor is BombBubble && !neighbor.isAnchor() && neighbor.state == Bubble.STATE_NORMAL) {
 							var neighborBomb:BombBubble = neighbor as BombBubble;
-							neighborBomb.state = 300;
+							neighborBomb.state = Bubble.STATE_POPPING;
 							playState.poppedBubbles.push(neighborBomb);
 							playState.stateDuration += popPerBubbleDelay;
 						}
@@ -117,15 +117,15 @@ package levels.nice
 					playState.hashPosition(bubble.x - PlayState.columnWidth, bubble.y - PlayState.bubbleHeight/2)
 				]) {
 					var neighbor:Bubble = positionMap[position] as Bubble;
-					if (neighbor is DefaultBubble && !neighbor.isAnchor() && neighbor.state == 0) {
+					if (neighbor is DefaultBubble && !neighbor.isAnchor() && neighbor.state == Bubble.STATE_NORMAL) {
 						var neighborDefaultBubble:DefaultBubble = neighbor as DefaultBubble;
 						playState.dropBubble(neighbor);
 						neighbor.velocity.x = Math.random() * 50 - 25 + 15 * (neighbor.x - bubble.x);
 						neighbor.velocity.y = Math.random() * 50 - 25 + 15 * (neighbor.y - bubble.y);
 						neighborDefaultBubble.setBubbleColor(0xff000000);
-					} else if (neighbor is BombBubble && !neighbor.isAnchor() && neighbor.state == 0) {
+					} else if (neighbor is BombBubble && !neighbor.isAnchor() && neighbor.state == Bubble.STATE_NORMAL) {
 						var neighborBomb:BombBubble = neighbor as BombBubble;
-						neighborBomb.state = 300;
+						neighborBomb.state = Bubble.STATE_POPPING;
 						playState.poppedBubbles.push(neighborBomb);
 						playState.stateDuration += popPerBubbleDelay;
 					}

@@ -23,16 +23,15 @@ package
 		
 		public var elapsed:Number = 0;
 		public var rowScrollTimer:Number = 0;
-		/**
-		 * 100 == normal
-		 * 110 == popping
-		 * 120 == dropping
-		 * 130 == scrolling paused
-		 * 140-149 == custom (paused, non-interactive)
-		 * 200 == game over (lose)
-		 * 300 == game over (win)
-		 */
-		public var gameState:int = 100;
+		
+		public static const STATE_NORMAL:int = 100;
+		public static const STATE_POPPING:int = 110;
+		public static const STATE_DROPPING:int = 120;
+		public static const STATE_PAUSED:int = 130;
+		public static const STATE_LOSE:int = 200;
+		public static const STATE_WIN:int = 300;
+		
+		public var gameState:int = STATE_NORMAL;
 		public var stateTime:Number = 0;
 		public var stateDuration:Number = 0;
 		
@@ -181,7 +180,7 @@ package
 			} else {
 				ekgGraphic.setSeconds(Math.max(0, levelDetails.levelDuration - elapsed));
 			}
-			if (gameState < 200) {
+			if (gameState < STATE_LOSE) {
 				if (variableDifficultyMode && getTimer() >= nextDifficultyIncrementTime) {
 					FlxG.timeScale = Math.min(50.0, FlxG.timeScale * Math.sqrt(7 / 6));
 					nextDifficultyIncrementTime += difficultyIncrementFrequency;
@@ -195,7 +194,7 @@ package
 			 * Update after moving the player -- to ensure stuff like bubbles track with the player correctly
 			 */
 			super.update();
-			if (gameState < 200) {
+			if (gameState < STATE_LOSE) {
 				if (FlxG.keys.justPressed("ESCAPE")) {
 					kill();
 					FlxG.switchState(new returnClass());
@@ -232,7 +231,7 @@ package
 				maybeAddConnectors(justScrolledBubbles);				
 			}
 			playerLine.finalUpdate();
-			if (gameState < 300 && newRowLocation > levelDetails.minNewRowLocation) {
+			if (gameState < STATE_WIN && newRowLocation > levelDetails.minNewRowLocation) {
 				// need to add new rows
 				var removedNullBubbles:Boolean = false;
 				var newPoppableBubbles:Array = new Array();
@@ -256,19 +255,19 @@ package
 					}
 					newRowLocation -= bubbleHeight;
 				} while (newRowLocation > levelDetails.minNewRowLocation);
-				if (removedNullBubbles && (gameState == 100 || gameState == 130)) {
+				if (removedNullBubbles && (gameState == STATE_NORMAL || gameState == STATE_PAUSED)) {
 					checkForDetachedBubbles();
 				}
 				maybeAddConnectors(newPoppableBubbles);
 			}
-			if (gameState == 100 || gameState == 130) {
+			if (gameState == STATE_NORMAL || gameState == STATE_PAUSED) {
 				// playfield is currently interactive...
 				
 				// did the player trigger a drop event?
 				// if so, transition to state 120...
 				if (FlxG.keys.justPressed("Z")) {
 					checkForDetachedBubbles();
-					if (gameState == 120) {
+					if (gameState == STATE_DROPPING) {
 						return;
 					}
 				}
@@ -292,7 +291,7 @@ package
 					var thrownBubble:Bubble = thrownBubbles[i];
 
 					if (thrownBubble != null && thrownBubble.alive) {
-						if (thrownBubble.state == 200) {
+						if (thrownBubble.state == Bubble.STATE_THROWING) {
 							thrownBubbleCount++;
 						} else {
 							thrownBubbles[i] = null;
@@ -309,7 +308,7 @@ package
 						if (thrownBubble != null && thrownBubble.alive) {
 							popCounter.popMatches(thrownBubble);
 							if (popCounter.shouldPopBubble(thrownBubble)) {
-								thrownBubble.changeState(0);
+								thrownBubble.changeState(Bubble.STATE_NORMAL);
 								thrownBubbles[i] = null;
 								maybeAddConnectorSingle(positionMap, thrownBubble)
 							}
@@ -319,11 +318,11 @@ package
 					poppedBubbles = popCounter.getPoppedBubbles();
 					poppedBubbles.sort(orderByPosition);
 					for each (var bubble:Bubble in poppedBubbles) {
-						bubble.changeState(300);
+						bubble.changeState(Bubble.STATE_POPPING);
 					}
 					comboLevelBubbleCount = 0;
 					comboLevel++;
-					changeState(110, levelDetails.popDelay + levelDetails.popPerBubbleDelay * poppedBubbles.length);
+					changeState(STATE_POPPING, levelDetails.popDelay + levelDetails.popPerBubbleDelay * poppedBubbles.length);
 					return;
 				}
 				if (thrownBubbleCount == 0 && thrownBubbles.length > 0) {
@@ -331,10 +330,10 @@ package
 				}
 				
 				// is scrolling paused?
-				if (gameState == 130) {
+				if (gameState == STATE_PAUSED) {
 					// yes, scrolling is paused
 					if (stateTime >= stateDuration) {
-						changeState(100);
+						changeState(STATE_NORMAL);
 					}
 				} else {
 					// no, it's not paused
@@ -347,7 +346,7 @@ package
 						levelDetails.bubblesScrolled();
 						rowScrollTimer -= scrollAmount;
 					}
-					if (gameState == 100) {
+					if (gameState == STATE_NORMAL) {
 						// kill the combo
 						comboSfxCount = 0;
 						comboLevel = 0;
@@ -356,13 +355,13 @@ package
 						if (badBubbleCount > 1000) {
 							if (variableDifficultyMode) {
 								// player would have lost; eliminate some bubbles and reset them
-								changeState(130, 1.0 * FlxG.timeScale);
+								changeState(STATE_PAUSED, 1.0 * FlxG.timeScale);
 								// don't count the pause when calculating the quota
 								elapsed -= 1.0 * FlxG.timeScale;
 								variableDifficultyDeaths.push(FlxG.timeScale);
 								if (variableDifficultyDeaths.length >= 9) {
 									FlxG.timeScale = 1.0;
-									changeState(200);
+									changeState(STATE_LOSE);
 									var text:FlxText = new FlxText(0, 0, FlxG.width);
 									text.text = BpmLevel.produceAverageText(variableDifficultyDeaths.slice(2));
 									text.alignment = "center";
@@ -372,10 +371,10 @@ package
 									text = new FlxText(0, text.y + text.height, FlxG.width);
 									var smartAverage:Number = BpmLevel.computeSmartAverage(variableDifficultyDeaths.slice(3));
 									var adjustedBpm:Number = PlayerSave.getBubblesPerMinute()/smartAverage;
-									text.text = String(BpmLevel.roundTenths(PlayerSave.getBubblesPerMinute()));
-									text.text += " / " + BpmLevel.roundTenths(smartAverage);
-									text.text += " = " + BpmLevel.roundTenths(adjustedBpm) + " rating. quotaBpm = ";
-									text.text += BpmLevel.roundTenths((1.05 * eliminatedBubbleCount) / (elapsed / 60));
+									text.text = String(BubbleColorUtils.roundTenths(PlayerSave.getBubblesPerMinute()));
+									text.text += " / " + BubbleColorUtils.roundTenths(smartAverage);
+									text.text += " = " + BubbleColorUtils.roundTenths(adjustedBpm) + " rating. quotaBpm = ";
+									text.text += BubbleColorUtils.roundTenths((1.05 * eliminatedBubbleCount) / (elapsed / 60));
 									
 									text.alignment = "center";
 									add(text);
@@ -402,7 +401,7 @@ package
 							}
 							
 							// player loses. transition to state 200
-							changeState(200);
+							changeState(STATE_LOSE);
 							var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
 							text.alignment = "center";
 							text.y = FlxG.height / 2 - text.height / 2;
@@ -435,11 +434,11 @@ package
 					text.alignment = "center";
 					text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
 					add(text);
-					changeState(300);
+					changeState(STATE_WIN);
 					return;
 				}
 			}
-			if (gameState == 110) {
+			if (gameState == STATE_POPPING) {
 				// change the bubble colors
 				var popAnimState:int = (stateTime * 3) / levelDetails.popDelay;
 				if (popAnimState == 0 || popAnimState == 2) {
@@ -477,17 +476,17 @@ package
 					levelDetails.bubblesFinishedPopping();
 					// if so, remove popped bubbles
 					poppedBubbles.length = 0;
-					if (gameState == 110) {
+					if (gameState == STATE_POPPING) {
 						// if the player triggered a drop event, transition to state 120...
 						checkForDetachedBubbles();
 					}
-					if (gameState == 110) {
+					if (gameState == STATE_POPPING) {
 						if (suspendedBubbles.length > 0) {
 							// if the player has suspended bubbles, transition to the "paused state" until they're thrown
-							changeState(130, levelDetails.throwDuration);
+							changeState(STATE_PAUSED, levelDetails.throwDuration);
 						} else {
 							// otherwise, transition to the "paused state" for just 1 frame
-							changeState(130, 0);
+							changeState(STATE_PAUSED, 0);
 						}
 					}
 					for each (var fallingBubble:Bubble in fallingBubbles.members) {
@@ -497,7 +496,7 @@ package
 						}
 					}
 				}
-			} else if (gameState == 120) {
+			} else if (gameState == STATE_DROPPING) {
 				// drop some bubbles
 				for (var i:int = 0; i < poppedBubbles.length; i++) {
 					if ((i + 1) * levelDetails.dropPerBubbleDelay + levelDetails.dropDelay < stateTime) {
@@ -514,17 +513,17 @@ package
 					poppedBubbles.length = 0;
 					if (suspendedBubbles.length > 0) {
 						// if the player has suspended bubbles, transition to the "paused state" until they're thrown
-						changeState(130, levelDetails.throwDuration);
+						changeState(STATE_PAUSED, levelDetails.throwDuration);
 					} else {
 						// otherwise, transition to the "paused state" for just 1 frame
-						changeState(130, 0);
+						changeState(STATE_PAUSED, 0);
 					}
 					// check if the user triggered another drop while we were dropping...
 					checkForDetachedBubbles();
 				}
-			} else if (gameState == 200 || gameState == 300) {
+			} else if (gameState == STATE_LOSE || gameState == STATE_WIN) {
 				// game over
-				if (gameState == 200) {
+				if (gameState == STATE_LOSE) {
 					rowScrollTimer += levelDetails.rowScrollPixels() * speedupFactor;
 					if (rowScrollTimer > levelDetails.minScrollPixels) {
 						var scrollAmount:Number = Math.floor(rowScrollTimer / levelDetails.minScrollPixels) * levelDetails.minScrollPixels;
@@ -563,7 +562,7 @@ package
 		private function countBadBubbles():int {
 			var badBubbleCount:int = 0;
 			for each (var bubble:Bubble in bubbles.members) {
-				if (bubble != null && bubble.alive && (bubble.y + bubble.height >= playerSprite.y) && bubble.state != 200) {
+				if (bubble != null && bubble.alive && (bubble.y + bubble.height >= playerSprite.y) && bubble.state != Bubble.STATE_THROWING) {
 					badBubbleCount++;
 					if (bubble.y > FlxG.height * 1.5) {
 						bubble.kill();
@@ -596,7 +595,7 @@ package
 					}
 				}
 			}
-			if (removedNullBubbles && (gameState == 100 || gameState == 130)) {
+			if (removedNullBubbles && (gameState == STATE_NORMAL || gameState == STATE_PAUSED)) {
 				checkForDetachedBubbles();
 			}
 			for each (var connector:Connector in connectors.members) {
@@ -674,7 +673,7 @@ package
 			}
 			if (poppedBubbles.length > 0) {
 				poppedBubbles.sort(orderByPosition);
-				changeState(120, levelDetails.dropDelay + poppedBubbles.length * levelDetails.dropPerBubbleDelay);
+				changeState(STATE_DROPPING, levelDetails.dropDelay + poppedBubbles.length * levelDetails.dropPerBubbleDelay);
 			}
 		}
 		

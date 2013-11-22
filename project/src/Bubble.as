@@ -4,13 +4,11 @@ package
 
 	public class Bubble extends FlxSprite
 	{
-		/**
-		 * state
-		 * 0 = normal
-		 * 100 = grabbing
-		 * 200 = throwing
-		 * 300 = popping
-		 */
+		public static const STATE_NORMAL:int = 0;
+		public static const STATE_GRABBING:int = 100;
+		public static const STATE_THROWING:int = 200;
+		public static const STATE_POPPING:int = 300;
+		 
 		public var state:int = 0;
 		public var stateTime:Number = 0;
 		protected var playerPoint:PlayerSprite;
@@ -28,7 +26,7 @@ package
 			this.levelDetails = levelDetails;
 			this.x = x;
 			this.y = y;
-			this.state = 0;
+			this.state = STATE_NORMAL;
 			this.stateTime = 0;
 			this.playerPoint = null;
 			this.quickApproachTime = 0;
@@ -50,13 +48,13 @@ package
 		}
 		
 		public function wasGrabbed(playerPoint:PlayerSprite):void {
-			changeState(100);
+			changeState(STATE_GRABBING);
 			this.playerPoint = playerPoint;
 			updateOffsets();
 		}
 		
 		public function wasThrown(playerPoint:PlayerSprite):void {
-			changeState(200);
+			changeState(STATE_THROWING);
 			this.playerPoint = playerPoint;
 			updateOffsets();
 		}
@@ -79,17 +77,17 @@ package
 		 * @return True if the bubble should be displayed stationary, as held by the player
 		 */
 		public function isHeld():Boolean {
-			return state == 100 && stateTime >= levelDetails.grabDuration;
+			return state == STATE_GRABBING && stateTime >= levelDetails.grabDuration;
 		}
 		
 		private function updateOffsets():void {
 			var statePct:Number;
-			if (state == 100) {
+			if (state == STATE_GRABBING) {
 				// grabbing; apply grab offsets
 				statePct = Math.min(1, Math.pow(stateTime / levelDetails.grabDuration, 2.5));
 				offset.x = statePct * ((x + width / 2) - (playerPoint.getMidpoint().x));
 				offset.y = statePct * ((y + height / 2) - (playerPoint.getMidpoint().y));
-			} else if (state == 200) {
+			} else if (state == STATE_THROWING) {
 				// throwing; apply throw offsets
 				statePct = Math.min(1, Math.pow(stateTime / levelDetails.throwDuration, 1.5));
 				offset.x = (1 - statePct) * ((x + width / 2) - (playerPoint.getMidpoint().x));
@@ -109,8 +107,8 @@ package
 			super.update();
 			stateTime += FlxG.elapsed;
 			updateOffsets();
-			if (state == 200 && stateTime >= levelDetails.throwDuration) {
-				changeState(0);
+			if (state == STATE_THROWING && stateTime >= levelDetails.throwDuration) {
+				changeState(STATE_NORMAL);
 			}
 			if (quickApproachDistance > 0) {
 				quickApproachTime += FlxG.elapsed;
@@ -136,7 +134,7 @@ package
 			if (isAnchor()) {
 				return false;
 			}
-			if (state == 300) {
+			if (state == STATE_POPPING) {
 				return false;
 			}
 			return true;
@@ -182,7 +180,7 @@ package
 		}
 		
 		public function changeState(state:int):void {
-			if (state == 0) {
+			if (state == STATE_NORMAL) {
 				offset.x = offset.y = 0;
 			}
 			this.state = state;

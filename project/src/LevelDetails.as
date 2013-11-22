@@ -53,7 +53,7 @@ package
 				}
 				playState.newRowLocation -= PlayState.bubbleHeight;
 			}
-			if (removedNullBubbles && (playState.gameState == 100 || playState.gameState == 130)) {
+			if (removedNullBubbles && (playState.gameState == PlayState.STATE_NORMAL || playState.gameState == PlayState.STATE_PAUSED)) {
 				playState.checkForDetachedBubbles();
 			}			
 			playState.maybeAddConnectors(newPoppableBubbles);
@@ -185,6 +185,6 @@ package
 					addConnector(defaultBubble, defaultBubbleS, graphic);
 				}
 			}
-		}		
+		}
 	}
 }
