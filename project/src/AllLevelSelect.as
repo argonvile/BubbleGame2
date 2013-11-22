@@ -7,6 +7,7 @@ package
 
 	public class AllLevelSelect extends FlxState
 	{
+		private const VISIBLE_LEVEL_COUNT:int = 9;
 		private const romanNumerals:Array = ["I", "II", "III", "IV", "V"];
 		private var codeChars:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 		private var code:String = "        "
@@ -19,21 +20,16 @@ package
 		override public function create():void {
 			var button:FlxButtonPlus;
 			var text:FlxText;
-			
-			button = new FlxButtonPlus(5, 5, keyboardOptions, null, "Keyboard Settings", 150, 20);
-			add(button);
-			button = new FlxButtonPlus(165, 5, sixLevels, null, "Six Levels", 150, 20);
-			add(button);
 
-			for (var j:int = 0; j < 8; j++) {
-				text = new FlxText(5, 33 + 25 * j, 150);
+			for (var j:int = 0; j < VISIBLE_LEVEL_COUNT; j++) {
+				text = new FlxText(5, 8 + 25 * j, 150);
 				text.alignment = "right";
 				levelTexts[j] = text;
 				add(text);
 				var array:Array = new Array();
 				levelButtons[j] = array;
 				for (var i:int = 0; i < 5; i++) {
-					button = new FlxButtonPlus(160 + 25 * i , 30 + 25 * j, null, null, "", 20, 20);
+					button = new FlxButtonPlus(160 + 25 * i , 5 + 25 * j, null, null, "", 20, 20);
 					button.textNormal.text = romanNumerals[i];
 					button.textHighlight.text = romanNumerals[i];
 					add(button);
@@ -43,7 +39,7 @@ package
 			scrollEm(0);
 			codeText = new FlxText(0, 0, FlxG.width);
 			add(codeText);
-			var upButton:FlxButtonPlus = new FlxButtonPlus(300, 30, scrollEm, [-8], "-", 15, 20);
+			var upButton:FlxButtonPlus = new FlxButtonPlus(300, 5, scrollEm, [-8], "-", 15, 20);
 			add(upButton);
 			var downButton:FlxButtonPlus = new FlxButtonPlus(300, 205, scrollEm, [8], "+", 15, 20);
 			add(downButton);
@@ -55,7 +51,7 @@ package
 			firstLevelIndex += number;
 			firstLevelIndex = Math.max(0, firstLevelIndex);
 			firstLevelIndex = Math.min(PlayerData.levelClasses.length - 8, firstLevelIndex);
-			for (var j:int = 0; j < 8; j++) {
+			for (var j:int = 0; j < VISIBLE_LEVEL_COUNT; j++) {
 				text = levelTexts[j];
 				text.text = PlayerData.levelClasses[j + firstLevelIndex]["name"];
 				for (var i:int = 0; i < 5; i++) {
@@ -89,16 +85,6 @@ package
 		
 		private function codeEntered(expectedCode:String):Boolean {
 			return code.substring(code.length - expectedCode.length, code.length) == expectedCode;
-		}
-		
-		private function keyboardOptions():void {
-			kill();
-			FlxG.switchState(new KeyboardOptions(AllLevelSelect));
-		}
-		
-		private function sixLevels():void {
-			kill();
-			FlxG.switchState(new LevelSelect());
 		}
 		
 		private function startGame(clazz:Class, scenario:int):void {

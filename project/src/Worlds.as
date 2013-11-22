@@ -10,7 +10,7 @@ package
 				var allLevels:Array = new Array();
 				for each (var clazz:Class in PlayerData.levelClasses) {
 					for each (var scenario:int in [0, 1, 2, 3, 4]) {
-						var o:Object = new Object();
+						var o:LevelSummary = new LevelSummary();
 						o.levelClass = clazz;
 						o.scenario = scenario;
 						o.duration = [75, 90, 100, 115][Rndm.integer(0, 4)];
@@ -48,12 +48,8 @@ package
 			}
 		}
 		
-		private static function orderByDifficulty(o0:Object, o1:Object):int {
-			var clazz0:Class = o0.levelClass;
-			var scenario0:int = o0.scenario;
-			var clazz1:Class = o1.levelClass;
-			var scenario1:int = o1.scenario;
-			return clazz0["scenarioBpms"][scenario0] - clazz1["scenarioBpms"][scenario1];
+		private static function orderByDifficulty(o0:LevelSummary, o1:LevelSummary):int {
+			return o0.getScenarioBpm() - o1.getScenarioBpm();
 		}
 	}
 }

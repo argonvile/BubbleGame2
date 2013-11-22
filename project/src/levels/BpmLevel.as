@@ -122,7 +122,8 @@ package levels
 					mean += num;
 				}
 			}
-			finalText += " = " + String(Math.round(10 * mean / trials) / 10);			
+			finalText += " = " + String(Math.round(10 * mean / trials) / 10);
+			finalText += " (was " + PlayerSave.getBubblesPerMinute() + ")";
 			return finalText;
 		}
 		

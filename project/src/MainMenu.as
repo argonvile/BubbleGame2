@@ -20,7 +20,7 @@ package
 				node.push(["World " + (i + 1)]);
 				var uncleared:int = 0;
 				for (var j:int = 0; j < Worlds.allWorlds[i].length; j++) {
-					var level:Object = Worlds.allWorlds[i][j];
+					var level:LevelSummary = Worlds.allWorlds[i][j];
 					var scenarioName:String = LevelButton.scenarioName(level.levelClass, level.scenario);
 					if (uncleared >= 3) {
 						scenarioName = "?????";
@@ -33,8 +33,8 @@ package
 					getNode(["Normal","World " + (i+1)]).push(newArray);
 				}
 			}
+			tree.push(["Ranked"]);
 			tree.push(["All Levels"]);
-			tree.push(["Six Levels"]);
 			tree.push(["Keyboard Settings"]);
 			
 			expand(treeLevel)
@@ -88,14 +88,14 @@ package
 				return;
 			}
 			if (node.length == 1) {
+				if (node[0] == "Ranked") {
+					kill();
+					FlxG.switchState(new RankedLevelSelect());
+					return;
+				}
 				if (node[0] == "All Levels") {
 					kill();
 					FlxG.switchState(new AllLevelSelect());
-					return;
-				}
-				if (node[0] == "Six Levels") {
-					kill();
-					FlxG.switchState(new LevelSelect());
 					return;
 				}
 				if (node[0] == "Keyboard Settings") {

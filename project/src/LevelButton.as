@@ -8,7 +8,7 @@ package
 
 	public class LevelButton extends FlxButtonPlus
 	{
-		public function LevelButton(x:int,y:int,clazz:Class,scenario:int,callback:Function,params:Array) 
+		public function LevelButton(x:int,y:int,levelSummary:LevelSummary,callback:Function,params:Array) 
 		{
 			super(x, y, callback, params);
 			width = 90;
@@ -20,9 +20,9 @@ package
 			matrix.translate(0, 12);
 			buttonNormal.pixels.draw(bitmapData, matrix);
 			var text:FlxText;
-			text = new FlxText(0, 0, width, scenarioName(clazz, scenario));
+			text = new FlxText(0, 0, width, scenarioName(levelSummary.levelClass, levelSummary.scenario));
 			buttonNormal.pixels.draw(text.pixels);
-			var scenarioBpm:Number = clazz["scenarioBpms"][scenario];
+			var scenarioBpm:Number = levelSummary.getScenarioBpm();
 			text = new FlxText(0, 0, width, "Level: " + PlayerData.getDifficultyString(scenarioBpm));
 			matrix.identity();
 			matrix.translate(0, 56);

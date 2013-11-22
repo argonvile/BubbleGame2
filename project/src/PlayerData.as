@@ -25,7 +25,10 @@ package
 					for each (var scenario:int in [0, 1, 2, 3, 4]) {
 						difficultyString = getDifficultyString(clazz["scenarioBpms"][scenario]);
 						difficulties[difficultyString]++;
-						_levels.push([clazz, scenario]);
+						var levelSummary:LevelSummary = new LevelSummary();
+						levelSummary.levelClass = clazz;
+						levelSummary.scenario = scenario;
+						_levels.push(levelSummary);
 					}
 				}
 				_levels.reset();

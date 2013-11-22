@@ -9,6 +9,15 @@ package
 		private static var repeatRate:Number;
 		private static var bubblesPerMinute:Number;
 		private static var clearedNormalLevels:Object;
+		private static var elo:Number;
+		
+		public static function getElo():Number {
+			return get("elo") as Number;
+		}
+		
+		public static function setElo(value:Number):void {
+			set("elo", value);
+		}
 		
 		public static function getRepeatDelay():Number {
 			return get("repeatDelay") as Number;
@@ -76,6 +85,9 @@ package
 				}
 				if (save.data.clearedNormalLevels == null) {
 					save.data.clearedNormalLevels = new Object();
+				}
+				if (save.data.elo == null) {
+					save.data.elo = 100;
 				}
 			}
 		}

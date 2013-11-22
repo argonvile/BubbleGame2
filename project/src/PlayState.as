@@ -160,8 +160,6 @@ package
 			
 			ekgGraphic = new EkgGraphic(ekgPoint.x, ekgPoint.y);
 			add(ekgGraphic);
-			
-			trace(levelDetails + " " + levelDetails.levelQuota);
 		}
 		
 		public function scrollBg(howMany:int = 1):void {

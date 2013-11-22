@@ -5,9 +5,8 @@ package levels.cosmetic
 	public class Vivid extends LevelDetails
 	{
 		public static const name:String = "Vivid";
-		public static const scenarioBpms:Array = [82.3 + 10, 112.3 + 15, 132.4 + 20, 193, 244.9];
-		// TODO: Bad quotas
-		public static const quotaBpms:Array = [100, 163, 174, 251, 366];
+		public static const scenarioBpms:Array = [72.4 + 10, 127.4 + 15, 133.2 + 20, 226.8, 295.3];
+		public static const quotaBpms:Array = [89.1, 156.5, 161.7, 230.6, 335.2];
 		
 		private var vividController:VividController = new VividController();
 		private var minVividRate:Number;
@@ -56,8 +55,8 @@ package levels.cosmetic
 				minVividRate = 24;
 				maxVividRate = 60;
 				curveDuration = 20;
-				vividController.saturation = 1.0;
-				vividController.value = 0.85;
+				vividController.saturation = 0.4;
+				vividController.value = 0.95;
 			}
 		}
 		
