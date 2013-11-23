@@ -91,6 +91,7 @@ package levels.nice
 							}
 						}
 					}
+					popCounts = new Object();
 					changedBubbles.length = 0;
 					// if the player triggered a drop event, transition to state 120...
 					playState.checkForDetachedBubbles();
@@ -128,7 +129,6 @@ package levels.nice
 				changedBubbles.sort(playState.orderByPosition);
 				playState.changeState(140, dropDelay + dropPerBubbleDelay * changedBubbles.length);
 			}
-			popCounts = new Object();
 		}
 	}
 }

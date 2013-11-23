@@ -65,6 +65,9 @@ REFACTOR: Remove function assignment for custom scrolling
 REFACTOR: Use FlxG's image cache instead of BitmapDataCache?
 REFACTOR: PlayerData should be saved in a single complex object
 
+User can pick between three save slots
+Can delete save slots
+
 "Ranked mode" should arrange 3, 4, 5-level arrangements better
 
 Level select should use real screenshots

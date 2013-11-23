@@ -50,7 +50,7 @@ package
 			var text:FlxText;
 			firstLevelIndex += number;
 			firstLevelIndex = Math.max(0, firstLevelIndex);
-			firstLevelIndex = Math.min(PlayerData.levelClasses.length - 8, firstLevelIndex);
+			firstLevelIndex = Math.min(PlayerData.levelClasses.length - VISIBLE_LEVEL_COUNT, firstLevelIndex);
 			for (var j:int = 0; j < VISIBLE_LEVEL_COUNT; j++) {
 				text = levelTexts[j];
 				text.text = PlayerData.levelClasses[j + firstLevelIndex]["name"];

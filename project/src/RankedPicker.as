@@ -67,7 +67,7 @@ package
 			_pickSome(PlayerSave.getElo(), arrangement.normal, arrangement.outOf);
 			_pickSome(PlayerSave.getElo() * 1.3, arrangement.hard, arrangement.outOf);
 			_pickSome(PlayerSave.getElo(), arrangement.arbitrary, arrangement.arbitrary);
-            _picked.sort(orderByDifficulty);
+			shuffle(_picked);
 			var desc:String = "Picked: ";
 			if (arrangement.easy > 0) desc += arrangement.easy + " easy, " ;
 			if (arrangement.normal > 0) desc += arrangement.normal + " normal, " ;
@@ -76,6 +76,19 @@ package
 			desc += "out of " + arrangement.outOf;
 			trace(desc);
 			return _picked;
+		}
+		
+		private static function shuffle(array:Array):Array {
+			var temp:Object;
+			var tempOffset:int;
+			for (var i:int = array.length - 1; i >= 0; i--)
+			{
+				tempOffset = Math.random() * i;
+				temp = array[i];
+				array[i] = array[tempOffset];
+				array[tempOffset] = temp;
+			}
+			return array;
 		}
 		
 		private function _pickSome(target:Number, pickCount:int, outOf:int):void {
