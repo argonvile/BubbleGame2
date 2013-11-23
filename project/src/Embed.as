@@ -25,6 +25,10 @@ package
 		[Embed(source = "../graphics/monster-arms1.png")] public static var MonsterArms1:Class;
 		[Embed(source = "../graphics/explosion.png")] public static var Explosion:Class;
 		[Embed(source = "../graphics/bomb.png")] public static var Bomb:Class;
+		[Embed(source = "../graphics/rating-circle.png")] public static var RatingCircle:Class;
+		[Embed(source = "../graphics/rating-star.png")] public static var RatingStar:Class;
+		[Embed(source = "../graphics/rating-skull.png")] public static var RatingSkull:Class;
+		[Embed(source = "../graphics/rating-fireskull.png")] public static var RatingFireSkull:Class;
 
 		[Embed(source = "../sound/blipa0.mp3")] public static var SfxBlipA0:Class;
 		[Embed(source = "../sound/blipa1.mp3")] public static var SfxBlipA1:Class;

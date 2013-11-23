@@ -50,22 +50,22 @@ lowering moustache pops glitch out a little
 *"Normal Mode" should feature random durations from level to level
 *"Ranked Mode" should keep track of user's ELO
 *"Ranked Mode" should pick levels according to user's ELO
-"Ranked Mode" should display message on "rank up"
-"Ranked Mode" should display "to next rank" bar after level
-"Normal mode" should increase player's rank, ELO sometimes
-
 *REFACTOR: Add constants for different states
 *REFACTOR: Move "roundTenths" utility to somewhere better
+*Level select should use graphical difficulty icons
 
+"Ranked Mode" should display "to next rank" bar after level
 Level select should display descriptions/hints
-Level select should use graphical difficulty icons
 new level: "divide", several "dead columns" in the middle of the field. bubbles thrown here just vanish
+Rename "Newspaper", "Edgehog" levels to city names
 ----
 REFACTOR: Change "scenarioBPM" to "scenarioRating"
 REFACTOR: Replace specific "throwing", "grabbing", etc. bubble logic with generic "here's where i am and here's where i'm going" logic
 REFACTOR: Remove function assignment for custom scrolling
 REFACTOR: Use FlxG's image cache instead of BitmapDataCache?
 REFACTOR: PlayerData should be saved in a single complex object
+
+"Ranked mode" should arrange 3, 4, 5-level arrangements better
 
 Level select should use real screenshots
 Character improvement: Animate character ambiently (moves feet, breathes a little?)
@@ -89,6 +89,8 @@ new level: "bubble ghost", bubbles leave harmless ghosts when popped. ghosts van
 new level: "red red whine", adjacent red bubbles pop when thrown, and on higher difficulties, drop if you grab too many
 new level: holding a blue bubble makes all blue bubbles orange, and all orange bubbles blue (held bubble is affected too)
 new level: orange bubbles drop when grabbed, and on higher difficulties, "pop" a replacement
+"Ranked Mode" should display message on "rank up"
+"Normal mode" should increase player's rank, ELO sometimes
 
 improve popping graphics -- little bubblets?
 

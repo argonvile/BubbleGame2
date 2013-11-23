@@ -22,11 +22,45 @@ package
 			var text:FlxText;
 			text = new FlxText(0, 0, width, scenarioName(levelSummary.levelClass, levelSummary.scenario));
 			buttonNormal.pixels.draw(text.pixels);
+			// draw rating...
 			var scenarioBpm:Number = levelSummary.getScenarioBpm();
-			text = new FlxText(0, 0, width, "Level: " + PlayerData.getDifficultyString(scenarioBpm));
 			matrix.identity();
 			matrix.translate(0, 56);
-			buttonNormal.pixels.draw(text.pixels, matrix);
+			var itemCount:int = 0;
+			var itemClass:Class;
+			var positions:Array;
+			var difficultyIndex:int = PlayerData.getDifficultyIndex(scenarioBpm);
+			if (difficultyIndex <= 2) {
+				itemCount = difficultyIndex + 1;
+				itemClass = Embed.RatingCircle;
+			} else if (difficultyIndex <= 7) {
+				itemCount = difficultyIndex - 2;
+				itemClass = Embed.RatingStar;
+			} else if (difficultyIndex <= 14) {
+				itemCount = difficultyIndex - 7;
+				itemClass = Embed.RatingSkull;
+			} else {
+				itemCount = difficultyIndex - 14;
+				itemClass = Embed.RatingFireSkull;
+			}
+			switch(itemCount) {
+				case 1: positions = [0, 0]; break;
+				case 2: positions = [-1, 0, 1, 0]; break;
+				case 3: positions = [-2, 0, 0, 0, 2, 0]; break;
+				case 4: positions = [-3, 0, -1, 0, 1, 0, 3, 0]; break;
+				case 5: positions = [-2, 1, -1, -1, 0, 1, 1, -1, 2, 1]; break;
+				case 6: positions = [-3, 1, -2, -1, -1, 1, 1, 1, 2, -1, 3, 1]; break;
+				case 7: positions = [-3, 1, -2, -1, -1, 1, 0, -1, 1, 1, 2, -1, 3, 1]; break;
+			}
+			var ratingItem:FlxSprite = new FlxSprite(0, 0, itemClass);
+			var iconSize:Number = 18;
+			for (var i:int = 0; i < positions.length;i+=2) {
+				matrix.identity();
+				matrix.scale(iconSize / ratingItem.width, iconSize / ratingItem.height);
+				matrix.translate(width / 2 - iconSize/2 + 12 * positions[i], 68 - iconSize/2 + 3 * positions[i+1]);
+				buttonNormal.pixels.draw(ratingItem.pixels, matrix);
+			}
+			
 			buttonNormal.drawLine(0, 0, width, 0, 0x18ffffff);
 			buttonNormal.drawLine(0, 1, 0, height, 0x18ffffff);
 			buttonNormal.drawLine(width-1, 1, width-1, height, 0x18000000);
