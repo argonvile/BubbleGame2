@@ -141,12 +141,20 @@ package
 			var levelDetails:LevelDetails = new clazz(scenario);
 			levelDetails.levelDuration = duration;
 			var playState:PlayState = new PlayState(MainMenu, levelDetails);
-			playState.setWinCallback(normalWin, [clazz, scenario]);
+			playState.setWinCallback(normalWin, [playState, clazz, scenario]);
 			FlxG.switchState(playState);
 		}
 		
-		public static function normalWin(clazz:Class, scenario:int):void {
+		public static function normalWin(playState:PlayState,clazz:Class, scenario:int):void {
 			PlayerSave.setClearedNormalLevel(clazz, scenario);
+			var text:FlxText = new FlxText(0, 0, FlxG.width, "You win!");
+			text.alignment = "center";
+			text.y = FlxG.height / 2 - text.height / 2;
+			playState.add(text);
+			text = new FlxText(0, 0, FlxG.width, "Hit <Enter>");
+			text.alignment = "center";
+			text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
+			playState.add(text);
 		}
 		
 		override public function update():void {

@@ -5,6 +5,9 @@ package levels
 	
 	public class BpmLevel extends LevelDetails
 	{
+		public static const name:String = "BPM Level";
+		public static const scenarioBpms:Array = [600, 700, 800, 900, 100];
+		public static const quotaBpms:Array = [6000, 7000, 8000, 9000, 1000];
 		private var splitStartTime:Number = 0;
 		private var averages:Array = new Array();
 		private var permaText:String = "";
@@ -60,6 +63,7 @@ package levels
 				averages.push(average);
 				// last frame
 				var finalText:String = produceAverageText(averages);
+				finalText += " (was " + BubbleColorUtils.roundTenths(PlayerSave.getBubblesPerMinute()) + ")";
 				text.text = finalText;
 				PlayerSave.setBubblesPerMinute(computeSmartAverage(averages));
 			} else {
@@ -123,7 +127,6 @@ package levels
 				}
 			}
 			finalText += " = " + String(Math.round(10 * mean / trials) / 10);
-			finalText += " (was " + PlayerSave.getBubblesPerMinute() + ")";
 			return finalText;
 		}
 	}

@@ -65,6 +65,8 @@ package
 		
 		private var winCallback:Function;
 		private var winParams:Array;
+		private var loseCallback:Function;
+		private var loseParams:Array;
 		
 		public function PlayState(returnClass:Class=null, levelDetails:LevelDetails = null) {
 			this.returnClass = returnClass;
@@ -84,6 +86,8 @@ package
 				FlxG.timeScale = 6/7;
 				levelDetails.levelDuration = 10;
 				nextDifficultyIncrementTime = getTimer() + 10000 + difficultyIncrementFrequency;
+			} else {
+				FlxG.timeScale = 1.0;
 			}
 			
 			levelDetails.init(this);
@@ -159,6 +163,8 @@ package
 			
 			ekgGraphic = new EkgGraphic(ekgPoint.x, ekgPoint.y);
 			add(ekgGraphic);
+			
+			trace("Level quota: " + levelDetails.levelQuota);
 		}
 		
 		public function scrollBg(howMany:int = 1):void {
@@ -357,9 +363,31 @@ package
 								// player would have lost; eliminate some bubbles and reset them
 								changeState(STATE_PAUSED, 1.0 * FlxG.timeScale);
 								// don't count the pause when calculating the quota
-								elapsed -= 1.0 * FlxG.timeScale;
 								variableDifficultyDeaths.push(FlxG.timeScale);
-								if (variableDifficultyDeaths.length >= 9) {
+								FlxG.timeScale = Math.max(0.02, FlxG.timeScale * 0.6);
+								nextDifficultyIncrementTime = getTimer() + difficultyIncrementFrequency * 2;
+								var bubbleReduction:int = 0;
+								for each (var bubble:Bubble in bubbles.members) {
+									if (bubble != null && bubble.alive) {
+										if (bubble.onScreen()) {
+											bubbleReduction++;
+										}
+										bubble.kill();
+									}
+								}
+								levelDetails.prepareLevel();
+								for each (var bubble:Bubble in bubbles.members) {
+									if (bubble != null && bubble.alive) {
+										if (bubble.onScreen()) {
+											bubbleReduction--;
+										}
+										if (bubble.y < newRowLocation) {
+											newRowLocation = bubble.y;
+										}
+									}
+								}
+								eliminatedBubbleCount += bubbleReduction;
+								if (variableDifficultyDeaths.length >= 8) {
 									FlxG.timeScale = 1.0;
 									changeState(STATE_LOSE);
 									var text:FlxText = new FlxText(0, 0, FlxG.width);
@@ -369,7 +397,7 @@ package
 									add(text);
 									
 									text = new FlxText(0, text.y + text.height, FlxG.width);
-									var smartAverage:Number = BpmLevel.computeSmartAverage(variableDifficultyDeaths.slice(3));
+									var smartAverage:Number = BpmLevel.computeSmartAverage(variableDifficultyDeaths.slice(2));
 									var adjustedBpm:Number = PlayerSave.getBubblesPerMinute()/smartAverage;
 									text.text = String(BubbleColorUtils.roundTenths(PlayerSave.getBubblesPerMinute()));
 									text.text += " / " + BubbleColorUtils.roundTenths(smartAverage);
@@ -384,32 +412,23 @@ package
 									add(text);
 									return;
 								}
-								FlxG.timeScale = Math.max(0.02, FlxG.timeScale * 0.6);
-								nextDifficultyIncrementTime = getTimer() + difficultyIncrementFrequency * 2;
-								for each (var bubble:Bubble in bubbles.members) {
-									if (bubble != null && bubble.alive) {
-										bubble.kill();
-									}
-								}
-								levelDetails.prepareLevel();
-								for each (var bubble:Bubble in bubbles.members) {
-									if (bubble != null && bubble.alive && bubble.y < newRowLocation) {
-										newRowLocation = bubble.y;
-									}
-								}
 								return;
 							}
 							
 							// player loses. transition to state 200
+							if (loseCallback != null) {
+								loseCallback.apply(null, loseParams);
+							} else {
+								var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
+								text.alignment = "center";
+								text.y = FlxG.height / 2 - text.height / 2;
+								add(text);
+								text = new FlxText(0, 0, FlxG.width, "Hit <Enter>");
+								text.alignment = "center";
+								text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
+								add(text);
+							}
 							changeState(STATE_LOSE);
-							var text:FlxText = new FlxText(0, 0, FlxG.width, "You lasted " + Math.round(elapsed) + "." + (Math.round(elapsed * 10) % 10) + "s");
-							text.alignment = "center";
-							text.y = FlxG.height / 2 - text.height / 2;
-							add(text);
-							text = new FlxText(0, 0, FlxG.width, "Hit <Enter>");
-							text.alignment = "center";
-							text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
-							add(text);
 							return;
 						} else if (badBubbleCount > 0) {
 							// player is in trouble
@@ -425,15 +444,16 @@ package
 				if (!variableDifficultyMode && (elapsed > levelDetails.levelDuration || eliminatedBubbleCount >= levelDetails.levelQuota)) {
 					if (winCallback != null) {
 						winCallback.apply(null, winParams);
+					} else {
+						var text:FlxText = new FlxText(0, 0, FlxG.width, "You win!");
+						text.alignment = "center";
+						text.y = FlxG.height / 2 - text.height / 2;
+						add(text);
+						text = new FlxText(0, 0, FlxG.width, "Hit <Enter>");
+						text.alignment = "center";
+						text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
+						add(text);
 					}
-					var text:FlxText = new FlxText(0, 0, FlxG.width, "You win!");
-					text.alignment = "center";
-					text.y = FlxG.height / 2 - text.height / 2;
-					add(text);
-					text = new FlxText(0, 0, FlxG.width, "Hit <Enter>");
-					text.alignment = "center";
-					text.y = FlxG.height / 2 - text.height / 2 + text.height * 2;
-					add(text);
 					changeState(STATE_WIN);
 					return;
 				}
@@ -787,6 +807,11 @@ package
 		public function setWinCallback(callback:Function, params:Array):void {
 			this.winCallback = callback;
 			this.winParams = params;
+		}
+		
+		public function setLoseCallback(callback:Function, params:Array):void {
+			this.loseCallback = callback;
+			this.loseParams = params;
 		}
 	}
 }

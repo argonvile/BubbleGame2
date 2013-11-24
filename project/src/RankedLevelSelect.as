@@ -25,7 +25,7 @@ package
 			}
 			
 			var flxText:FlxText;
-			flxText = new FlxText(0, 0, 100, "ELO: " + BubbleColorUtils.roundTenths(PlayerSave.getElo()) + " ("+PlayerData.getDifficultyString(PlayerSave.getElo())+")");
+			flxText = new FlxText(0, 0, 200, "ELO: " + BubbleColorUtils.roundTenths(PlayerSave.getElo()) + " (" + PlayerData.getDifficultyString(PlayerSave.getElo()) + ")");
 			add(flxText);
 		}
 		
@@ -36,14 +36,42 @@ package
 			levelDetails.levelDuration = levelSummary.duration;
 			var playState:PlayState = new PlayState(RankedLevelSelect, levelDetails);
 			var eloCalculator:EloCalculator = new EloCalculator(PlayerSave.getElo());
-			PlayerSave.setElo(eloCalculator.loseElo(levelSummary.getScenarioBpm()));
+			var oldElo:Number = PlayerSave.getElo();
+			var loseElo:Number = eloCalculator.loseElo(levelSummary.getScenarioBpm());
+			var winElo:Number = eloCalculator.winElo(levelSummary.getScenarioBpm());
+			PlayerSave.setElo(loseElo);
+			if (loseElo < PlayerSave.getMinElo()) {
+				PlayerSave.setMinElo(loseElo);
+			}
 			RankedPicker.finishedPicking();
-			playState.setWinCallback(rankedWin, [eloCalculator.winElo(levelSummary.getScenarioBpm())]);
+			var playerRank:int = PlayerData.getDifficultyIndex(PlayerSave.getMaxElo());
+			var minElo:Number = PlayerSave.getMinElo();
+			var fromPct:Number = Math.max(0, (oldElo - minElo) / (PlayerData.difficultyCutoffs[playerRank] - minElo));
+			playState.setWinCallback(rankedWin, [playState, fromPct, winElo]);
+			playState.setLoseCallback(rankedLose, [playState, fromPct, loseElo]);
 			FlxG.switchState(playState);
 		}
 
-		public static function rankedWin(newElo:Number):void {
+		public static function rankedWin(playState:PlayState, fromPct:Number, newElo:Number):void {
+			var fromRank:int = PlayerData.getDifficultyIndex(PlayerSave.getMaxElo());
+			var toRank:int = PlayerData.getDifficultyIndex(Math.max(newElo, PlayerSave.getMaxElo()));
+			var toPct:Number = Math.min(1, (newElo - PlayerSave.getMinElo()) / (PlayerData.difficultyCutoffs[fromRank] - PlayerSave.getMinElo()));
 			PlayerSave.setElo(newElo);
+			if (newElo > PlayerSave.getMaxElo()) {
+				PlayerSave.setMaxElo(newElo);
+			}
+			playState.add(new RankChangeDialog(fromPct, toPct, fromRank, toRank, "Success!"));
+			if (toPct == 1) {
+				var playerRank:int = PlayerData.getDifficultyIndex(PlayerSave.getMaxElo());
+				PlayerSave.setMinElo(PlayerData.difficultyCutoffs[playerRank - 1]);
+			}
+		}
+
+		public static function rankedLose(playState:PlayState, fromPct:Number, newElo:Number):void {
+			var fromRank:int = PlayerData.getDifficultyIndex(PlayerSave.getMaxElo());
+			var toRank:int = PlayerData.getDifficultyIndex(Math.max(newElo, PlayerSave.getMaxElo()));
+			var toPct:Number = (PlayerSave.getElo() - PlayerSave.getMinElo()) / (PlayerData.difficultyCutoffs[fromRank] - PlayerSave.getMinElo());
+			playState.add(new RankChangeDialog(fromPct, toPct, fromRank, toRank, "Failure..."));
 		}
 		
 		override public function update():void {

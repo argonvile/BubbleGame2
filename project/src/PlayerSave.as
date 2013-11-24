@@ -9,7 +9,25 @@ package
 		private static var repeatRate:Number;
 		private static var bubblesPerMinute:Number;
 		private static var clearedNormalLevels:Object;
+		private static var minElo:Number;
+		private static var maxElo:Number;
 		private static var elo:Number;
+		
+		public static function getMinElo():Number {
+			return get("minElo") as Number;
+		}
+		
+		public static function setMinElo(value:Number):void {
+			set("minElo", value);
+		}		
+		
+		public static function getMaxElo():Number {
+			return get("maxElo") as Number;
+		}
+		
+		public static function setMaxElo(value:Number):void {
+			set("maxElo", value);
+		}		
 		
 		public static function getElo():Number {
 			return get("elo") as Number;
@@ -88,6 +106,12 @@ package
 				}
 				if (save.data.elo == null) {
 					save.data.elo = 100;
+				}
+				if (save.data.minElo == null) {
+					save.data.minElo = PlayerData.difficultyCutoffs[PlayerData.getDifficultyIndex(save.data.elo)];
+				}
+				if (save.data.maxElo == null) {
+					save.data.maxElo = save.data.elo;
 				}
 			}
 		}

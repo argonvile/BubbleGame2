@@ -6,12 +6,12 @@ package levels.mean
 	{
 		public static const name:String = "Relentless";
 		public static const scenarioBpms:Array = [50, 90, 126, 190, 252];
-		// TODO: Bad quotas
-		public static const quotaBpms:Array = [107, 151, 184, 275, 341];
+		public static const quotaBpms:Array = [82.5, 141.1, 176.3, 295, 361.3];
 		private var period:Number = 5.0;
 		
 		public function Relentless(scenario:int)
 		{
+			super(scenario);
 			bubbleColors = [0xff8a8a8a, 0xffff7400, 0xff009999, 0xff1729b0, 0xff4dde00];
 			if (scenario == 0) {
 				bubbleColors = bubbleColors.slice(0, 4);
@@ -40,7 +40,6 @@ package levels.mean
 				period = 20.0;
 				setSpeed(3);
 			}
-			levelQuota = Math.ceil(1.05 * (maxBubbleRate + (columnCount * 6) / (levelDuration / 60)) * levelDuration / 60);
 		}
 		
 		override public function prepareLevel():void {

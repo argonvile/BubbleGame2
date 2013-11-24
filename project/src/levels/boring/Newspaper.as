@@ -4,8 +4,7 @@ package levels.boring
 	{
 		public static const name:String = "Newspaper";
 		public static const scenarioBpms:Array = [33.2, 64.8, 105.6, 157.2, 208.5];
-		// TODO: Bad quotas
-		public static const quotaBpms:Array = [131, 211, 365, 577, 797];
+		public static const quotaBpms:Array = [152, 245, 465, 798, 982];
 		public function Newspaper(scenario:int) 
 		{
 			setSpeed(scenario);

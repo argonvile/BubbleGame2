@@ -44,9 +44,17 @@ package
 		[Embed(source = "../sound/big-boulder1.mp3")] public static var SfxBigBoulder1:Class;
 		[Embed(source = "../sound/big-boulder2.mp3")] public static var SfxBigBoulder2:Class;
 		[Embed(source = "../sound/buzz.mp3")] public static var SfxBuzz:Class;
+		[Embed(source = "../sound/rankup0.mp3")] public static var SfxRankUp0:Class;
+		[Embed(source = "../sound/rankup1.mp3")] public static var SfxRankUp1:Class;
+		[Embed(source = "../sound/rankup2.mp3")] public static var SfxRankUp2:Class;
+		[Embed(source = "../sound/rankdown0.mp3")] public static var SfxRankDown0:Class;
+		[Embed(source = "../sound/rankdown1.mp3")] public static var SfxRankDown1:Class;
+		[Embed(source = "../sound/rankdown2.mp3")] public static var SfxRankDown2:Class;
+		[Embed(source = "../sound/newrank.mp3")] public static var SfxNewRank:Class;
 		
 		[Embed(source = "../fonts/lets-go-digital-regular.ttf", fontFamily = "digital", embedAsCFF="false")] public	static var FontDigital:String;
 		[Embed(source = "../fonts/just-sayin.ttf", fontFamily = "handwriting", embedAsCFF="false")] public	static var FontHandwriting:String;
+		[Embed(source = "../fonts/04b03.ttf", fontFamily = "pixel", embedAsCFF="false")] public	static var FontPixel:String;
 		
 		private static var sounds:Object = new Object();
 		private static var soundStartTimes:Array = new Array();
@@ -56,7 +64,7 @@ package
 			play(EmbeddedSounds[whichSound], volume, singular, restartTime);
 		}
 		
-		public static function play(EmbeddedSound:Class, volume:Number = 1.0, singular:Boolean = false, restartTime:int = 25, playbackSpeed:Number = 1.0):void {
+		public static function play(EmbeddedSound:Class, volume:Number = 1.0, singular:Boolean = false, restartTime:int = 25, playbackSpeed:Number = 1.0):FlxSound {
 			var sound:FlxSound;
 			if (sounds[EmbeddedSound] == null) {
 				sound = new FlxSound();
@@ -67,7 +75,7 @@ package
 				sound = sounds[EmbeddedSound];
 			}
 			if (getTimer() - soundStartTimes[EmbeddedSound] <= 25) {
-				return;
+				return sound;
 			}
 			if (singular) {
 				sound.stop();
@@ -80,6 +88,7 @@ package
 			sound.volume = volume;
 			sound.play(true);
 			soundStartTimes[EmbeddedSound] = getTimer();
+			return sound;
 		}
 		
 		public static function playPopSound(poppedBubbleCount:Number):void {

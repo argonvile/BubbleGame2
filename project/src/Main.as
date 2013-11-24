@@ -7,7 +7,7 @@ package
 	{
 		public function Main()
 		{
-			super(320, 240, RankedLevelSelect, 2, 60, 60);
+			super(320, 240, MainMenu, 2, 60, 60);
 			PlayerSave.load();
 			FlxG.debug = true;
 		}
